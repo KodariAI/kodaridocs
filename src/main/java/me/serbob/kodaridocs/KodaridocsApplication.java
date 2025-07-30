@@ -9,5 +9,4 @@ public class KodaridocsApplication {
     public static void main(String[] args) {
         SpringApplication.run(KodaridocsApplication.class, args);
     }
-
 }
