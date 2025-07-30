@@ -1,0 +1,37 @@
+plugins {
+    id 'org.springframework.boot' version '3.5.4'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+allprojects {
+    apply plugin: 'java'
+
+    group = 'me.serbob'
+    version = '0.0.1-SNAPSHOT'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        compileOnly 'org.projectlombok:lombok:1.18.38'
+        annotationProcessor 'org.projectlombok:lombok:1.18.38'
+        testCompileOnly 'org.projectlombok:lombok:1.18.38'
+        testAnnotationProcessor 'org.projectlombok:lombok:1.18.38'
+    }
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(21)
+        }
+    }
+}
+
+repositories {}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'me.paulschwarz:spring-dotenv:4.0.0'
+
+    implementation 'com.anthropic:anthropic-java:0.2.0'
+}

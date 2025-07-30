@@ -1,0 +1,5 @@
+server:
+  port: 8083
+
+anthropic:
+  api-key: ${ANTHROPIC_API_KEY}
