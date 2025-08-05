@@ -53,7 +53,7 @@ We provide a tool to automatically generate docs from JAR files.
 ./gradlew :autogen:run --args="full"
 ```
 
-### Mode 2: Package-Specific Scan
+#### Mode 2: Package-Specific Scan
 ```bash
 # Scan only specific package
 ./gradlew :autogen:run --args="package com.example.api"
@@ -65,9 +65,9 @@ We provide a tool to automatically generate docs from JAR files.
 3. Check `autogen/src/main/resources/output/` for generated docs
 4. Review and copy good docs to `src/main/resources/docs/`
 
-## Examples
+### Examples
 
-### Example 1: Full JAR Scan
+#### Example 1: Full JAR Scan
 ```bash
 # Clone the repo
 git clone https://github.com/KodariAI/kodaridocs.git
@@ -83,7 +83,7 @@ cp ~/spigot-api-1.20.4.jar autogen/src/main/resources/input/
 cat autogen/src/main/resources/output/spigot-api-1.20.4.md
 ```
 
-## Example 2: Package-Specific Scan
+#### Example 2: Package-Specific Scan
 ```bash
 # Add your JAR
 cp ~/EcoPets.jar autogen/src/main/resources/input/
