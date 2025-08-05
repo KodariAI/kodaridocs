@@ -2,9 +2,9 @@ package me.serbob.kodaridocs.service;
 
 import com.anthropic.client.AnthropicClient;
 import com.anthropic.client.okhttp.AnthropicOkHttpClient;
-import com.anthropic.models.MessageCountTokensParams;
-import com.anthropic.models.MessageTokensCount;
-import com.anthropic.models.Model;
+import com.anthropic.models.messages.MessageCountTokensParams;
+import com.anthropic.models.messages.MessageTokensCount;
+import com.anthropic.models.messages.Model;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -37,7 +37,7 @@ public class TokenCountService {
     ) {
         try {
             MessageCountTokensParams params = MessageCountTokensParams.builder()
-                    .model(Model.CLAUDE_3_5_SONNET_20241022)
+                    .model(Model.CLAUDE_4_SONNET_20250514)
                     .addUserMessage(text)
                     .build();
 
