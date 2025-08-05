@@ -37,21 +37,37 @@ Methods:
 - Content: Focus on method signatures and basic usage
 
 ## Auto-generating Documentation
-
 We provide a tool to automatically generate docs from JAR files.
 
 ### Using the Auto-generator
 
 1. Place your JAR files in `autogen/src/main/resources/input/`
-2. Run from project root:
-   ```bash
-   ./gradlew :autogen:run
-   ```
+2. Choose your scanning mode and run from project root:
+
+#### Mode 1: Full JAR Scan (default)
+```bash
+# Scan entire JAR
+./gradlew :autogen:run
+
+# Or explicitly
+./gradlew :autogen:run --args="full"
+```
+
+### Mode 2: Package-Specific Scan
+```bash
+# Scan only specific package
+./gradlew :autogen:run --args="package com.example.api"
+
+# Works with both dot and slash notation
+./gradlew :autogen:run --args="package com/example/api"
+```
+
 3. Check `autogen/src/main/resources/output/` for generated docs
 4. Review and copy good docs to `src/main/resources/docs/`
 
-### Example
+## Examples
 
+### Example 1: Full JAR Scan
 ```bash
 # Clone the repo
 git clone https://github.com/KodariAI/kodaridocs.git
@@ -60,11 +76,23 @@ cd kodaridocs
 # Add your JAR
 cp ~/spigot-api-1.20.4.jar autogen/src/main/resources/input/
 
-# Generate docs
+# Generate complete docs
 ./gradlew :autogen:run
 
 # Check output
 cat autogen/src/main/resources/output/spigot-api-1.20.4.md
+```
+
+## Example 2: Package-Specific Scan
+```bash
+# Add your JAR
+cp ~/EcoPets.jar autogen/src/main/resources/input/
+
+# Generate docs only for the API package
+./gradlew :autogen:run --args="package com.willfp.ecopets.api"
+
+# Output will be named with package suffix
+cat autogen/src/main/resources/output/EcoPets-com-willfp-ecopets-api.md
 ```
 
 ## Running Locally
