@@ -17,17 +17,33 @@ import java.util.stream.Collectors;
 public class ApiDocGenerator {
 
     public void generateDocs(String jarPath, String outputPath) throws Exception {
-        log.info("Scanning JAR: {}", jarPath);
+        generateDocs(jarPath, outputPath, ScanMode.FULL_JAR, null);
+    }
 
+    public void generateDocs(String jarPath, String outputPath, String packagePath) throws Exception {
+        generateDocs(jarPath, outputPath, ScanMode.PACKAGE_SPECIFIC, packagePath);
+    }
+
+    public void generateDocs(String jarPath, String outputPath, ScanMode mode, String packagePath) throws Exception {
+        log.info("Scanning JAR: {} in {} mode", jarPath, mode);
+
+        if (mode == ScanMode.PACKAGE_SPECIFIC) {
+            log.info("Filtering to package: {}", packagePath);
+        }
 
         File jarFile = new File(jarPath);
         String apiName = jarFile.getName().replace(".jar", "");
 
-        Set<ClassInfo> allClasses = scanJarWithASM(jarFile);
+        if (mode == ScanMode.PACKAGE_SPECIFIC && packagePath != null) {
+            String packageSuffix = packagePath.replace('/', '-').replace('.', '-');
+            apiName = apiName + "-" + packageSuffix;
+        }
+
+        Set<ClassInfo> allClasses = scanJarWithASM(jarFile, mode, packagePath);
 
         log.info("Found {} classes", allClasses.size());
 
-        String markdown = buildMarkdown(apiName, allClasses);
+        String markdown = buildMarkdown(apiName, allClasses, mode, packagePath);
 
         Path output = Paths.get(outputPath, apiName + ".md");
         Files.createDirectories(output.getParent());
@@ -36,8 +52,16 @@ public class ApiDocGenerator {
         log.info("Generated {} KB of docs", markdown.length() / 1024);
     }
 
-    private Set<ClassInfo> scanJarWithASM(File jarFile) {
+    private Set<ClassInfo> scanJarWithASM(File jarFile, ScanMode mode, String packagePath) {
         Set<ClassInfo> classes = new HashSet<>();
+
+        String normalizedPackage = null;
+        if (mode == ScanMode.PACKAGE_SPECIFIC && packagePath != null) {
+            normalizedPackage = packagePath.replace('.', '/');
+            if (!normalizedPackage.endsWith("/")) {
+                normalizedPackage += "/";
+            }
+        }
 
         try (JarFile jar = new JarFile(jarFile)) {
             Enumeration<JarEntry> entries = jar.entries();
@@ -49,8 +73,11 @@ public class ApiDocGenerator {
                 if (!name.endsWith(".class"))
                     continue;
 
-                if (name.contains("$"))
-                    continue;
+                if (mode == ScanMode.PACKAGE_SPECIFIC && normalizedPackage != null) {
+                    if (!name.startsWith(normalizedPackage)) {
+                        continue;
+                    }
+                }
 
                 try (InputStream is = jar.getInputStream(entry)) {
                     ClassReader reader = new ClassReader(is);
@@ -71,12 +98,20 @@ public class ApiDocGenerator {
         return classes;
     }
 
-    private String buildMarkdown(String apiName, Set<ClassInfo> classes) {
+    private String buildMarkdown(String apiName, Set<ClassInfo> classes, ScanMode mode, String packagePath) {
         StringBuilder markdown = new StringBuilder();
         markdown.append("# ").append(apiName).append(" API Reference\n\n");
 
+        if (mode == ScanMode.PACKAGE_SPECIFIC && packagePath != null) {
+            markdown.append("**Package Filter:** `").append(packagePath).append("`\n\n");
+        }
+
         if (classes.isEmpty()) {
-            markdown.append("No public classes found in this JAR.\n");
+            if (mode == ScanMode.PACKAGE_SPECIFIC) {
+                markdown.append("No public classes found in package: ").append(packagePath).append("\n");
+            } else {
+                markdown.append("No public classes found in this JAR.\n");
+            }
             return markdown.toString();
         }
 
@@ -158,6 +193,10 @@ public class ApiDocGenerator {
 
     private String formatMethod(MethodInfo method) {
         StringBuilder sb = new StringBuilder();
+
+        if (method.isStatic) {
+            sb.append("**static** ");
+        }
 
         sb.append(typeToSimpleName(method.returnType));
         sb.append(" ");
