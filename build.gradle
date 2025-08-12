@@ -35,5 +35,5 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'me.paulschwarz:spring-dotenv:4.0.0'
 
-    implementation 'com.anthropic:anthropic-java:2.2.0'
+    implementation 'com.anthropic:anthropic-java:2.4.0'
 }
