@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
+import java.util.Map;
 
 @ApiV1Controller
 @RequiredArgsConstructor
@@ -16,18 +17,24 @@ public class DocsController {
 
     private final DocsService docsService;
 
-    @GetMapping("/available-docs")
-    public List<String> getAvailableDocs() {
-        return docsService.getAvailableDocs();
+    @GetMapping("/docs/tree")
+    public Map<String, List<String>> getCategoryTree() {
+        return docsService.getCategoryTree();
     }
 
-    @GetMapping("/docs/{docId}")
-    public ResponseEntity<DocResponse> getDoc(@PathVariable String docId) {
-        DocResponse doc = docsService.getDoc(docId);
+    @GetMapping("/docs/{category}/{subcategory}/{docId}")
+    public ResponseEntity<DocResponse> getDocInformation(
+            @PathVariable String category,
+            @PathVariable String subcategory,
+            @PathVariable String docId
+    ) {
+        String fullCategory = category + "/" + subcategory;
+        DocResponse doc = docsService.getDoc(fullCategory, docId);
 
-        if (doc == null) {
+        System.out.println("FULL CATEGORY IN PULA MEA: "+fullCategory);
+
+        if (doc == null)
             return ResponseEntity.notFound().build();
-        }
 
         return ResponseEntity.ok(doc);
     }
