@@ -31,8 +31,6 @@ public class DocsController {
         String fullCategory = category + "/" + subcategory;
         DocResponse doc = docsService.getDoc(fullCategory, docId);
 
-        System.out.println("FULL CATEGORY IN PULA MEA: "+fullCategory);
-
         if (doc == null)
             return ResponseEntity.notFound().build();
 
