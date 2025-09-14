@@ -11,7 +11,7 @@ COPY src ./src
 
 RUN ./gradlew bootJar --no-daemon
 
-FROM amazoncorretto:24-alpine
+FROM amazoncorretto:21-alpine
 WORKDIR /app
 
 RUN addgroup -g 1001 -S appuser && adduser -u 1001 -S appuser -G appuser
