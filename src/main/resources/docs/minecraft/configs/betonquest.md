@@ -1,6 +1,3 @@
-Overview
-This is the complete reference documentation for BetonQuest. It has in depth explanations for all of BetonQuest's features, config options and permissions.
-
 About Scripting
 BetonQuest's quests do not have a predefined structure and can be freely designed. This is made possible by a powerful quest scripting language.
 
@@ -10,9 +7,13 @@ Quest Structure with a Traditional Quest Plugin
 Rebel Quest
 Explanation
 Quest Starts
+
 Spy on Rebels
+
 Inform King
+
 Quest Ends
+
 
 Quest Structure with BetonQuest
 
@@ -21,20 +22,30 @@ Rebel Quest
 Explanation
 Dragon Hunter Quest
 Too slow
+
 In Time
+
 Quest Starts
+
 Spy on Rebels
+
 Decision: Inform King
+
 Decision: Betray King
+
 King rewards you
+
 Hunt the King down
+
 Quest Fails
+
 You become King
+
 
 Building Blocks🔗
 The BetonQuest scripting language is based on a few basic building blocks which are outlined in the following sections. They can be freely combined to create any quest you want. All of these are defined using an instruction text.
 
-Intstruction Text Example
+Instruction Text Example
 
 conditions: 
   myCondition: "health 10" 
@@ -50,7 +61,7 @@ Explore all Events
 Objectives🔗
 Objective are goals that player must complete. At first, they must be started for a player with the objective event. When the player completes the objective, all defined events are run. For example, you could reward the player by giving them an item.
 
-You define them in the objectives section as shown above. At the end of the instruction text you can add conditions and events for the objective. Conditions will limit when the objective can be completed (e.g. killing zombies only at given location), and events will fire when the objective is completed (e.g. giving a reward, or setting a tag which will enable collecting a reward from an NPC). You define these like that: conditions:con1,con2 events:event1,event2 at the end of instruction text. Separate them by commas and never use spaces! You can also use the singular forms of these arguments: condition: and event:.
+You define them in the objectives section as shown above. At the end of the instruction text you can add conditions and events for the objective. Conditions will limit when the objective can be completed (e.g. killing zombies only at given location), and events will fire when the objective is completed (e.g. giving a reward, or setting a tag which will enable collecting a reward from an NPC). You define these like that: conditions:con1,con2 events:event1,event2 at the end of instruction text. Separate them by commas and never use spaces!
 
 If you want to start an objective right after it was completed you can add the persistent argument at the end of its instruction string. For example, you could create a custom respawn system with a die objective. When the player dies, they will be teleported to the spawnpoint and the die objective will be started again. The persistent argument prevents the objective from being completed, although it will run all its events. To cancel such an objective you need to use objective delete event.
 
@@ -89,7 +100,7 @@ Explore all Objectives
 Conditions🔗
 Conditions allow you to control what options are available to players in conversations, how the NPC responds or if the objective will be completed. They check if a given in-game state is present and return true or false as a result.
 
-You can negate the condition (revert its output) by adding an exclamation mark (!) at the beginning of its name. This only works in the place where conditions are used, i.e. in conversations, not in the conditions section). If you do so, make sure to enclose the condition in quotes, otherwise YAML will give you a syntax error.
+You can negate the condition (revert its output) by adding an exclamation mark (!) at the beginning of its name. This only works in the place where conditions are used (i.e. in conversations, not in the conditions section). If you do so, make sure to enclose the condition in quotes, otherwise YAML will give you a syntax error.
 
 Example
 
@@ -136,12 +147,12 @@ The names of these features must be unique in that package, no matter which file
 
 Example
 Working across Packages🔗
-Accessing features from other packages can be very helpful to link quests together. All events, conditions, objectives, items and conversations can be accessed. Just journal entries only work in their own package.
+Accessing features from other packages can be very helpful to link quests together. All events, conditions, objectives, items and conversations can be accessed.
 
 You never need to access a specific file since feature names are unique within a package.
 
 Top-Level Packages🔗
-You can access top-level packages (placed directly in "QuestPackages") by prefixing the feature's name with a dot and the package name.
+You can access top-level packages (placed directly in "QuestPackages") by prefixing the feature's name with a greater than (>) and the package name.
 
 Example
 Packages in Sub-folders🔗
@@ -149,18 +160,28 @@ You can access packages in sub-folders by prefixing the feature's name with the 
 
 Example
 Relative paths🔗
-You can specify relative paths to a package instead of full paths. The underscore (_) means "one folder up" from the current packages "package.yml". In turn, a leading dash (-) combined with a folder name navigates "one folder down" into the given folder. Each package in the path must be seperated by a dash.
+You can specify relative paths to a package instead of full paths. The underscore (_) means "one folder up" from the current packages "package.yml". In turn, a leading dash (-) combined with a folder name navigates "one folder down" into the given folder. Each package in the path must be separated by a dash.
 
 This can be useful when distributing or moving packages. Instead of rewriting every package path to match the current location, relative paths will still work.
 
 Example
 Disabling Packages🔗
-Each package can optionally be disabled/enabled by setting enabled inside the package section to true or false.
+Packages are enabled by default, you can disable a package if you don't want it to be loaded. Set enabled inside the package section to true or false to enable or disable the package.
 
 
 package:
   ## Optionally add this to the package.yml
   enabled: false
+Package Version🔗
+Each package has a version inside the package section that is used by the automatic migrator. When no version is set the newest version will be set on loading. Any new package section will be added at the end of the file, so you probably want to move that to the file's top.
+
+Info
+
+When updating from a version before versioning see Migration to BQ 3.0.
+
+
+package:
+  version: 3.0.0-QUEST-1 # Don't change this! The plugin's automatic quest updater handles it.
 Templates🔗
 You should have experience creating and using packages before you start using templates. Templates are a way to create packages that can be used as a base for other packages to reduce the amount of repetitive work. Therefore, they are a great way to centralize logic or create utilities.
 
@@ -179,14 +200,6 @@ If the same events, objectives, conditions, etc. is defined in multiple template
 You can also use templates in templates. Also in this case, the events, objectives, conditions, etc. that are defined in the current template will be used instead of the ones from the template that is being used as a base.
 
 Events List🔗
-Cancel a quest: cancel🔗
-This event works in the same way as a quest canceler in the backpack.
-
-Running this event is equal to the player canceling a quest using the backpack. The only argument is the identifier of a quest canceler, as defined in the cancel section.
-
-Example
-
-cancelQuest: "cancel woodQuest"
 Burn: burn🔗
 Parameter	Syntax	Default Value	Explanation
 duration	duration:number		The duration the player will burn (in seconds). Can be a variable.
@@ -195,6 +208,17 @@ Example
 events:
   burn: "burn duration:4"
   punishing_fire: "burn duration:%point.punishment.amount%"
+Cancel a quest: cancel🔗
+This event works in the same way as a quest canceler in the backpack.
+
+Running this event is equal to the player canceling a quest using the backpack.
+
+Parameter	Syntax	Default Value	Explanation
+canceler	CancelerID		The Quest Canceler to execute.
+bypass	Keyword (bypass)	Disabled	If the canceler conditions should be ignored. If enabled the canceler will be executed, even when its conditions are not met.
+Example
+
+cancelQuest: "cancel woodQuest bypass"
 Cancel the Conversation: cancelconversation🔗
 Cancels the active conversation of the player.
 
@@ -249,8 +273,8 @@ The destination must be defined in compass section. You can specify a name for t
 compass:
   beton:
     name:
-      en: Target
-      pl: Cel
+      en-US: Target
+      pl-PL: Cel
     location: 100;200;300;world
     item: scroll
 Example
@@ -337,6 +361,14 @@ Example
 
 
 effect BLINDNESS 30 1 ambient icon
+Eval Event: eval🔗
+This event allows you to resolve an expression containing variables, and the result will then be interpreted again as an event.
+
+Example
+
+events:
+  simpleEval: eval notify "This is actually an eval event evaluating to a notify event."
+  complexEval: eval point ranking 5 action:add %objective.settings.notify% 
 Give experience: experience🔗
 This event allows you to manipulate player's experience. First you specify a number as the amount, then the modification action. You can use action:addExperience, action:addLevel, action:setExperienceBar and action:setLevel as modification types.
 
@@ -375,7 +407,7 @@ Parameter	Syntax	Default Value	Explanation
 events to run	eventName1,event2		One or multiple events to run. Contains event names seperated by commas.
 delay	Keyword	without delay	The delay before the folder starts executing it's events.
 period	period:number	without delay	The time between each event of the folder.
-time unit	Keyword	Seconds	The unit of time to use for delay and period. Either ticks or minutes. Omit to use seconds.
+time unit	unit:unit	Seconds	The unit of time to use for delay and period. Either ticks, minutes or seconds.
 random	random:number	Disabled	Enables "random mode". Will randomly pick the defined amount of events .
 cancelOnLogout	Keyword	Disabled	If enabled, the folder will stop executing events if the player disconnects.
 cancelConditions	cancelConditions:cond1,cond2	Disabled	If enabled, the folder will stop executing events if the conditions are true.
@@ -385,19 +417,19 @@ events:
   simpleFolder: "folder event1,event2,event3" 
   runEvents: "folder event1,event2,event3 delay:5 period:1" 
   troll: "folder killPlayer,banPlayer,kickPlayer delay:5 random:1" 
-  wait: "folder messagePlayer,giveReward delay:1 minutes" 
+  wait: "folder messagePlayer,giveReward delay:1 unit:minutes" 
 If-else through a list of events: first🔗
 This event wraps multiple events inside itself, similar folder. Unlike folder, it attempts to execute each event, starting from the first onward. Once it successfully executes one event, it stops executing the rest. This is useful for collapsing long if-else chains into single events.
 
-This event is especially powerful when it is used in conjunction with the condition: keyword, which can be used with any event.
+This event is especially powerful when it is used in conjunction with the conditions: keyword, which can be used with any event.
 
 Example
 
 events: 
   firstExample: "first event1,event2,event3"
-  event1: "point carry boxes 10 action:add condition:firstCondition"
-  event2: "point carry boxes 20 action:add condition:secondCondition"
-  event3: "point carry boxes 40 action:add condition:thirdCondition"
+  event1: "point carry boxes 10 action:add conditions:firstCondition"
+  event2: "point carry boxes 20 action:add conditions:secondCondition"
+  event3: "point carry boxes 40 action:add conditions:thirdCondition"
 Equivalent using if-else
 
 events:
@@ -591,6 +623,18 @@ Example
   events:
     logPlayer: "log %player% completed first quest."
     debug: "log level:DEBUG daily quests have been reset"
+NPC Teleport: npcteleport🔗
+persistent, static
+
+This event will teleport the Npc to the given location.
+
+Parameter	Syntax	Default Value	Explanation
+Npc	Npc		The ID of the Npc
+Location	Unified Location Formatting		The location to which the Npc will be teleported
+Spawn	Keyword (spawn)	Disabled	If the NPC should be spawned if not in the world
+Example
+
+teleportToSpawn: npcteleport mayorHans 100;200;300;world
 Objective: objective🔗
 persistent, static
 
@@ -625,17 +669,15 @@ party 10 has_tag1,!has_tag2 give_special_reward amount:3
 Pick random: pickrandom🔗
 persistent, static
 
-Another container for events. It picks one (or multiple) of the given events and runs it. You must specify how likely it is that each event is picked by adding the percentage before the event's id. The event won't break if your total percentages are above 100%.
+Another container for events. It picks one (or multiple) of the given events and runs it. You must specify how likely it is that each event is picked by adding the weighting before the event's id. The weighting is a floating point number, that is the ratio of the event's chance to be picked.
 
 It picks one event from the list by default, but you can add an optional amount: if you want more to be picked. Note that only as many events as specified can be picked and amount:0 will do nothing.
-
-There must be two %% before the event's name if variables are used, one is from the variable and the other one from the event's syntax.
 
 Example
 
 
-pickrandom 20.5%event1,0.5%event2,79%event3 amount:2
-pickrandom %point.factionXP.amount%%event1,0.5%event2,79%event3,1%event4 amount:3
+pickrandom 20.5~event1,0.5~event2,79~event3 amount:2
+pickrandom %point.factionXP.amount%~event1,0.5~event2,79~event3,1~event4 amount:3
 Point: point🔗
 persistent
 
@@ -880,7 +922,452 @@ events:
   setShortRain: "weather rain duration:60 world:rpgworld"
   setStorm: "weather storm duration:%point.tribute.left:150%"
 
-  Conditions List🔗
+  Objectives List🔗
+Action: action🔗
+This objective completes when the player clicks on the given block type. It works great with the location condition and the item in hand condition to further limit the counted clicks.
+
+Parameter	Syntax	Default Value	Explanation
+Click Type	right, left or any		What type of click should be handled
+Block Type	Block Selector or any		The block which must be clicked, or any for even air
+Location	loc:Location	Optional. Default: none	Adds an optional location to the objective, only counting blocks clicked at the specific location.
+range	range:number	0	The range around the location where to count the clicks.
+cancel	Keyword (cancel)	Not Set	Prevents the player from interacting with the block.
+hand	hand:(hand,off_hand, any)	hand	The hand the player must use to click the block, any can the objective cause to be completed multiple times
+Example
+
+action right DOOR conditions:holding_key loc:100;200;300;world range:5
+action any any conditions:holding_magicWand events:fireSpell #Custom click listener for a wand
+Variable Properties
+The objective contains one property, location. It's a string formatted like X: 100, Y: 200, Z:300. It does not show the radius.
+
+Arrow Shooting: arrow🔗
+To complete this objective the player needs to shoot the arrow into the target. There are two arguments, location of the target and precision number (radius around location where the arrow must land, should be small). Note that the position of an arrow after hit is on the wall of a full block, which means that shooting not full blocks (like heads) won't give accurate results. Experiment with this objective a bit to make sure you've set the numbers correctly.
+
+Example
+
+arrow 100.5;200.5;300.5;world 1.1 events:reward conditions:correct_player_position
+ Break or Place Blocks: block🔗
+To complete this objective the player must break or place the specified amount of blocks.
+
+Parameter	Syntax	Default Value	Explanation
+Block Type	Block Selector		The block which must be broken / placed.
+Amount	Number		The amount of blocks to break / place. Less than 0 for breaking and more than 0 for placing blocks.
+Safety Check	Keyword (noSafety)	Safety Check Enabled	The Safety Check prevents faking the objective. The progress will be reduced when the player does to opposite of what they are supposed to do. Example: Player must break 10 blocks. They place 10 of their stored blocks. Now the total amount of blocks to break is 20.
+Notifications	Keyword (notify)	Disabled	Displays messages to the player each time they progress the objective. Optionally with the notification interval after colon.
+Location	loc:location	Optional. Default: none	Adds an optional location to the objective, only counting blocks broken/placed at the specific location.
+Region definer	region:location	Optional. Default: none	Adds an optional second location to only count blocks broken/placed in a rectangle between the specified location and this location. This won't have an effect if parameter location isn't set.
+ignorecancel	Keyword (ignorecancel)	Protected blocks will not affect the objective	Allows the objective to progress, even if the event is cancelled by the Server. For example if the player is not allowed to build.
+Example
+
+objectives:
+  breakLogs: "block .*_LOG -16 events:reward notify"
+  placeBricks: "block BRICKS 64 events:epicReward notify:5"
+  breakIron: "block IRON_ORE -16 noSafety notify events:dailyReward"
+Variable Properties
+Note that these follow the same rules as the amount argument, meaning that blocks to break are a negative number!
+
+Name	Example Output	Explanation
+amount	-6 / 6	Shows the amount of blocks already broken / placed.
+left	-4 / 4	Shows the amount of blocks that still need to be broken / placed for the objective to be completed.
+total	-10 / 10	Shows the initial amount of blocks that needed to be broken / placed.
+You can use these variables to always get positive values:
+
+Name	Example Output	Explanation
+absoluteAmount	6	Shows the absolute amount of blocks already broken / placed.
+absoluteLeft	4	Shows the absolute amount of blocks that still need to be broken / placed for the objective to be completed.
+absoluteTotal	10	Shows the initial absolute amount of blocks that needed to be broken / placed.
+Breed animals: breed🔗
+This objective is completed by breeding animals of specified type. The first argument is the animal type and the second argument is the amount (positive integer). You can add the notify argument to display a message with the remaining amount each time the animal is bred, optionally with the notification interval after a colon. While you can specify any entity, the objective will be completable only for breedable ones.
+
+This objective has three properties: amount, left and total. amount is the amount of animals already breed, left is the amount of animals still needed to breed and total is the amount of animals initially required.
+
+Example
+
+breed cow 10 notify:2 events:reward
+Put items in a chest: chestput🔗
+This objective requires the player to put specified items in a specified chest. First argument is a location of the chest, second argument is a list of items (from items section), separated with a comma. You can also add amount of items after a colon. The items will be removed upon completing the objective unless you add items-stay optional argument. By default, only one player can look into the chest at the same time. You can change it by adding the key multipleaccess.
+
+Example
+
+chestput 100;200;300;world emerald:5,sword events:tag,message
+chestput 0;50;100;world apple:42 events:message multipleaccess:true
+ Eat/drink: consume🔗
+This objective is completed by eating the specified food or drinking the specified potion.
+
+Parameter	Syntax	Default Value	Explanation
+Item	Quest Item		The item or potion that must be consumed.
+Amount	amount:number	1	The amount of items to consume.
+Example
+
+objectives:
+  eatApple: "consume apple events:faster_endurance_regen"
+  eatSteak: "consume steak amount:4 events:health_boost"
+Variable Properties
+Name	Example Output	Explanation
+amount	6	Shows the amount of items already consumed.
+left	4	Shows the amount of items that still need to be consumed for the objective to be completed.
+total	10	Shows the initial amount of items that needed to be consumed.
+Crafting: craft🔗
+To complete this objective the player must craft specified item. First argument is ID of the item, as in the items section. Next is amount (integer). You can use the notify keyword to display a message each time the player advances the objective, optionally with the notification interval after a colon.
+
+This objective has three properties: amount, left and total. amount is the amount of items already crafted, left is the amount of items still needed to craft and total is the amount of items initially required.
+
+Example
+
+craft saddle 5 events:reward
+ Enchant item: enchant🔗
+This objective is completed when the player enchants the specified quest item with the specified enchantment.
+
+Parameter	Syntax	Default Value	Explanation
+item	Quest Item		The quest item that must be enchanted.
+enchants	enchantment:level		The enchants that must be added to the item. Enchantment names are different from the vanilla ones. If a level is present, the enchanted level must be equal or bigger then the specified one. Multiple enchants are supported: ARROW_DAMAGE:1,ARROW_FIRE:1
+requirementMode	requirementMode:mode	all	Use one if any enchantment from enchants should complete the objective. Use all if all are required at the same time.
+amount	amount:number	1	The amount of items to enchant.
+Example
+
+lordSword: "enchant lordsSword damage_all,knockback events:rewardLord"
+kingSword: "enchant kingsSword damage_all:2,knockback:1 events:rewardKing"
+massProduction: "enchant ironSword sharpness amount:10 events:blacksmithLevel2Reward"
+Variable Properties
+Name	Example Output	Explanation
+amount	6	Shows the amount of items already enchanted.
+left	4	Shows the amount of items that still need to be enchanted for the objective to be completed.
+total	10	Shows the initial amount of items that needed to be enchanted.
+Experience: experience🔗
+This objective can be completed by reaching the specified amount of experience levels. You can also define decimal numbers, for example experience 1.5 will complete when the player reaches 1.5 experience levels or more. If you want to check for an absolute amount of experience points you can convert it to decimal levels. The objective is checked every time the player gets experience naturally, such as killing mobs or mining blocks. Additionally, it is checked if the player reaches a new level in any way (vanilla level up, commands or other plugins). The objective will also imminently complete if the player already has the experience level or more. And it will also be completed if the player joins the game with the specified amount of experience levels or more. You can use the notify keyword to display a message each time the player advances the objective, optionally with the notification interval after a colon.
+
+This objective has three properties: amount, left and total. amount is the current amount of experience levels, left is the amount of experience levels still needed and total is the amount of experience required.
+
+Example
+
+experience 25 level events:reward
+ Wait: delay🔗
+This objective completes itself after certain amount of time. The player must be online and meet all conditions. If the player is not online the objective is completed on the player's next login.
+
+Parameter	Syntax	Default Value	Explanation
+time	Any Number		The time after which the objective is completed.
+unit	Keyword	minutes	The unit of time. Either minutes, seconds or ticks.
+precision	interval:number	interval:200	The interval in which the objective checks if the time is up. Measured in ticks. Low values cost more performance but make the objective preciser.
+Example
+
+objectives:
+  waitDay: "delay 1440 events:resetDaily" 
+  wait50sec: "delay 1000 ticks interval:5 events:failQuest" 
+Variable Properties
+Name	Example Output	Explanation
+left	23 days 5 hours 45 minutes 17 seconds	Shows the time left until the objective is completed.
+date	17.04.2022 16:14	Shows the date the objective is completed at using the config's date_format setting.
+rawSeconds	5482	Shows the amount of seconds until objective completion.
+Death: die🔗
+The death objective is completed when a player dies while fulfilling all conditions. If you set the respawn location the player will spawn at that location, after pressing respawn, and the objective will be completed then, not immediately on death.
+
+Optionally you can also add the cancel argument to prevent the player from dying. In this case, the player will be healed and all status effects will be removed. You can also specify the respawn location to which the player will be teleported to.
+
+Example
+
+die respawn:100;200;300;world;90;0 events:respawned
+die cancel respawn:100;200;300;world;90;0 events:respawned
+ Fishing: fish🔗
+Requires the player to catch something with the fishing rod. It doesn't have to be a fish, it can also be any other item.
+
+Parameter	Syntax	Default Value	Explanation
+Item	Quest Item		The item that must be caught.
+amount	Any Number		The amount that must be caught.
+notifications	notify:number	notify:0	Add notify to display a notification when a fish is caught. Optionally with the notification interval after a colon.
+hookLocation	hookLocation:Location	Everywhere	The location at which the item must be caught. Range must also be defined.
+range	range:number	Everywhere	The range around the hookLocation.
+Example
+
+objectives:
+  fisherman: "fish SALMON 5 notify events:tag_fish_caught" 
+  fishAtPond: "fish COD 5 hookLocation:123;456;789;fishWorld range:10 events:giveSpecialFish" 
+Variable Properties
+Name	Example Output	Explanation
+left	4	The amount of fish still left to be caught.
+amount	6	The amount of already caught fish.
+total	10	The initially required amount of fish needed to be caught.
+Interact with entity: interact🔗
+The player must click on entities to complete this objective.
+
+Parameter	Syntax	Default Value	Explanation
+Click Type	right, left or any		What type of click should be handled
+Entity Type	EntityType type		The entity which must be clicked
+amount	number		The amount of different entities which must be interacted with.
+name	name:text	Disabled	Only count named mobs.
+realname	realname:text	Disabled	To check for the real name (e.g. if you renamed players to include their rank).
+marked	marked:text	Disabled	If the clicked entity needs to be marked by the spawn event (see its description for marking explanation)
+hand	hand:(hand,off_hand, any)	hand	The hand the player must use to click the block, any can the objective cause to be completed multiple times
+Notifications	Keyword (notify)	Disabled	Displays messages to the player each time they progress the objective. Optionally with the notification interval after colon.
+Cancel	Keyword (cancel)	Disabled	if the click shouldn't do what it usually does (i.e. left click won't hurt the entity).
+Location	loc:Location	Everywhere	The location at which the entity must be interacted.
+range	range:number	1	The range around the loc. Requires defined loc.
+Example
+
+interact right creeper 1 marked:sick conditions:syringeInHand cancel
+Variable Properties
+Name	Example Output	Explanation
+amount	7	The amount of already interacted entities.
+left	13	The amount of entities still needed to be interacted with.
+total	20	The initially required amount of entities to interact.
+Resource pack state: resourcepack🔗
+To complete this objective the player must have the specified resource pack state. The first argument is the state of the resource pack. It can be successfully_loaded, declined, failed_download and accepted.
+
+Example
+
+resourcepack successfully_loaded events:reward
+resourcepack declined events:declined
+Kill player: kill🔗
+To complete this objective the player needs to kill another player. The first argument is amount of players to kill. You can also specify additional arguments: name: followed by the name will only accept killing players with this name, required: followed by a list of conditions separated with commas will only accept killing players meeting these conditions and notify will display notifications when a player is killed, optionally with the notification interval after a colon.
+
+The kill objective has three properties: left is the amount of players still left to kill, amount is the amount of already killed players and total is the initially required amount to kill.
+
+Example
+
+kill 5 required:team_B
+Location: location🔗
+The specified location where the player needs to be. It is not required to specify entry or exit then the objective also completes if the player just moves inside the location's range.
+
+Parameter	Syntax	Default Value	Explanation
+location	ULF		The location to go to
+range	number		The range around the location where the player must be.
+entry	entry	Disabled	The player must enter (go from outside to inside) the location to complete the objective.
+exit	exit	Disabled	The player must exit (go from inside to outside) the location to complete the objective.
+Example
+
+
+location 100;200;300;world 5 conditions:started events:notifyWelcome,start
+location 100;200;300;world 5 exit conditions:started events:notifyBye
+Variable Properties
+Name	Example Output	Explanation
+location	X: 100, Y: 200, Z:300	The target location of this objective
+Login: login🔗
+To complete this objective the player simply needs to login to the server. If you use global this objective will be also completed directly when a new player joins for the first time. If you use persistent it will be permanent. Don't forget that if you use global and persistent you can still remove the objective explicitly.
+
+Example
+
+login events:welcome_message
+Logout: logout🔗
+To complete this objective the player simply needs to leave the server. Keep in mind that running a folder event here will make it run in "persistent" mode, since the player is offline on the next tick.
+
+Example
+
+
+logout events:delete_objective
+NPC Interact: npcinteract🔗
+The player has to interact with a Npc.
+
+Parameter	Syntax	Default Value	Explanation
+Npc	Npc		The ID of the Npc.
+Cancel	cancel	False	If the interaction with the Npc should be cancelled, so a conversation won't start.
+Interaction	interaction:Keyword	right	The interaction type. Either left, right or any.
+Example
+
+stealItem: npcinteract mayor cancel conditions:sneak events:steal
+punchThief: npcinteract thief interaction:left events:poke
+NPC Range: npcrange🔗
+The player has to enter/leave a circle with the given radius around the NPC to complete this objective. It is also possible to define multiple NPCs separated with ,. The objective will be completed as soon as you meet the requirement of just one npc.
+
+Parameter	Syntax	Default Value	Explanation
+Npcs	Npc List		The IDs of the Npcs
+Action	Keyword		The required action. Either enter, leave, inside or outside.
+Range	Number		The maximum distance to a Npc
+Info
+
+The types enter, leave force the player to actually enter the radius after you were outside of it and vice versa. This means that enter is not completed when the player gets the objective and is already in the range, while inside is instantly completed.
+
+Example
+
+goToVillage: npcrange farmer,guard enter 20 events:master_inRange
+Password: password🔗
+This objective requires the player to write a certain password in chat. All attempts of a player will be hidden from public chat. The password consists of a prefix followed by the actual secret word:
+
+
+Solution: The Cake is a lie!     
+^prefix   ^secret word(s)
+The objective's instruction string is defined as follows:
+
+The first argument is the password, use quoting for spaces The password is a regular expression.
+
+The prefix can be changed: The default (when no prefix is set) is the translated prefix from the messages.yml config in the user's language.
+Note that every custom prefix is suffixed with :⠀, so prefix:Library_password will require the user to enter Library password: myfancypassword.
+To disable the prefix use an empty prefix: declaration, e.g. password myfancypassword prefix: events:success. Be aware of these side effects that come with disabling the prefix:
+
+Nothing will be hidden on failure, so tries will be visible in chat and commands will get executed!
+If a command was used to enter the password, the command will not be canceled on success and thus still be executed!
+This ensures that even if your password is quest you can still execute the /quest command.
+You can also add the ignoreCase argument if you want a password's capitalization to be ignored. This is especially important for regex matching.
+
+If you want to trigger one or more events when the player failed to guess the password you can use the argument fail with a list of events (comma separated). With disabled prefix every command or chat message will trigger these events!
+
+Example
+
+objectives:
+  theBetonPassword: 'password beton ignoreCase prefix:secret fail:failEvent1,failEvent2 events:message,reward'
+  theBetonPasswordSpaced: 'password "beton quest" ignoreCase prefix:secret fail:failEvent1,failEvent2 events:message,reward'
+Pickup item: pickup🔗
+To complete this objective you need to pickup the specified amount of items. The first argument must be the internal name of an item defined in the items section. This can also be a comma-separated list of multiple items. You can optionally add the amount: argument to specify how many of these items the player needs to pickup. This amount is a total amount though, it does not count per each individual item. You can use the notify keyword to display a message each time the player advances the objective, optionally with the notification interval after a colon.
+
+You can also add the notify keyword to display how many items are left to pickup.
+
+This objective has three properties: amount, left and total. amount is the amount of items already picked up, left is the amount of items still needed to pick up and total is the amount of items initially required.
+
+Example
+
+pickup emerald amount:3 events:reward notify
+pickup emerald,diamond amount:6 events:reward notify
+ Entity Kill: mobkill🔗
+The player must kill the specified amount of entities (living creatures). All entities work, make sure to use their correct types.
+
+Parameter	Syntax	Default Value	Explanation
+type	ENTITY_TYPE,ENTITY_TYPE		A list of entities, e.g. ZOMBIE,SKELETON.
+amount	Positive Number		Amount of mobs to kill in total.
+name	name:text	Disabled	Only count named mobs.
+marked	marked:keyword	Disabled	Only count marked mobs. See the spawn event for more information. Supports variables.
+notify	notify:interval	Disabled	Display a message to the player each time they kill a mob. Optionally with the notification interval after colon.
+Example
+
+objectives:
+  monsterHunter: "mobkill ZOMBIE,SKELETON,SPIDER 10 notify" 
+  specialMob: "mobkill PIG 1 marked:special" 
+  bossZombie: "mobkill ZOMBIE 1 name:Uber_Zombie" 
+Variable Properties
+Name	Example Output	Explanation
+amount	2	Shows the amount of mobs already killed.
+left	8	Shows the amount of mobs that still need to be killed.
+total	10	Shows the amount of mobs initially required to kill.
+Potion brewing: brew🔗
+To complete this objective the player needs to brew specified amount of specified potions. The first argument is a potion ID from the items section. Second argument is amount of potions. You can optionally add notify argument to make the objective display progress to players, optionally with the notification interval after a colon.
+
+Progress will be counted for the player who last added or changed an item before the brew process completed. Only newly created potions are counted.
+
+This objective has three properties: amount, left and total. amount is the amount of potions already brewed, left is the amount of potions still needed to brew and total is the amount of potions initially required.
+
+Example
+
+brew weird_concoction 4 events:add_tag
+Sheep shearing: shear🔗
+To complete this objective the player has to shear specified amount of sheep, optionally with specified color and/or name. The first, required argument is amount (integer). Optionally, you can add a name: argument to only count specific sheep. If you want to use spaces use quoting syntax. You can also check for the sheep's color: using these color names. You can use the notify keyword to display a message each time the player advances the objective, optionally with the notification interval after a colon.
+
+This objective has three properties: amount, left and total. amount is the amount of sheep already sheared, left is the amount of sheep still needed to shear and total is the amount of sheep initially required.
+
+Example
+
+shear 1 name:Bob color:black
+shear 1 name:jeb
+shear 1 "name:jeb 2"
+Smelting: smelt🔗
+To complete this objective the player must smelt the specified item. Note that you must define the output item, not the ingredient. The first argument is the name of a Quest Item. The second one is the amount (integer).
+
+You can use the notify keyword to display a message each time the player advances the objective, optionally with the notification interval after a colon.
+
+This objective has three properties: amount, left and total. amount is the amount of items already smelted, left is the amount of items still needed to smelt and total is the amount of items initially required.
+
+Example
+
+smeltIron: "smelt ironIngot 5 events:reward"
+Stages: stage🔗
+The Stage objective is a special objective that can be used to track the progress of a quest or a part of a quest. It can be completed in two ways, the first one is by increasing the stage more than there are stages defined and the second one is by completing the objective with the objective event. The behaviour of completing the objective by increasing the stage can be disabled by setting the preventCompletion flag.
+
+When the conditions of the stage objective are not met, the stage of the player can not be modified.
+You can modify the stages with the stage event and check it's state with the stage condition.
+
+Parameter	Syntax	Default Value	Explanation
+stages	List of stage names		The stages that must be completed.
+preventCompletion	Keyword	Completion Enabled	Prevents the objective from being completed by increasing the stage.
+Example
+
+objectives:
+  questProgress: "stage part1,part2,part3"
+  bakeCookies: "stage collectIngredients,cookCookies,deliverCookies preventCompletion"
+Variable Properties
+Name	Example Output	Explanation
+index	2	The index of the players current stage beginning at 0.
+current	cookCookies	The current stage name of the player or empty if the objective is not active.
+next	deliverCookies	The next stage name of the player or empty if the objective is not active.
+previous	collectIngredients	The previous stage name of the player or empty if the objective is not active.
+Step on pressure plate: step🔗
+To complete this objective the player has to step on a pressure plate at a given location. The type of plate does not matter. The first and only required argument is a location. If the pressure plate is not present at that location, the objective will not be completable and will log errors in the console.
+
+Step objective contains one property, location. It shows the exact location of the pressure plate in a string formatted like X: 100, Y: 200, Z:300.
+
+Example
+
+step 100;200;300;world events:done
+Taming: tame🔗
+To complete this objective player must tame some amount of mobs. First argument is type, second is amount. The mob must be tamable for the objective to be valid, e.g.: CAT, DONKEY, HORSE, LLAMA, PARROT or WOLF. You can use the notify keyword to display a message each time the player advances the objective, optionally with the notification interval after a colon.
+
+This objective has three properties: amount, left and total. amount is the amount of animals already tamed, left is the amount of animals still needed to tame and total is the amount of animals initially required.
+
+Example
+
+tame WOLF 2 events:wolfs_tamed
+Track time: timer🔗
+Tracks time in seconds from the start of the objective to the completion of the objective. If you simply want to have something like wait for 10 minutes, you can use the amount argument. If you don't define the amount, the objective will run indefinitely until you complete it with the objective event.
+
+Parameter	Syntax	Default Value	Explanation
+name	name:text	Disabled	A display name for the objective that can be accessed as property.
+interval	interval:number	interval:20	How often the objective checks the conditions and adds time, in seconds.
+amount	amount:number	Disabled	The amount of time in seconds to track before the objective is completed.
+done	done:events	Disabled	Events that will be executed when the objective is done, but before it is removed.
+If you want to access the time tracked by this objective in seconds, you can use the amount, left and total properties. They are only available while the objective is active, this is still the case in the done events, but not in the normal events as they are executed after the objective is already removed.
+
+Example
+
+objectives:
+    track: timer "name:This is the Display Name" interval:10 done:done_in events:done conditions:in_region
+Player must Jump: jump🔗
+To complete this objective the player must jump. The only argument is amount. You can use the notify keyword to display a message each time the player advances the objective, optionally with the notification interval after a colon.
+
+This objective has three properties: amount, left and total. amount is the amount of jumps already done, left is the amount of jumps still needed and total is the amount of jumps initially required.
+
+Example
+
+jump 15 events:legExerciseDone
+Ride an entity: ride🔗
+This objective can be completed by riding the specified entity. any is also a valid input and matches any entity.
+
+Example
+
+ride horse
+ride any
+Run a Command: command🔗
+To complete this objective the player must execute a specified command. It can be both an existing or a new, custom command. The first argument is the command text. To allow spaces use quoting syntax. The command argument is case-sensitive and also supports using placeholders. The second required argument is a list of events to execute when the objective ismet.
+
+Example
+
+command "/warp %player% farms" events:event1,event2
+command //replace_oak\_wood events:event1,event2
+With this configuration, the command objective requires the player to execute /warp MyName farms to be completed. The command objective matches from the start of the command that was executed, therefore if the player executed /warp MyName farms other arguments it would still be completed.
+
+Optional arguments:
+
+ignoreCase: If provided, instructs the objective to ignore case for the command to match.
+exact: If provided, requires an exact command match, not just the command start.
+cancel: If provided, the objective will cancel the execution of the command on a match. This needs to be enabled to suppress the Unknown Command message when using custom commands.
+failEvents: If provided, specifies a list of events to execute if a non-matching command is run and conditions are met.
+Complex Example
+
+command "/warp %player% farms" ignoreCase exact cancel failEvents:failEvent1,failEvent2 events:event1,event2
+Equip Armor Item: equip🔗
+The player must equip the specified quest item in the specified slot. The item must be any quest item as defined in the items section. Available slot types: HEAD, CHEST, LEGS, FEET.
+
+Example
+
+eqHelm: equip HEAD amazing_helmet events:event1,event2
+equipBody: equip CHEST amazing_armor events:event1,event2
+Variable: variable🔗
+This objective is different. You cannot complete it, it will also ignore defined events and conditions. You can start it and that's it. While this objective is active though, everything the player types in chat (and matches a special pattern) will become a variable. The pattern is key: value. So if the player types MyFirstVariable: Hello!, it will create a variable called MyFirstVariable, which will resolve as a Hello! string. You can access them as objective properties. Let's say you defined this objective as CustomVariable in your objectives.yml file. You can access the variable in any conversation, event or condition with %objective.CustomVariable.MyFirstVariable% - and in the case of this example, it will resolve to Hello!. The player can type something else and the variable will change its value. Variables are per-player, so the value of one player's MyFirstVariable will be different from other players' MyFirstVariable values, depending on what they typed in chat. There is no limit to the amount of variables that can be created and assigned to players. To remove this objective, use objective delete event - there is no other way.
+
+You can also use variable event to change variables stored in this objective. There is one optional argument, no-chat. If you use it, the objective won't be modified by what players type in chat which is only useful when you're also using the variable event.
+
+Also, the key is interpreted in lower case. That means there is no difference between MyFirstVariable, myfirstvariable or MYfirstVARIABLE.
+
+Example
+
+storage: variable
+storeChat: variable no-chat
+
+Conditions List🔗
 Advancement: advancement🔗
 This condition checks if the player has specified advancement. The only argument is the full name of the advancement. This includes the namespace, the tab and the name of the advancement as configured on your server. List of all vanilla advancements.
 
@@ -944,7 +1431,7 @@ Example
 
 conversation innkeeper
 Day of week: dayofweek🔗
-It must be a specific day of the week that this condition returns true. You can specify either the english name of the day or the number of the day (1 being monday, 7 sunday,..).
+It must be a specific day of the week that this condition returns true. You can specify either the english name of the day or the number of the day (1 being monday, 7 sunday,...).
 
 Example
 
@@ -973,6 +1460,14 @@ Example
 
 
 entities ZOMBIE:2 100;200;300;world 10 name:Deamon
+Eval Condition: eval🔗
+This condition allows you to resolve an expression containing variables, and the result will then be interpreted again as an condition.
+
+Example
+
+events:
+  simpleEval: eval chestitem -288;64;357;World emerald:5
+  complexEval: eval point ranking 5 %objective.settings.equal% 
 Experience: experience🔗
 This condition is met when the player has the specified amount of experience levels. You can also define decimal numbers, for example experience 1.5 will be met when the player has 1.5 or more experience levels. If you want to check for an absolute amount of experience points you can convert it to decimal levels.
 
@@ -1104,18 +1599,40 @@ Example
 
 
 looking loc:12.0;14.0;-15.0;world type:STONE
-Moon Cycle: mooncycle🔗
+Moon Phase: moonphase🔗
 static
 
-This condition checks the moon cycle (1 is full moon, 8 is Waxing Gibbous) in the given world or the players world. A list of phases can be found here.
+This condition checks the moon phase in the given world or the player's world.
 
 Parameter	Syntax	Default Value	Explanation
-MoonPhase	Number		The MoonPhase to check for. Can be a variable.
+MoonPhase	Keyword		The moon phase to check for. Can be a list and variables.
 world	world:name	player location	The world to check for the moon phase. Can be a variable.
 Example
 
-fullMoon: "mooncycle 1"
-newMoonHub: "mooncycle 5 world:hub"
+fullMoon: "moonphase FULL_MOON"
+darkInHub: "moonphase WANING_CRESCENT,NEW_MOON,WAXING_CRESCENT world:hub"
+playersFirstJoinMoon: "moonphase %ph.player_first_join_moon%"
+NPC distance: npcdistance🔗
+This condition will check if a Npc is close to the player.
+
+Parameter	Syntax	Default Value	Explanation
+Npc	Npc		The ID of the Npc
+Distance	Variable		The maximum distance
+Example
+
+canHearBandit: npcdistance bandit 22
+NPC location: npclocation🔗
+persistent, static
+
+This condition will check if a Npc is close to a location.
+
+Parameter	Syntax	Default Value	Explanation
+Npc	Npc		The ID of the Npc
+Location	Location		The location
+Distance	Number		The maximum distance
+Example
+
+nearTarget: npclocation merchant 4.0;14.0;-20.0;world 22
 Number compare: numbercompare🔗
 This condition compares two numbers. The valid operations are: <, <=, =, !=, >=, >.
 
@@ -1140,7 +1657,7 @@ Example
 
 or night,rain,!has_armor
 Partial date: partialdate🔗
-The current date must match the given pattern. You can specify the day of the month, the month or the year it must be that this condition returns true or combine them. You can also specify multiple days/months/years by just separating them by , or a interval by using -. If you have trouble understanding how this works have a look at the example.
+The current date must match the given pattern. You can specify the day of the month, the month or the year it must be that this condition returns true or combine them. You can also specify multiple days/months/years by just separating them by , or an interval by using -. If you have trouble understanding how this works have a look at the example.
 
 The example is true between the 1st and the 5th or on the 20th of each month, but only in the year 2017.
 
@@ -1199,12 +1716,12 @@ Example
 
 rating 10
 Real time: realtime🔗
-static****persistent
+static, persistent
 
 There must a specific (real) time for this condition to return true.
 
 Parameter	Syntax	Default Value	Explanation
-Timespan	startTime-endTime		Two points of time seperated by dash in the 24-hour format (0 - 24). The minutes are optional (hh or hh:mm).
+Timespan	startTime-endTime		Two points of time separated by dash in the 24-hour format (0 - 24). The minutes are optional (hh or hh:mm).
 Example
 
 allDayReal: "realtime 6-19"
@@ -1271,7 +1788,7 @@ static
 There must be specific (Minecraft) time on the world for this condition to return true.
 
 Parameter	Syntax	Default Value	Explanation
-Timespan	startTime-endTime		Two points of time seperated by dash in the 24-hour format (0 - 24). The minutes are optional (hh or hh:mm).
+Timespan	startTime-endTime		Two points of time separated by dash in the 24-hour format (0 - 24). The minutes are optional (hh or hh:mm).
 world	world:name	player location	The world to check for the time. Can be a variable.
 Example
 
@@ -1315,867 +1832,6 @@ Example
 
 world world
 
-Integration List🔗
-This page contains documentation for known integrations that exist for third party plugins. Some integrations also have dedicated pages in the documentation. In total 38 plugins have dedicated support for BetonQuest.
-
-Provided by BetonQuest🔗
-BetonQuest hooks into other plugins by itself to provide more events, conditions and objectives or other features.
-AuraSkills, Brewery, Citizens, DecentHolograms, Denizen, EffectLib, FakeBlock, Heroes, HolographicDisplays, JobsReborn, LuckPerms, Magic, mcMMO, MythicLib, MMOCore, MMOItems, MythicMobs, PlaceholderAPI, ProtocolLib, Quests, RedisChat, Shopkeepers, TrainCarts, ProSkillAPI, Skript, Vault, WorldEdit, FastAsyncWorldEdit and WorldGuard.
-
-Provided by other plugins🔗
-Some plugins also hook into BetonQuest and provide support by themselves:
-nuNPCDestinations, CalebCompass, Depenizen, NotQuests, HonnyCompass MythicDungeons JourneyBetonQuest
-
-There are also plugins that hook into BetonQuest that require a clientside mod:
-BetonQuestGUI, NGVexJournal
-
-AuraSkills🔗
-Conditions🔗
-Skill level: auraskillslevel🔗
-Checks if the player has the specified skill level. The amount can be a variable or a number. The player needs to be on that level or higher to meet the condition. You can disable this behaviour by adding the equal argument, then the player must match the specified level exactly.
-
-
-auraskillslevel fighting 5
-auraskillslevel farming 10 equal
-Stat level: auraskillsstatslevel🔗
-Checks if the player has the specified stat level. The amount can be a variable or a number. The player needs to be on that level or higher to meet the condition. You can disable this behaviour by adding the equal argument, then the player must match the specified level exactly.
-
-
-auraskillsstatslevel luck 5
-auraskillsstatslevel luck 10 equal
-Events🔗
-Give Skill Xp : auraskillsxp🔗
-Adds experience to the players skill. The amount can be a variable or a number. The level argument is optional and would convert the amount to levels instead of XP points.
-
-
-auraskillsxp farming 5
-auraskillsxp farming 10 level
-Brewery & BreweryX🔗
-Conditions🔗
-Drunk: drunk🔗
-This condition is true if the player is drunken. Only argument is the minimal drunkness (0-100).
-
-
-drunk 50
-Drunk Quality: drunkquality🔗
-This condition is true if the player has the given drunk quality. Only argument is the minimal drunk quality (1-10).
-
-
-drunkquality 3
-Has Brew: hasbrew🔗
-This condition is true if the player has the given brew with the specified amount in his inventory.
-
-
-hasbrew 2 MY_BREW
-Events🔗
-Give Brew: givebrew🔗
-Gives the player the specified drink. The first number is the amount, and the second number is the quality of the drink.
-
-
-givebrew 1 10 MY_BREW
-Take Brew: takebrew🔗
-Removes the specified drink from the players inventory. An amount needs to be specified.
-
-
-takebrew 2 MY_OTHER_BREW 
-Citizens🔗
-If you have this plugin you can use it's NPCs for conversations. I highly recommend you installing it, it's NPCs are way more immersive. Having Citizens also allows you to use NPCKill objective and to have moving NPC's.
-
-A Citizen NPC will only react to right clicks by default. This can be changed by setting acceptNPCLeftClick in the config.yml to true.
-
-Notice
-
-You need to specify the ID of the NPC instead of it's name in the package.yml when using Citizens!
-
-Conditions🔗
-NPC distance: npcdistance🔗
-This condition will return true if the player is closer to the NPC with the given ID than the given distance. The NPCs ID is the first argument, the distance is the second. If the npc is despawned the condition will return false.
-
-Example
-
-
-npcdistance 16 22
-NPC location: npclocation🔗
-persistent, static
-
-This condition will return true if a npc is close to a location. First argument is the id of the NPC, second the location and third the maximum distance to the location that the npc is allowed to have.
-
-Example
-
-
-npclocation 16 4.0;14.0;-20.0;world 22
-NPC region: npcregion🔗
-persistent, static
-
-Notice
-
-This condition also requires WorldGuard to work.
-
-This condition will return true if a npc is inside a region. First argument is the id of the npc second is the name of the region.
-
-Example
-
-
-npcregion 16 spawn
-Events🔗
-Move NPC: movenpc🔗
-This event will make the NPC move to a specified location. It will not return on its own, so you have to set a single path point with /npc path command - it will then return to that point every time. If you make it move too far away, it will teleport or break, so beware. You can change maximum pathfinding range in Citizens configuration files. The first argument in this event is ID of the NPC to move. Second one is a location in a standard format (like in teleport event). You can also specify multiple locations separated by colons to let the npc follow a path of locations. You can also specify additional arguments: block will block the NPC so you won't be able to start a conversation with him while he is moving, wait: is a number of tick the NPC will wait at its destination before firing events, done: is a list of events fired after reaching the destination, fail: is a list of events fired if this event fails. Move event can fail if the NPC is already moving for another player.
-
-Example
-
-
-movenpc 121 100;200;300;world,105;200;280;world block wait:20 done:msg_were_here,give_reward fail:msg_cant_go,give_reward
-Stop moving NPC: stopnpc🔗
-This will stop all current move tasks for the npc with the given ID.
-
-Example
-
-
-stopnpc 16
-Teleport NPC: teleportnpc🔗
-This event will teleport the NPC with the given ID to the given location.
-
-Example
-
-
-teleportnpc 53 100;200;300;world
-Objectives🔗
-NPC Interact: npcinteract🔗
-The player has to right-click on the NPC with specified ID. It can also optionally cancel the action, so the conversation won't start. The first argument is number (ID of the NPC). You can add the optional argument cancel to cancel the actual interaction with the NPC. With interaction you can also define the type of interaction that is required, you can define left, right or any.
-
-Example
-
-
-npcinteract 3 cancel conditions:sneak events:steal
-npcinteract 54 interaction:left events:poke
-NPC Kill: npckill🔗
-The NPC kill objective requires the player to kill a NPC with the given ID. You can also define how many times the NPC has to be killed. Right after the objective's name there must be the ID of the NPC. You can also add an amount with the amount keyword. You can use the notify keyword to display a message each time the player advances the objective, optionally with the notification interval after a colon.
-
-This objective has three properties: amount, left and total. amount is the amount of NPCs already killed, left is the amount of NPCs still needed to kill and total is the amount of NPCs initially required.
-
-Example
-
-
-npckill 16 amount:3 events:reward notify
-NPC Range: npcrange🔗
-The player has to enter/leave a circle with the given radius around the NPC to complete this objective. It is also possible to define multiple NPCs separated with ,. The objective will be completed as soon as you meet the requirement of just one npc. First argument is the ID of the NPC, second one is the type: Either enter, leave, inside or outside and the third one is the range. The types enter, leave force the player to actually enter the radius after you were outside of it and vice versa. This means that enter is not completed when the player gets the objective and is already in the range, while inside is instantly completed.
-
-Example
-
-
-npcrange 3,5 enter 20 events:master_inRange
-Variables🔗
-Citizen Variable: %citizen.<id>.<argument>%🔗
-This variable resolves information about a Citizen NPC by id. Specifying an argument determines the return: the NPC name, or full name.
-
-Arguments: * name - Return citizen name * full_name - Full Citizen name
-
-Example
-
-
-%citizen.15.name%        # Bob
-%citizen.15.full_name%   # &eBob
-Citizen Location Variable: %citizen.<id>.location.<mode>.<precision>%🔗
-This variable resolves to all Citizen location arguments: the x, y and z coordinates, the world name, the yaw and pitch (head rotation). The first argument is citizen, followed by the citizen ID, then location. It also supports the BetonQuest Unified Location Formatting modes which can optionally be added to the end.
-
-Example
-
-
-%citizen.15.location%           # -> 325;121;814;npcWorldName;12;6
-%citizen.15.location.xyz%       # -> 325 121 814 
-%citizen.15.location.x%         # -> 325
-%citizen.15.location.y%         # -> 121
-%citizen.15.location.z%         # -> 814
-%citizen.15.location.yaw%       # -> 12
-%citizen.15.location.pitch%     # -> 6
-%citizen.15.location.world%     # -> npcWorldName
-%citizen.15.location.ulfShort%  # -> 325;121;814;npcWorldName
-%citizen.15.location.ulfLong%   # -> 325;121;814;npcWorldName;12;6
-
-%citizen.15.location.x.2%       # -> 325.16
-%citizen.15.location.ulfLong.5% # -> 325.54268;121.32186;814.45824;npcWorldName;12.0;6.0
-Denizen🔗
-Depenizen is also integrated with BetonQuest! Discover available features on the meta documentation.
-
-Events🔗
-Script: script🔗
-With this event you can fire Denizen task scripts. Don't confuse it with skript event, these are different. The first and only argument is the name of the script.
-
-Example
-
-runDenizenScript: "script beton"
-EffectLib🔗
-If you install this plugin on your server you will be able to play particle effects on NPCs and locations. You can also use the particle event to trigger particle.
-
-Info
-
-EffectLib is not a normal plugin, it's a powerful developer tool - there are no official docs. However, the Magic plugin has a wiki for EffectLib. It does contain a few magic specific settings though so please don't be confused if some stuff does not work. There is also a magic editor with autocompletion for EffectLib.
-
-Example
-
-effectlib: 
-   farmer: 
-      class: VortexEffect 
-      iterations: 20 
-      particle: crit_magic 
-      helixes: 3
-      circles: 1
-      grow: 0.1
-      radius: 0.5
-      pitch: -60 
-      yaw: 90 
-      interval: 30 
-      checkinterval: 80 
-      npcs: 
-         - 1 
-      locations: 
-         - 171;72;-127;world
-      conditions: 
-         - '!con_tag_started'
-         - '!con_tag_finished'
-Events🔗
-Particle: particle🔗
-This event will load an effect defined in effects section and display it on player's location. The only argument is the name of the effect. You can optionally add loc: argument followed by a location written like 100;200;300;world;180;-90 to put it on that location. If you add private argument the effect will only be displayed to the player for which you ran the event.
-
-Example
-
-
-effects:
-  beton:
-    class: HelixEffect
-    iterations: 100
-    particle: smoke
-    helixes: 5
-    circles: 20
-    grow: 3
-    radius: 30
-
-events:
-  playEffect: particle beton loc:100;200;300;world;180;-90 private
-FakeBlock🔗
-If you have the FakeBlock integration installed, you will be able to view and hide the block groups created in FakeBlock on a player-specific basis.
-
-Events🔗
-Show and hide block groups: fakeblock🔗
-Shows or hides the block group for the player. The block group can be specified as a comma-separated list. The groups are case-sensitive. To show a group the showgroup argument is required. To hide a group the hidegroup argument is required.
-
-
-events:
-  showBridge: "fakeblock showgroup bridge"
-  hideCityBorder: "fakeblock hidegroup gate,wall,door"
-Heroes🔗
-When you install Heroes, all kills done via this plugin's skills will be counted in MobKill objectives.
-
-Conditions🔗
-Heroes Class: heroesclass🔗
-This condition checks the classes of the player. The first argument must be primary, secondary or mastered. Second is the name of a class or any. You can optionally specify level: argument followed by the required level of the player.
-
-Example
-
-
-heroesclass mastered warrior
-Heroes Attribute: heroesattribute🔗
-This condition check's the level of a player's attribute. The first argument must be strength, constitution, endurance, dexterity, intellect, wisdom, or charisma. Second argument is the required level of the attribute. Must be greater than or equal the specified number.
-
-Example
-
-
-heroesattribute strength 5
-Skill: heroesskill🔗
-This condition checks if the player can use specified skill. The first argument is the name of the skill.
-
-Example
-
-
-heroesskill charge
-Events🔗
-Heroes experience: heroesexp🔗
-This event simply gives the player specified amount of Heroes experience. The first argument is either primary or secondary and it means player's class. Second one is the amount of experience to add.
-
-Example
-
-
-heroesexp primary 1000
-JobsReborn🔗
-Requires adding the following to config.yml:
-
-
-hook:
-  jobs: 'true'
-Conditions🔗
-Can Level up: nujobs_canlevel {jobname}🔗
-Returns true if the player can level up
-
-Has Job: nujobs_hasjob {jobname}🔗
-Returns true if the player has this job
-
-Example
-
-
-nujobs_hasjob Woodcutter
-Job Full: nujobs_jobfull {jobname}🔗
-Returns true if the job is at the maximum slots
-
-Job Level: nujobs_joblevel {jobname} {min} {max}🔗
-Returns true if the player has this job, and at a level equal to or between the min/max
-
-Example
-
-
-nujobs_joblevel Woodcutter 5 10
-Events🔗
-Add Jobs Experience: nujobs_addexp {jobname} {exp}🔗
-Gives the player experience
-
-Increase Jobs Level: nujobs_addlevel {jobname} {amount}🔗
-Increases the player level by amount.
-
-Decrease Jobs Level: nujobs_dellevel {jobname} {amount}🔗
-Decreases the players level by amount.
-
-Join Jobs Job Event: nujobs_joinjob {jobname}🔗
-Joins the player to job.
-
-Leave Jobs Job Event: nujobs_leavejob {jobname}🔗
-Removes the player from job.
-
-Set Jobs Level: nujobs_setlevel {jobname} {level}🔗
-Set the player to level.
-
-Objectives🔗
-Join Jobs Job Objective: nujobs_joinjob {jobname}🔗
-Triggers when player joins job.
-
-Leave Jobs Job Objective: nujobs_leavejob {jobname}🔗
-Triggers when player leaves job.
-
-Notice
-
-This is not triggered by '/jobs leaveall'
-
-Jobs Job Levelup: nujobs_levelup {jobname}🔗
-Triggers when player levels up.
-
-Jobs Job Payment: nujobs_payment {amount}🔗
-Triggers when player makes {amount} of money from jobs. You can use the notify keyword to display a message each time the player advances the objective, optionally with the notification interval after a colon.
-
-This objective has three properties: amount, left and total. amount is the amount of money already received, left is the amount of money still needed to receive and total is the amount of money initially required.
-
-LuckPerms🔗
-Context Integration🔗
-Any BetonQuest tag (global and per-player) can be used as a LuckPerms context. This means that a player needs the specified tag for a permission to be true - this removes the need for tons of permission add ... events as you can hook your existing quest progress tags right into LuckPerms permission contexts. The syntax is as follows:
-
-key	value
-betonquest:tag:PACKAGE_NAME.TAG_NAME	true
-betonquest:globaltag:PACKAGE_NAME.TAG_NAME	true
-betonquest:tag:myPackage.tagName	true
-betonquest:globaltag:myQuest.someTag	true
-Check the Luck Perms documentation for an in-depth explanation on what contexts are and how to add them to permissions.
-
-Permissions🔗
-If you prefer to directly add or remove permissions without triggering the LuckPerms changelog chat notifications, you can utilize the luckperms addPermission and luckperms removePermission events. You also have the possibility to assign groups to the player via the group.<GroupName> permission.
-
-Example
-
-events:
-  addDefaultGroup: "luckperms addPermission permission:group.default,group.quester" 
-  addNegated: "luckperms addPermission permission:tutorial.done value:false" 
-  addWithContext: "luckperms addPermission permission:group.legend context:server;lobby" 
-  addTemporary: "luckperms addPermission permission:donator.level.one expiry:20 unit:MINUTES" 
-  removeTutorial: "luckperms removePermission permission:tutorial.done"
-  removeMultiple: "luckperms removePermission permission:tutorial.done,group.default" 
-You can also add context, value and expiry to the removePermission event but its not recommended as it only removes exact matches. Instead only use the permission to remove.
-
-Magic🔗
-Conditions🔗
-Wand: wand🔗
-This condition can check wands. The first argument is either hand, inventory or lost. If you choose lost, the condition will check if the player has lost a wand. If you choose hand, the condition will check if you're holding a wand in your hand. inventory will check your whole inventory instead of just the hand. In case of hand and inventory arguments you can also add optional name: argument followed by the name of the wand (as defined in wands.yml in Magic plugin) to check if it's the specific type of the wand. In the case of inventory you can specify an amount with amount and this will only return true if a player has that amount. You can also use optional spells: argument, followed by a list of spells separated with a comma. Each spell in this list must have a minimal level defined after a colon.
-
-Example
-
-
-wand hand name:master spells:flare:3,missile:2
-McMMO🔗
-Conditions🔗
-McMMO Level: mcmmolevel🔗
-This conditions checks if the player has high enough level in the specified skill. The first argument is the name of the skill, second one is the minimum level the player needs to have to pass this condition.
-
-Example
-
-
-mcmmolevel woodcutting 50
-Events🔗
-Add MCMMO Experience: mcmmoexp🔗
-This event adds experience points in a specified skill. The first argument is the name of the skill, second one is the amount of experience to add.
-
-Example
-
-
-mcmmoexp swords 1500
-MMOCore & MMOItems & MythicLib🔗
-Conditions🔗
-MMOCore class: mmoclass🔗
-Checks if a player has the given MMOCore class. You can check for any class that is not the default class by writing * instead of a class name. If a level has been specified the player needs to be on that level or higher to meet the condition. You can disable this behaviour by adding the equal argument.
-
-
-mmoclass * 5
-mmoclass WARRIOR
-mmoclass MAGE 5
-mmoclass MAGE 5 equal
-MMOCore attribute: mmoattribute🔗
-Checks if a player has the specified attribute on the given level or higher. You can disable this behaviour by adding the equal argument.
-
-
-mmoclass mmoattribute strength 2 
-mmoclass mmoattribute strength 2 equal
-MMOCore profession: mmoprofession🔗
-Checks if a player has the specified profession on the given level or higher. You can disable this behaviour by adding the equal argument.
-
-
-mmoprofession mining 2 
-mmoprofession mining 2 equal
-MMOItems item: mmoitem🔗
-Checks if a player has the specified amount of MMOItems or more in his inventory. If no amount has been defined the default amount is one.
-
-
-mmoitem ARMOR SKELETON_CROWN
-mmoitem GEMS SPEED_GEM 3
-MMOItems hand: mmohand🔗
-Checks if a player holds the specified MMOItem in his hand. Checks the main hand if not specified otherwise using the offhand argument. If no amount has been defined the default amount is one.
-
-
-mmohand ARMOR SKELETON_CROWN
-mmohand GEMS SPEED_GEM 3 offhand
-MythicLib stat: mmostat🔗
-Checks these stats that combine all sorts of stats from MMOCore and MMOItems. The player needs to be on the specified level or higher in order to meet this condition. You can disable this behaviour by adding the equal argument.
-
-
-mmostat DAMAGE_REDUCTION 3
-Objectives🔗
-Break Special Blocks: mmocorebreakblock🔗
-This objective requires the player to break special blocks from MMOCore. Please note that you must use this objective over block if you are using MMOCore's custom mining system. All three different block types and an amount can be defined. You can also send notifications to the player by appending the notify keyword optionally with the notification interval after a colon.
-
-This objective has three properties: amount, left and total. amount is the amount of blocks already broken, left is the amount of blocks still left to break and total is the amount of blocks initially required.
-
-
-mmocorebreakblock 5 block:1      #A custom block's block ID
-mmocorebreakblock 64 block:STONE  #vanilla material
-mmocorebreakblock 1 block:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVy #... this is a heads texture data
-Change MMOCore class: mmochangeclass🔗
-This objective requires the player to change their class.
-
-Example
-
-objectives:
-    selectAnyClass: "mmochangeclass events:pickedClass"
-    selectMage: "mmochangeclass class:MAGE events:startMageIntroQuest"
-MMOCore Profession levelup: mmoprofessionlevelup🔗
-This objective requires the player to level the given profession to the specified level. Use main to check for class level ups.
-
-
-mmoprofessionlevelup MINING 10
-Craft item: mmoitemcraft🔗
-This objective requires the player to craft the item with the given type and id. It supports any MMOItem that was crafted using vanilla crafting methods, MMOItems "recipe-amounts" crafting and MMOItems station crafting. An amount can also be set if it shall differ from the default (which is one) by adding the amount: argument. The amount is based on how many items have actually been crafted, not how often a specific recipe has been used! Therefore, a recipe that makes four items at once will let the objective progress by four steps. You can use the notify keyword to display a message each time the player advances the objective, optionally with the notification interval after a colon.
-
-This objective has three properties: amount, left and total. amount is the amount of items already crafted, left is the amount of items still needed to craft and total is the amount of items initially required.
-
-
-mmoitemcraft SWORD STEEL_SWORD
-mmoitemcraft HEALTH_POTION_RECIPE amount:5
-Upgrade Item: mmoitemupgrade🔗
-This objective tracks if a player upgrades the given item with an upgrade consumable.
-
-
-mmoitemupgrade SWORD FALCON_BLADE
-Apply gemstone: mmoitemapplygem🔗
-This objective is completed when the player applies the gemstone with the given gemstoneID to an item with the given itemType and itemID.
-
-
-mmoitemapplygem SWORD CUTLASS GEM_OF_ACCURACY
-Activate MythicLib skill: mmoskill🔗
-This objective requires the player to activate a MythicLib skill (e.g. with MMOItems or MMOCore).
-
-Parameter	Syntax	Default Value	Explanation
-skill	SKILL_ID		The ID of the skill.
-trigger	name:level	All trigger types.	The types of triggers that can be used to activate the skill. If not specified, all triggers are allowed.
-Example
-
-triggerSkill: "mmoskill LIFE_ENDER event:updateStatistics"
-castSkillWithMMOCore: "mmoskill DEEP_WOUND trigger:CAST event:completeTutorial"
-itemSkill: "mmoskill DEEP_WOUND trigger:RIGHT_CLICK,LEFT_CLICK event:giveReward"
-Events🔗
-Give MMOCore class experience: mmoclassexperience🔗
-Adds experience to the players class. The amount can be a variable or a number. The level argument is optional and would convert the amount to levels instead of XP points.
-
-
-mmoclassexperience 150
-mmoclassexperience 1 level
-Give MMOCore profession experience: mmoprofessionexperience🔗
-Adds experience in the specified player profession. The amount can be a variable or a number. The level argument is optional and would convert the amount to levels instead of XP points.
-
-
-mmoprofessionexperience MINING 100
-mmoprofessionexperience CUSTOM_PROFESSION_NAME 1 level
-Give class points: mmocoreclasspoints🔗
-Gives the player class points. The amount can be a variable or a number.
-
-
-mmocoreclasspoints 1
-Give skill points: mmocoreskillpoints🔗
-Gives the player skill points. The amount can be a variable or a number.
-
-
-mmocoreskillpoints 10
-Give attribute points: mmocoreattributepoints🔗
-Gives the player attribute points. The amount can be a variable or a number.
-
-
-mmocoreattributepoints 2
-Give attribute reallocation points: mmocoreattributereallocationpoints🔗
-Gives the player attribute reallocation points. The amount can be a variable or a number.
-
-
-mmocoreattributereallocationpoints 1
-Give MMOItem: mmoitemgive🔗
-Gives the player predefined item. Default amount is one and can be set manually to a higher amount or a variable. The item can be adjusted to the players level by adding the scale option. If you want all items to be stacked together the singleStack option can be set. If the player doesn't have required space in the inventory, the items will be dropped on the ground. You can also specify the notify keyword to display a message to the player about what items have been received.
-
-
-mmoitemgive CONSUMABLE MANA_POTION
-Take MMOItem: mmoitemtake🔗
-Removes the specified item from the players inventory. Optional arguments are an amount and notify to send a notification to the player.
-
-Which inventory types are checked is defined by the invOrder: option. You can use Backpack, Inventory and Armor there. One after another will be checked if multiple types are defined. The backpack will not work before 2.0's item rework since the current item system does not safe custom NBT data.
-
-You can also specify notify keyword to display a simple message to the player about loosing items.
-
-Amount can be a variable.
-
-
-mmoitemtake SWORD STEEL_SWORD
-mmoitemtake SWORD STEEL_SWORD notify
-mmoitemtake CONSUMABLE HEALTH_POTION amount:5
-mmoitemtake CONSUMABLE BAKED_APPLES amount:2 invOrder:Backpack,Inventory
-mmoitemtake ARMOR KINGS_CHESTPLATE invOrder:Armor,Backpack
-MythicMobs🔗
-Required MythicMobs version: 5.3.5 or above
-
-Objectives🔗
-MobKill: mmobkill🔗
-You need to kill the specified amount of MythicMobs to complete this objective. The first argument must be the mob's internal name (the one defined in your MythicMobs configuration). Multiple mob names must be comma seperated. You can optionally add the amount: argument to specify how many of these mobs need to be killed. It's also possible to add the optional arguments minLevel and maxLevel to further customize what mobs need to be killed. You can also add an optional neutralDeathRadiusAllPlayers argument to complete the objective for each nearby player within the defined radius when the mob is killed by any non-player source. Alternatively, you could use the deathRadiusAllPlayers argument to count all deaths of the specified mythic mob(s), no matter if it was killed by a non-player source or not. You can add a notify keyword if you want to send a notification to players whenever the objective progresses. You can also add an optional marked argument to only count kills marked with the mspawn event. Variables are supported.
-
-This objective has three properties: amount, left and total. amount is the amount of mythic mobs already killed, left is the amount of mythic mobs still needed to kill and total is the amount of mythic mobs initially required.
-
-Example
-
-
-mmobkill SkeletalKnight amount:2 events:reward
-mmobkill SnekBoss,SnailBoss,SunBoss amount:10 events:reward
-mmobkill SnekBoss amount:2 minlevel:4 maxlevel:6 events:reward marked:DungeonBoss3
-mmobkill dungeonDevil deathRadiusAllPlayers:30 events:reward
-Conditions🔗
-MythicMob distance: mythicmobdistance🔗
-Check whether the player is near a specific MythicMobs entity. The first argument is the internal name of the mob (the one defined in MythicMobs' configuration). The second argument is the distance to check, measured in block lengths in a circular radius.
-
-Example
-
-
-mythicmobdistance SkeletalKnight 7
-Events🔗
- Spawn MythicMob: mspawnmob🔗
-persistent, static
-
-Parameter	Syntax	Default Value	Explanation
-location	ULF		The location to spawn the mob at.
-name	name:level		MythicMobs mob name. A level must be specifed after a colon.
-amount	Positive Number		Amount of mobs to spawn.
-target	Keyword	False	Will make the mob target the player.
-private	Keyword	Disabled	Will hide the mob from all other players until restart. This does not hide particles or block sound from the mob. Also see notes below.
-marked	marked:text	None	Marks the mob, supporting variables. You can check for marked mobs in mmobkill objective.
-Example
-
-events:
-  spawnBoss: mspawnmob 100;200;300;world MegaBoss:1 1 target
-  spawnKnights: mspawnmob 100;200;300;world SkeletalKnight:3 5
-  spawnPrivateDevil: mspawnmob 100;200;300;world Mephisto:1 5 target private marked:DungeonBoss3
-Private Argument
-
-The private argument requires some MythicMob setup for optimal use. It's best to use the private argument in combination with the target argument so the mob does not attack players that cannot see it. Additionally, the mob should be configured to never change its AI target using MythicMobs.
-
-Private & Target Arguments
-
-The private and target arguments are ignored when the event is used in a static context like Schedules.
-
-PlaceholderAPI🔗
-If you have this plugin, BetonQuest will add a betonquest placeholder to it and you will be able to use ph variable in your conversations.
-
-Placeholder: betonquest🔗
-You can use all BetonQuest variables in any other plugin that supports PlaceholderAPI. You can even use BetonQuests conditions using the condition variable!
-This works using the %betonquest_package:variable% placeholder. The package: part is the name of a package. The variable part is just a BetonQuest variable without percentage characters, like point.beton.amount.
-
-Testing your placeholder is easy using this command:
-/papi parse <PlayerName> %betonquest_<PackageName>:<VariableType>.<Property>%
-
-
-%betonquest_someGreatQuest:objective.killZombies.left%
-Variable: ph🔗
-persistent, static
-
-You can also use placeholders from other plugins in BetonQuest. Simply insert a variable starting with ph, the second argument should be the placeholder without percentage characters.
-
-Example
-
-
-%ph.player_item_in_hand%
-ProtocolLib🔗
-Events🔗
-Freeze players: 'freeze'🔗
-This event allows you to freeze player for the given amount of ticks:
-
-
-freezeMe: "freeze 100" #Freezes the player for 5 seconds
-Chat Interceptor🔗
-Packet interceptor: packet🔗
-This interceptor works on network package level and is thus much more reliable than the simple interceptor when working with advanced Chat plugins.
-
-Quests🔗
-Quests is another questing plugin, which offers very simple creation of quests. If you don't want to spend a lot of time to write advanced quests in BetonQuest but you need a specific thing from this plugin you can use Custom Event Reward or Custom Condition Requirement. Alternatively, if you have a lot of quests written in Quests, but want to integrate them with the conversation system, you can use quest event and quest condition.
-
-Condition Requirement (Quests)🔗
-When adding requirements to a quest, choose "Custom requirement" and then select "BetonQuest condition". Now specify condition's name and it's package (like package.conditionName). Quests will check BetonQuest condition when starting the quest.
-
-Event Reward (Quests)🔗
-When adding rewards to a quest or a stage, choose "Custom reward" and then select "BetonQuest event". Now specify event's name and it's package (like package.eventName). Quests will fire BetonQuest event when this reward will run.
-
-Conditions🔗
-Quest condition: quest🔗
-This condition is met when the player has completed the specified quest. The first and only argument is the name of the quest. It it contains any spaces replace them with _.
-
-Example
-
-
-quest stone_miner
-Events🔗
-Quest: quest🔗
-This event will start the quest for the player. The first argument must be the name of the quest, as defined in name option in the quest. If the name contains any spaces replace them with _. You can optionally add check-requirements argument if you want the event to respect this quest's requirements (otherwise the quest will be forced to be started).
-
-Example
-
-
-quest stone_miner check-requirements
-RedisChat🔗
-Chat Interceptor🔗
-RedisChat interceptor: redischat🔗
-This chat interceptor works directly with RedisChat to pause the chat during conversations.
-
-Shopkeepers🔗
-Conditions🔗
-Shop amount: shopamount🔗
-This condition checks if the player owns specified (or greater) amount of shops. It doesn't matter what type these shops are. The only argument is a number - minimum amount of shops.
-
-Example
-
-
-shopamount 2
-Events🔗
-Open shop window: shopkeeper🔗
-This event opens a trading window of a Villager. The only argument is the uniqueID of the shop. You can find it in Shopkeepers/saves.yml file, under uniqueID option.
-
-Example
-
-
-shopkeeper b687538e-14ce-4b77-ae9f-e83b12f0b929
-Fabled🔗
-Conditions🔗
-Fabled Class: fabledclass🔗
-This condition checks if the player has specified class or a child class of the specified one. The first argument is simply the name of a class. You can add exact argument if you want to check for that exact class, without checking child classes.
-
-Example
-
-
-fabledclass warrior
-Fabled Level: fabledlevel🔗
-This condition checks if the player has specified or greater level than the specified class level. The first argument is class name, the second one is the required level.
-
-Example
-
-
-fabledlevel warrior 3
-Skript🔗
-BetonQuest can also hook into Skript. Firstly, to avoid any confusion, I will refere to everything here by name of the plugin (Skript event is something else than BetonQuest event). Having Skript on your server will enable using BetonQuest events and conditions in scripts, and also trigger them by BetonQuest event.
-
-You can use cross-package paths using - between the packages. Example: player meets condition "default-Forest-Jack.Completed"
-
-Skript event triggered by BetonQuest skript event🔗
-This entry will describe two things: Skript event and BetonQuest event.
-
-Skript event - on [betonquest] event "id" - this is the line you use in your scripts to trigger the code. betonquest part is optional, and id is just some string, which must be equal to the one you specified in BetonQuest event.
-BetonQuest event - skript - this event will trigger the above Skript event in your scripts. The instruction string accepts only one argument, id of the event. It have to be the same as the one defined in Skript event for it to be triggered.
-Example
-
-In your script
-
-
-on betonquest event "concrete":
-In BetonQuest
-
-events:
-  fire_concrete_script: skript concrete
-Skript condition🔗
-You can check BetonQuest conditions in your scripts by using the syntax player meets [betonquest] condition "id". betonquest is optional, and id is the name of the condition, as defined in the conditions section.
-
-Example
-
-In your script
-
-
-player meets condition "has_ore"
-In BetonQuest
-
-has_ore: item iron_ore:5
-Skript event🔗
-You can also fire BetonQuest events with scripts. The syntax for Skript effect is fire [betonquest] event "id" for player. Everything else works just like in condition above.
-
-Example
-
-In your script
-
-
-fire event "give_emeralds" for player
-In BetonQuest
-
-events:
-  give_emeralds: give emerald:5
-TrainCarts🔗
-TrainCarts is a plugin that allows you to create trains with advanced features.
-
-Conditions🔗
-TrainCarts ride condition: traincartsride🔗
-Checks if the player is riding a specific named train.
-
-Example
-
-
-traincartsride train1
-Objectives🔗
-TrainCarts location objective: traincartslocation🔗
-This objective requires the player to be at a specific location while sitting in a train. It works similarly to the location objective, but the player must be in a TrainCarts train to complete it.
-
-Parameter	Syntax	Default Value	Explanation
-location	x;y;z;world		The Location the player has to pass whiles sitting in the train.
-range	range:double	1	The optional range around the location where the player must be.
-entry	entry	Disabled	The player must enter (go from outside to inside) the location to complete the objective.
-exit	exit	Disabled	The player must exit (go from inside to outside) the location to complete the objective.
-name	name:Train1		The optional Name of the Train.
-Example
-
-
-traincartslocation 100;60;100;world
-traincartslocation name:Train1 100;60;100;world range:2
-traincartslocation 100;60;100;world entry range:2
-TrainCarts ride objective: traincartsride🔗
-This objective requires the player to ride a train for a specific time. The time starts after the player enters the train and stops when the player exits the train. The conditions are checked every time the player enters or leaves the train or completes the objective. If the conditions are not met, the time will not be counted.
-
-Parameter	Syntax	Default Value	Explanation
-name	name:Train1		The optional Name of the Train.
-amount	amount:20	0	The optional amount of time in seconds, the player has to ride a specific train.
-Example
-
-
-traincartsride
-traincartsride name:Train1
-traincartsride name:Train1 amount:20
-TrainCarts ride objective: traincartsexit🔗
-This objective requires the player to exit a train.
-
-Example
-
-
-traincartsexit
-traincartsexit name:Train1
-Vault🔗
-Conditions🔗
-Vault Money Condition: money🔗
-Checks if the player has the specified amount of money.
-
-
-conditions:
-  hasMoney: "money 1"
-  canAffordPlot: "money 10000"
-  isRich: "money 1000000"
-Tip
-
-Invert this condition if you want to check if the player has less money than specified. Example:
-
-
-conditions:
-  isRich: "money 100000"
-events:
-  giveSubsidy: "money +500 conditions:!isRich" 
-Events🔗
-Vault Money Event: money🔗
-Deposits, withdraws or multiplies money in the player's account.
-
-Parameter	Syntax	Default Value	Explanation
-amount	Number		The amount of money to add or remove. Use * to multiply.
-notify	Keyword: notify	Disabled	Display a message to the player when their balance is changed.
-
-events:
-  sellItem: "money +100"
-  buyPlot: "money -10000"
-  winLottery: "money *7 notify"
-Change Permission (Groups): permission🔗
-Adds or removes a permission or a group.
-
-Parameter	Syntax	Default Value	Explanation
-action	add or remove		Whether to add or remove the thing specified using the following arguments.
-type	perm or group		Whether to use a permission or permission group.
-name	The name of the permission.		The name of the permission or group to add.
-world	The name of the world.	Global	You can limit permissions to certain worlds only. If no world is set the permission will be set everywhere (global).
-
-events:
-  allowFly: "permission add perm essentials.fly"
-  joinBandit: "permission add group bandit"
-  leaveBandit: "permission remove group bandit"
-Variables🔗
-Vault Money Variable: money🔗
-Use %money.amount% for showing the player's balance. Use %money.left:500% for showing the difference between the player's balance and the specified amount of money.
-
-
-events:
-  notifyBalance: "notify You have %money.amount%$!"
-  notifyNotEnough: "notify You still need %money.left:10000%$ to buy this plot."
-WorldEdit or FastAsyncWorldEdit🔗
-Events🔗
-Paste schematic: paste🔗
-persistent, static
-
-This event will paste a schematic at the given location. The first argument is a location and the second one is the name of a schematic file. The file must be located in WorldEdit/schematics or FastAsyncWorldEdit/schematics and must have a name like some_building.schematic. If WorldEdit saves .schem schematic files, simply append .schem to the schematic name in the event's instruction.
-
-The optional noair keyword can be added to ignore air blocks while pasting. You can also rotate the schematic by adding rotation:90 where 90 is the angle in degrees.
-
-Example
-
-events:
-  pasteCastle: "paste 100;200;300;world castle noair" 
-  pasteTree: "paste 100;200;300;world tree.schem noair" 
-WorldGuard🔗
-Conditions🔗
-Inside Region: region🔗
-This condition is met when the player is inside the specified region. The only argument is the name of the region.
-
-Example
-
-conditions:
-  inCastle: "region castle"
-Objectives🔗
-Enter Region: region🔗
-To complete this objective you need to enter WorldGuard region with specified name. A required argument is the name of the region and you may also pass an optional entry and/or exit to only trigger when entering or exiting a region instead of anytime inside a region.
-
-Example
-
-objectives:
-  deathZone: "region deathZone entry events:kill"
-
 Variables List🔗
 This page lists all the variables that are available in BetonQuest. Some of them are only useful when exported for use in other plugins through the support for PlaceHolderAPI.
 
@@ -2194,6 +1850,20 @@ You can translate the papiMode's result by changing the values of condition_vari
 
 %condition.myCondition%
 %condition.myCondition.papiMode%
+Constant Variable🔗
+Constants are a bit different from other variables, as you can freely define the values of them. They are defined in the constants section like this:
+
+
+constants:
+  village_location: 100;200;300;world
+  village_name: Concrete
+To use a constant variable, you must use %constant.constantName%:
+
+
+%constant.village_location%
+%constant.village_name%
+If you want to parse a variable from a different package, follow the same syntax as you would working across packages. The proper syntax is %questPackage>constant.constantName%.
+
 BetonQuest Data Types🔗
 Point Variable🔗
 This variable displays the amount of points you have in some category or amount of points you need to have to reach a number. The first argument is the name of a category and the second argument is either amount or left:x, where x is a number.
@@ -2226,15 +1896,6 @@ This variable displays whether a global tag is set or not. The variable will ret
 Custom Text Variable🔗
 It is possible to save text per player. This works by using the variable objective and the variable event.
 
-Global variables🔗
-You can insert a global variable in any instruction text. It looks like this: $beton$ (and this one would be called "beton"). When the plugin loads that instruction string it will replace those variables with values assigned to them in the variables: section before all instructions are parsed. This is useful for example when installing a package containing a WorldEdit schematic of the quest building. Instead of going through the whole code to set those locations, names or texts you will only have to specify a few variables (that is, of course, if the author of the package used those variables properly in his code).
-
-Note that these variables are something entirely different from other variables. Global ones use $ characters and conversation ones use % characters. The former is resolved before the instruction text is parsed while the latter is resolved when the quests are running, usually on a per-player basis.
-
-
-variables:
-  village_location: 100;200;300;world
-  village_name: Concrete
 Other Variables🔗
 Eval Variable🔗
 static
@@ -2280,9 +1941,11 @@ This variable resolves to all aspects of the player's location. The x, y and z c
 Math Variable🔗
 static
 
-This variable allows you to perform a calculation based on other variables (for example point or objective variables) and resolves to the result of the specified calculation. The variable always starts with math.calc:, followed by the calculation which should be calculated. Supported operations are +, -, *, /, ^ and %. You can use ( ) and [ ] braces and also calculate absolute values with | |. But be careful, don't use absolute values in the command event as it splits the commands at every | and don't nest them without parenthesis (|4*|3-5|| wont work, but |4*(|3-5|)| does). Additionally, you can use the round operator ~ to round everything left of it to the number of decimal digits given on the right. So 4+0.35~1 will produce 4.4 and 4.2~0 will produce 4.
+This variable allows you to perform a calculation based on other variables (for example point or objective variables) and resolves to the result of the specified calculation. The variable always starts with math.calc:, followed by the calculation which should be calculated. Supported operations are +, -, *, /, ^ and %. You can use ( ) and [ ] braces and also calculate absolute values with | |. But be careful, don't use absolute values in the command event as it splits the commands at every | and don't nest them without parenthesis (|4*|3-5|| won't work, but |4*(|3-5|)| does). Additionally, you can use the round operator ~ to round everything left of it to the number of decimal digits given on the right. So 4+0.35~1 will produce 4.4 and 4.2~0 will produce 4.
 
 To use variables in the calculation you have two options: First just write the variable, but without % around them; In cases where this doesn't work, e.g. if the variable contains mathematical operators, you can surround it with curly braces { }. Inside the curly braces you have to escape with \, so to have a \ in your variable you need to write \\, to have a } inside your variable you need to write \}.
+
+When the calculation fails 0 will be returned and the reason logged.
 
 Warning
 
@@ -2293,11 +1956,27 @@ The modulo operator needs to be escaped with a backslash \ to prevent it from be
 %math.calc:objective.kill_zombies.left/objective.kill_zombies.total*100~2%
 %math.calc:-{ph.myplugin_stragee+placeholder}%
 %math.calc:64\%32%
-NPC Name Variable🔗
-When the player is in a conversation, this variable will contain the questers name in the player's quest language. If the player is not in a conversation, the variable is empty.
+Npc Variable🔗
+static
 
+This variable resolves information about a Npc. Specifying an argument determines the return: the Npc name, or full name (with formatting).
 
-%npc%
+Arguments:
+* name - Return Npc name
+* full_name - Return Npc name with formatting
+
+Example
+
+%npc.bob.name%        # Bob
+%npc.bob.full_name%   # &eBob
+Npc Location Variable🔗
+This variable resolves to all Npc location. For details see the location variable. The general syntax is %npc.<id>.location.<mode>.<precision>%.
+
+Example
+
+%npc.mayor.location%           # -> 325;121;814;npcWorldName;12;6
+%npc.mayor.location.xyz%       # -> 325 121 814 
+%npc.mayor.location.ulfLong.5% # -> 325.54268;121.32186;814.45824;npcWorldName;12.0;6.0
 Player Name Variable🔗
 The variable %player% is the same as %player.name% and will display the name of the player. %player.display% will use the display name used in chat and %player.uuid% will display the UUID of the player.
 
@@ -2306,10 +1985,15 @@ The variable %player% is the same as %player.name% and will display the name of 
 %player.name%
 %player.display%
 %player.uuid%
+Quester Name (Conversation)🔗
+When the player is in a conversation, this variable will contain the quester's name in the player's quest language. If the player is not in a conversation, the variable is empty.
+
+
+%quester%
 Random Number Variable🔗
 static
 
-This variable gives a random number from the first value to the second. The first argument is whole or decimal, the second and third arguments are numbers or variables, seperated by a ~. Like the math variable you can round the decimal value by using instead of decimal the argument decimal~x where x is the maximal amount of decimal places. Variables can be used with {} instead of %%. Note that the first value is returned when it is higher than the second.
+This variable gives a random number from the first value to the second. The first argument is whole or decimal, the second and third arguments are numbers or variables, separated by a ~. Like the math variable you can round the decimal value by using instead of decimal the argument decimal~x where x is the maximal amount of decimal places. Variables can be used with {} instead of %%. Note that the first value is returned when it is higher than the second.
 
 
 %randomnumber.whole.0~10%
@@ -2429,115 +2113,7 @@ For example using realtime-daily type with a syntax like * * * * * (run every mi
 
 So be very cautious when using ALL catchup strategy!
 
-By deleting .cache/schedules.yml before startup you can make BetonQuest forget about any missed schedules 😉
-Quest Parties🔗
-Parties are very simple. So simple, that they are hard to understand if you already know some other party system. Basically, they don't even have to be created before using them. Parties are defined directly in the party event or the party condition.
-In such instruction strings the first argument is a number - range. It defines the radius where the party members will be looked for. A range of 0 will look for all players in the same world as the player who triggered the event. And a range of -1 will look for all players in all worlds.
-Second is a list of conditions. Only the players that meet those conditions will be considered as members of the party. It's most intuitive for players, as they don't have to do anything to be in a party - no commands, no GUIs, just starting the same quest or having the same item - you choose what and when makes the party.
-
-To understand better how it works I will show you an example of party event. Let's say that every player has an objective of pressing a button. When one of them presses it, this event is fired:
-
-
-party_reward: party 50 quest_started cancel_button,teleport_to_dungeon
-Now, it means that all players that: are in radius of 50 blocks around the player who pressed the button AND meet quest_started condition will receive cancel_button and teleport_to_dungeon events. The first one will cancel the quest for pressing the button for the others (it's no longer needed), the second one will teleport them somewhere. Now, imagine there is a player on the other side of the world who also meets quest_started condition - he won't be teleported into the dungeon, because he was not with the other players (not in 50 blocks range). Now, there were a bunch of other players running around the button, but they didn't meet the quest_started condition. They also won't be teleported (they didn't start this quest).
-
-Data Formats
- Unified location formating🔗
-Whenever you want to define some location in your events, conditions, objectives or any other things, you will define it with this specific format. The location consists of 2 things: base and vector. Only the base is always required.
-
-Base Location🔗
-The base is a core location. There are two types: absolute coordinates and variables. Absolute coordinates are defined like 100;200;300;world, where 100 is X coordinate, 200 is Y, 300 is Z and world is the name of the world. These can have decimal values. If you want you can also add two more numbers at the end, yaw and pitch (these are controlling the rotation, for example in teleportation event, both are needed if you decide to add them; example: 0.5;64;0.5;world;90;-270).
-
-Variables as Base Location🔗
-To use a variable as the location's base it must resolve to valid absolute coordinates. An example of such variable is %location%, which shows player's exact location. Simply place it instead of coordinates. There is one rule though: you can't use variable base types in events running without players (for example static events or the ones run from folder event after the player left the server). BetonQuest won't be able to resolve the location variable without the player!
-
-Vectors🔗
-The vector is a modification of the location. Vectors look like ->(10;2.5;-13) and are added to the end of the base. This will modify the location, X by 10, Y by 2.5 and Z by -13. For example, location written as 100;200;300;world_nether->(10;2.5;-13) will generate a location with X=110, Y=202.5 and Z=287 in the world world_nether.
-
-Block Selectors🔗
-When specifying a way of matching a block, a block selector is used.
-
-Format🔗
-The format of a block selector is: namespace:material[state=value,...]
-
-Where:
-
-namespace - (optional) The material namespace. If left out then it will be assumed to be 'minecraft'. Can be a regex.
-
-material - The material the block is made of. All materials can be found in Spigots Javadocs. It can be a regex. If the regex ends with square brackets you have to add another pair of empty square brackets even if you don't want to use the state argument ([regex][]).
-Instead of using a regex to match multiple materials you can also define a tag. Every tag matches a special group of blocks or items that can be grouped together logically. They can be used using this format :blocks:flowers or minecraft:blocks:flowers. Be aware that a tag always starts with either : or a namespace.
-
-state - (optional) The block states can be provided in a comma separated key=value list surrounded by square brackets. You can look up states in the Minecraft wiki. Any states left out will be ignored when matching. Values can be a regex.
-
-Examples:
-
-minecraft:stone - Matches all blocks of type STONE
-
-redstone_wire - Matches all blocks of type REDSTONE_WIRE
-
-redstone_wire[power=5] - Matches all blocks of type REDSTONE_WIRE and which have a power of 5
-
-redstone_wire[power=5,facing=1] - Matches all blocks of type REDSTONE_WIRE and which have both a power of 5 and are facing 1
-
-.*_LOG - Matches all LOGS
-
-.* - Matches everything
-
-.*[waterlogged=true] - Matches all waterlogged blocks
-
-minecraft:blocks:flowers - Matches all flowers
-
-:blocks:crops[age=0] - Matches all crops with an age of 0 meaning, not grown / just planted
-
-Setting behaviour🔗
-A block selector with a regex or tag as it's material name results in a random block out of all blocks that match that regex or tag. You cannot use a regex in block states when the block selector is used for placing blocks.
-
-Matching behaviour🔗
-The block state will ignore all additional block states on the block it's compared with by default. Example: fence[facing=north] matches fence[facing=north] and fence[facing=north,waterlogged=true] You can add an exactMatch argument if you only want to match blocks that exactly match the block state. A regex is allowed in any block state value when the block selector is used to match blocks.
-
-Regex (Regular Expressions)🔗
-A regular expression is a sequence of characters that specifies a search pattern for text. It's used in BetonQuest to check if game objects match a user-defined input. For example, Block Selectors use a regex to match multiple materials or block states. You can also use regular expressions in the variable condition or the password objective to match player names, item names, etc. These expressions are a very powerful tool, but can be confusing at first.
-
-Common Use Cases🔗
-Use Case	Regex
-A specific text e.g. STONE	STONE
-A text starting with STONE	STONE.*
-A text ending with _LOG	.*_LOG
-A specific number e.g. 42	^42$
-A specific range of numbers, e.g. any number between 0 and 99	[0-9]{1,2}
-Positive numbers only	^\d+$
-Negative numbers only	^-\d+$
-Any number	[-+]?[0-9]+\.?[0-9]+
-More complex use cases🔗
-If you want to use complex patterns you must learn more about regular expressions. There are countless resources online, for example you could read this cheatsheet.
-
-Quoting & advanced YAML
-Quoting🔗
-Sometimes it is important to pass an argument that contains spaces or even a newline as an argument. For those cases you can use quotes.
-
-Quoting examples
-
-events:
-  multiline: "notify \"This is the first line.\nAnd here is the second line!\"" 
-  quotes_in_quotes: 'notify "And he said: \"I have to tell you something!\""' 
-  backslash: notify "\\o/" 
-YAML🔗
-Using YAML multiline syntax🔗
-Very long instructions can be hard to read, but to improve readability there is a YAML feature that allows you to write easily readable formatted text that will work perfectly fine with instructions.
-
-Folded multi-line block example
-
-events:
-  long_text: >-
-    notify
-    This is a very long text.
-    It will still be displayed as one single line in chat,
-    no matter where you insert a newline.
-    Even combined with "quoting
-    there will be no newline" unless you "use a double linebreak,"
-
-    as that is interpreted as a normal newline by YAML."
-There is also an excellent reference for YAML Multiline written by Wolfgang Faust.
+By deleting .cache/schedules.yml before startup you can make BetonQuest forget about any missed schedules 
 
 Conversations
 Conversations are the main way to interact with players in BetonQuest. They are used to display text, ask questions and execute commands. This page contains the reference documentation for all conversation related features. Consider doing the conversation tutorial if you are just getting started.
@@ -2568,11 +2144,11 @@ conversations:
     player_options: 
       friendly:
         text: "Thank you your honor, I'm happy to be here."
-        event: "givePresent"
-        pointer: "blacksmithReminder"
+        events: "givePresent"
+        pointers: "blacksmithReminder"
       hostile:
         text: "Your Honor, I come bearing a ultimatum letter from the people. They have grown tired of your corruption and greed."
-        condition: 'hasUltimatumLetter'
+        conditions: 'hasUltimatumLetter'
         pointers: "howDareYou"
 When an NPC wants to say something he will check conditions for the first option (in this case welcome). If they are met, he will choose it. Otherwise, he will skip to next option (note: conversation ends when there are no options left to choose). After choosing an option the NPC will execute any events defined in it and say it's text. Then the player will see options defined in the player_options branch to which the pointers setting points, in this case friendly and hostile. If the conditions for a player options is not met, the option is simply not displayed, similar to texts from NPC. The player will choose the option they want, and it will point back to other NPC text, which points to next player options and so on.
 
@@ -2581,19 +2157,20 @@ If there are no possible options for player or NPC (either from not meeting any 
 This can and will be a little confusing, so you should name your options, conditions and events in a way which you will understand in the future. Don't worry though, if you make some mistake in configuration, the plugin will tell you this when running /q reload.
 
 Binding Conversations to NPCs🔗
-Conversations can be assigned to NPCs created with Citizens. This is done in the npcs section:
+Conversations can be assigned to NPCs. This is done in the npc_conversations section:
 
 Example
 
-npcs:
-  0: innkeeper
-  4: mayorHans
-The first part is the ID of the NPC. To acquire the NPCs ID select the NPC using /npc select, then run /npc id. The second part is the identifier of the corresponding conversation name as defined in the conversations section. You can assign the same conversation to multiple NPCs. It is not possible to assign multiple conversations to one npc. For this purpose, have a look at cross-conversation-pointers though.
+npc_conversations:
+  Hans: mayorHans 
+A NPC will only react to right clicks by default. This can be changed by setting npcs.accept_left_click in the "config.yml" to true.
+
+You can assign the same conversation to multiple NPCs. It is not possible to assign multiple conversations to one NPC. For this purpose, have a look at cross-conversation-pointers though.
 
 Conversation displaying🔗
 BetonQuest provides different conversation styles, so called "conversationIO's". They differ in their visual style and the way the player interacts with them.
 
-BetonQuest uses the menu style by default. If ProtocolLib is not installed, the chest style will be used. You can change this setting globally by changing the default_conversation_IO option in the config.yml file.
+BetonQuest uses the menu style by default. If ProtocolLib is not installed, the chest style will be used. You can change this setting globally by changing the default_io option in the "config.yml" file.
 
 It is also possible to override this setting per conversation. Add a conversationIO: <type> setting to the conversation file at the top of the YAML hierarchy (which is the same level as quester or first options).
 
@@ -2617,57 +2194,57 @@ Customizing the Menu Style
 
 
 Cross-Conversation Pointers🔗
-If you want to create a conversation with multiple NPCs at once or split a huge conversation into smaller, more focused files, you can point to both npc and player options in other conversations. Use the cross-package syntax to do so.
+If you want to create a conversation with multiple NPCs at once or split a huge conversation into smaller, more focused files, you can point to both NPC and player options in other conversations. Use the cross-package syntax to do so.
 
-There is one special case when you want to refer to the starting options of another conversation. In this case you do not specify an option name after the second point (package.conversation.).
+There is one special case when you want to refer to the starting options of another conversation. In this case you do not specify an option name after the point (package>conversation.).
 
 Cross-conversation Pointers Examples
 
 myConversationOption:
   text: "Look carefully at that guard over there..."
-  pointers: "lookCareful,guardConv.lookDetected,mainStory.Mirko.interrupt" 
+  pointers: "lookCareful,guardConv.lookDetected,mainStory>Mirko.interrupt" 
 specialOption:
   text: "This option points to the starting options of the conversation 'guardConv' in the package 'myPackage'."
-  pointers: "myPackage.guardConv."
+  pointers: "myPackage>guardConv."
 Conversation Variables🔗
 You can use variables in the conversations. They will be resolved and displayed to the player when he starts a conversation. Check the variables list for more information about which variables exist.
 
 Note
 
-If you use a variable incorrectly (for example trying to get a property of an objective which isn't active for the player, or using %npc% in message event), the variable will be replaced with empty string ("").
+If you use a variable incorrectly (for example trying to get a property of an objective which isn't active for the player, or using %quester% in message event), the variable will be replaced with empty string ("").
 
 Translations🔗
 Conversation can be fully translated into multiple languages. A players can choose their preferred language with the /questlang command. You can translate every NPC option, player option and the NPC's name. This is how it's done:
 
 
 quester:
-  en: "Innkeeper"
-  pl: "Karczmarz"
-  de: "Gastwirt"
+  en-US: "Innkeeper"
+  pl-PL: "Karczmarz"
+  de-DE: "Gastwirt"
 first: "example1" 
 NPC_options:
   example1:
     text:
-      en: "Good day, dear %player%! Welcome back to my town."
-      de: "Guten Tag, lieber %player%! Willkommen zurück in meiner Stadt." 
+      en-US: "Good day, dear %player%! Welcome back to my town."
+      de-DE: "Guten Tag, lieber %player%! Willkommen zurück in meiner Stadt." 
 player_options:
   example2:
     text:
-      en: "Thank you your honor, I'm happy to be here."
-      de: "Danke, Euer Ehren, ich bin froh, hier zu sein."
-en and de are identifiers of languages present in the messages.yml config. If the conversation is not translated in the players' language, the plugin will fall back to the default language, as defined in config.yml.
+      en-US: "Thank you your honor, I'm happy to be here."
+      de-DE: "Danke, Euer Ehren, ich bin froh, hier zu sein."
+en-US and de-DE are identifiers of languages present in the lang folder. If the conversation is not translated in the players' language, the plugin will fall back to the default language, as defined in "config.yml".
 The same syntax can be applied in a few other features, e.g. the journal entries, quest cancelers and notify events.
 
 Chat Interceptors🔗
 While engaged in a conversation, it can be distracting when messages from other players or system messages interfere with the dialogue. A chat interceptor provides a method of intercepting those messages and then sending them after the conversation has ended.
 
-You can specify the default chat interceptor by setting default_interceptor inside the config.yml. Additionally, you can overwrite the default for each conversation by setting the interceptor key inside your conversation file.
+You can specify the default chat interceptor by setting default_interceptor inside the "config.yml". Additionally, you can overwrite the default for each conversation by setting the interceptor key inside your conversation file.
 
 The default configuration of BetonQuest sets the default_interceptor option to packet,simple. This means that it first tries to use the packet interceptor. If that fails it falls back to using the simple interceptor.
 
 BetonQuest adds following interceptors: simple, packet and none:
 
-The simple interceptor works with every Spigot server but only supports very basic functionality and may not work with plugins like Herochat.
+The simple interceptor works with every server but only supports very basic functionality and may not work with plugins like Herochat.
 
 The packet interceptor requires the ProtocolLib plugin to be installed. It will work well in any kind of situation.
 
@@ -2682,12 +2259,12 @@ NPC_options:
   ## Normal Conversation Start
   start:
     text: 'What can I do for you'
-    extends: tonight, today
+    extends: tonight,today
 
   ## Useless addition as example
   tonight:
     # Always false
-    condition: random 0-1
+    conditions: random_0-1
     text: ' tonight?'
     extends: main_menu
 
@@ -2697,8 +2274,121 @@ NPC_options:
 
   ## Main main_menu
   main_menu:
-    pointers: i_have_questions, bye
+    pointers: i_have_questions,bye
 In the above example, the option start is extended by both tonight and today, both of whom are extended by main_menu. As tonight has a false condition the today option will win. The start option will have the pointers in main_menu added to it just as if they were defined directly in it and the text will be joined together from today. If you structure your conversation correctly you can make use of this to minimize duplication.
+
+Text Formatting
+Work in Progress
+
+This feature is still in development and does not work for every feature at the moment. Some features are marked as limited, that means that things like hover and click events are not supported. Currently supported are:
+
+Notify and NotifyAll Event
+Compass Names
+Conversation
+Journal
+NPC Name Variable (limited)
+Quest Cancler (limited)
+Plugin Messages / Translations (limited)
+Every string in BetonQuest can be formatted with a formatter. A formatter is a way to format a string with colors, styles, and more, while each formatter has its own syntax.
+
+In the "config.yml" file, you can set the default formatter with the text_parser setting. The default formatter is legacyminimessage.
+
+Anyway each string can set an individual formatter by prefixing the string with @[FormatterName].
+
+Formatter🔗
+Legacy🔗
+
+legacy
+The legacy formatter is the old common way to format strings. It's a really simple formatter that has a lot of limitations, but it is still used by the community as it is the most known one. It uses the & or § character followed by a color code or a style code character.
+
+You can read everything about minecraft formatting here.
+
+This formatter actually can parse a bit more as normally, like links get clickable, and colors in the adventure format §#a25981 or the BungeeCord RGB format §x§a§2§5§9§8§1.
+
+You can read everything about these formats here.
+
+Example
+
+
+text1: '&cHello &e&lWorld'
+text2: '@[legacy]&cHello &e&lWorld'
+MiniMessage🔗
+
+minimessage
+MiniMessage is the new standard for formatting strings. It's a really advanced formatter that has a lot of features. The formatting is based on tags like <red> and <bold>. You don't need to close them like </red>, but that sometimes make it clear what exactly you are formatting.
+
+Everything about this format can be read here.
+
+Example
+
+
+text1: '<red>Hello <yellow><bold>World</bold>'
+text2: '@[minimessage]<red>Hello <yellow><bold>World</bold>'
+Legacy & MiniMessage🔗
+
+legacyminimessage
+This formatter is a combination of the legacy and MiniMessage formatter. It allows you to use both formats. In that way, you can use the format that fits the best for every string. You can also use both formats in one string, but you need to be careful with that, as it can lead to unexpected results.
+
+Example
+
+
+text1: '&cHello <yellow><bold>World</bold>'
+text2: '@[legacyminimessage]&cHello <yellow><bold>World</bold>'
+MineDown🔗
+
+minedown
+This formatter is a perfect alternative to MiniMessage. Mainly, it still supports the old legacy format, but also the new RGB format, as well as some more simple formatting. You don't need to write these tags like in MiniMessage, instead you write more advanced formats like this [Text](format).
+
+You can read everything about this format here.
+
+Example
+
+
+text1: '[Hello](red) [World](yellow bold)'
+text2: '@[minedown][Hello](red) [World](yellow bold)
+
+NPCs
+NPCs are an essential part of every RPG for player ingame interaction. In BetonQuest NPCs can be used to start conversations or interact with them otherwise, as shown in the Scripting and Visual Effects section of the documentation.
+
+Info
+
+This NPC is not related to the NPC/Quester in Conversations
+
+Provided Integrations🔗
+BetonQuest provides Integrations for the following Npc plugins:
+
+Citizens
+MythicMobs
+FancyNpcs
+ZNPCsPlus
+Referring an NPC🔗
+Npcs are defined in the npcs section.
+
+
+Citizens
+MythicMobs
+FancyNpcs
+ZNPCsPlus
+Example
+
+npcs:
+  innkeeper: citizens 0
+  mayorHans: citizens 4
+  guard: citizens Guard byName
+You simply use the Citizens NPC id as argument. To acquire the NPCs ID select the NPC using /npc select, then run /npc id.
+
+You can also get a NPC by its name with the byName argument. That is useful when you have many NPCs with the same name which should all start the same conversation or count together in the npcinteract and npckill objectives.
+
+
+Warning
+
+If there are more NPCs than one NPC with the same name, and you select multiple NPCs by name (like by using Citizens byName option) certain events like npcteleport or objectives like npcrange might throw an exception.
+
+Conversations🔗
+You can start Conversations with NPC interaction by assigning them in the npc_conversations section of a quest package.
+
+NPC Hiding: hide_npcs🔗
+You can hide NPCs for certain players using conditions. You can find information about it here.
 
 Menus🔗
 BetonQuest allows the creation of fully custom GUIs using the events and items system.
@@ -2717,7 +2407,8 @@ menus:
   myMenuName:
     title: "My Menu Title"
     slots: #...
-    items: #...
+menu_items: #...
+items: #...
 General Menu Settings🔗
 These are general settings for customizing a menu.
 
@@ -2725,7 +2416,7 @@ Required Settings🔗
 Setting Name	
 Example
 Description
-title	title: "&6&lQuests"	Will be displayed in the top left corner of your menu. You can use color codes to color the title. Variables are supported.
+title	title: "&6&lQuests"	Will be displayed in the top left corner of your menu. You can use color codes to color the title. Variables and defining languages are supported.
 height	height: 3	How many lines of slots your menu will have. Minimum 1, Maximum 6.
 Optional Settings🔗
 Setting Name
@@ -2734,8 +2425,8 @@ open_conditions	open_conditions: "unlockedMenu,!sneaking"	One or multiple condit
 open_events	open_events: "menuOpenSound"	One or multiple events (separated by a ,) which will be fired when the menu is opened.
 close_events	close_events: "menuCloseSound"	One or multiple events (separated by a ,) which will be fired when the menu is closed.
 bind	bind: "openMenuItem"	Clicking with this quest item in hand will open the menu. You can create this item in the items section of your package.
-command	command: "/quests"	This command can be executed to open the menu. The server must be restarted to unregister command tab completions.
-The items section🔗
+command	command: "/quests"	This command can be executed to open the menu.
+The menu_items section🔗
 The items section contains all items which should be displayed in the menu, defined as individual sections of the config.
 
 A basic item section looks like this:
@@ -2746,11 +2437,11 @@ menus:
   myMenuName:
     title: "My Menu Title"
     slots: #...
-    items: 
-      skeletonQuestDone: 
-        item: "questDoneItem" 
-      goldQuestDone: 
-        item: "questDone"
+menu_items: 
+  skeletonQuestDone: 
+    item: "questDoneItem" 
+  goldQuestDone: 
+    item: "questDone"
 Optional Item Settings🔗
 The three basic optional settings.
 
@@ -2760,8 +2451,12 @@ amount	amount: 30	The size of the stack that will be displayed in the menu. Vari
 conditions	conditions: "questDone"	One or multiple conditions (separated by a ,) which all have to be true to display the item.
 close	close: true	If set to true the menu will be closed after clicking the item. If this is not set the default_close value from the plugins config will be used.
 The optional text setting🔗
-By default, the name and description of the quest item is displayed when hovering over the item. You can overwrite this by using the text setting. Both color codes and variables are supported. The text can be provided as a single string with newlines, a multi-line string, or a list of strings, see examples.
+By default, the name and description of the quest item is displayed when hovering over the item. You can overwrite this by using the text setting. If you only define one line, only the name will be overwritten. Both color codes and variables are supported and carried into the next line, if not overridden. The text can be provided as a single string with newlines, a multi-line string, or a list of strings, see examples.
 
+
+List
+String with Newlines
+Multi-line String
 List Example
 
 skeletonQuestDone:
@@ -2769,32 +2464,21 @@ skeletonQuestDone:
   text:
     - "&2Reputation: &6&l%point.quest_reputation.amount%"
     - "Make quests to gain reputation!"
-String with Newlines Example
 
-skeletonQuestDone:
-  item: "questDoneItem"
-  text: "&2Reputation: &6&l%point.quest_reputation.amount% \nMake quests to gain reputation!"
-Multi-line String Example
-
-skeletonQuestDone:
-  item: "questDoneItem"
-  text: |-
-    &2Reputation: &6&l%point.quest_reputation.amount%
-    Make quests to gain reputation!
 Just like the text in conversations you can provide translations for all languages:
 
 Translation Example
 
-items: 
-  skeletonQuestDone: 
+menu_items:
+  skeletonQuestDone:
     item: "questDoneItem"
     text:
-       en: 
+       en-US: 
          - "&7[Quest] &6&lThe lost amulet"
          - "&4&o"
          - "&eLeft click to locate npc"
          - "&eRight click to cancel quest"
-       de: 
+       de-DE: 
          - "&7[Quest] &6&lDas verlorene Amulet"
          - "&4&o"
          - "&eLinksclick um den NPC zu finden"
@@ -2805,16 +2489,16 @@ You can define one or multiple events (separated by ,) that are run whenever the
 Example
 
 items:
-  skeletonQuestDone: 
-    item: "questDoneItem"
-    click: "startQuest,closeMenu"
+  skeletonQuestDone:
+    item: "simple questDoneItem"
+    click: "simple startQuest,closeMenu"
 Click Types🔗
 Different types of clicks can be distinguished:
 
 Click Types Example
 
 items:
-  skeletonQuestDone: 
+  skeletonQuestDone:
     item: "questDoneItem"
     click:
       left: "give_xp,msg_give_xp" 
@@ -2852,7 +2536,7 @@ This is an example of a basic menu that displays the progress of two quests.
 Example
 
 Usage🔗
-You can copy and paste this example into any file in a package. Then reload and execute the command /q give YOUR_PACKAGE.openMenuItem to get the item that opens the menu.
+You can copy and paste this example into any file in a package. Then reload and execute the command /q give YOUR_PACKAGE>openMenuItem to get the item that opens the menu.
 
 Read the related docs in the menu section to learn more about these configuration options.
 
@@ -2872,63 +2556,63 @@ menus:
       10: "goldQuestActive,goldQuestDone"
       27-35: "filler,filler,filler,filler,filler,filler,filler,filler,filler"
 
-    items:
-      skeletonQuestActive:
-        item: "skeletonQuestActiveItem"
-        amount: 1
-        conditions: "!skeletonQuestDone"
-        text:
-            - "&7[Quest] &f&lBone ripper"
-            - "&f&oRipp some skeletons off"
-            - "&f&otheir bones to complete"
-            - "&f&othis quest."
-            - "&f&o"
-            - "&eLeft click to locate NPC."
-        click:
-          left: "locationNotify"
-        close: true
-      skeletonQuestDone:
-        item: "questDone"
-        amount: 1
-        conditions: "skeletonQuestDone"
-        text:
-            - "&2[Quest] &f&lBone ripper"
-            - "&f&oRipp some skeletons off"
-            - "&f&otheir bones to complete"
-            - "&f&othis quest."
-            - "&f&o"
-            - "&2Quest completed!"
-        close: false
-      goldQuestActive:
-        item: "goldQuestActiveItem"
-        amount: 1
-        conditions: "!goldQuestDone"
-        text:
-            - "&7[Quest] &f&lGold rush"
-            - "&f&oMine some gold"
-            - "&f&oto complete this quest."
-        click:
-          left: "locationNotify"
-        close: true
-      goldQuestDone:
-        item: "questDone"
-        amount: 1
-        conditions: "goldQuestDone"
-        text:
-            - "&2[Quest] &f&lGold rush"
-            - "&f&oMine some gold"
-            - "&f&oto complete this quest."
-            - "&2Quest completed!"
-        close: false
-      reputation:
-        item: "xpBottle" 
-        amount: 1
-        text:
-            - "&2Quest Level: &6&l%point.quest_reputation.amount%"
-        close: true
-      filler: 
-        text: "&a "
-        item: "filler"
+menu_items:
+  skeletonQuestActive:
+    item: "skeletonQuestActiveItem"
+    amount: 1
+    conditions: "!skeletonQuestDone"
+    text:
+        - "&7[Quest] &f&lBone ripper"
+        - "&f&oRipp some skeletons off"
+        - "&f&otheir bones to complete"
+        - "&f&othis quest."
+        - "&f&o"
+        - "&eLeft click to locate NPC."
+    click:
+      left: "locationNotify"
+    close: true
+  skeletonQuestDone:
+    item: "questDone"
+    amount: 1
+    conditions: "skeletonQuestDone"
+    text:
+        - "&2[Quest] &f&lBone ripper"
+        - "&f&oRipp some skeletons off"
+        - "&f&otheir bones to complete"
+        - "&f&othis quest."
+        - "&f&o"
+        - "&2Quest completed!"
+    close: false
+  goldQuestActive:
+    item: "goldQuestActiveItem"
+    amount: 1
+    conditions: "!goldQuestDone"
+    text:
+        - "&7[Quest] &f&lGold rush"
+        - "&f&oMine some gold"
+        - "&f&oto complete this quest."
+    click:
+      left: "locationNotify"
+    close: true
+  goldQuestDone:
+    item: "questDone"
+    amount: 1
+    conditions: "goldQuestDone"
+    text:
+        - "&2[Quest] &f&lGold rush"
+        - "&f&oMine some gold"
+        - "&f&oto complete this quest."
+        - "&2Quest completed!"
+    close: false
+  reputation:
+    item: "xpBottle" 
+    amount: 1
+    text:
+        - "&2Quest Level: &6&l%point.quest_reputation.amount%"
+    close: true
+  filler: 
+    text: "&a "
+    item: "filler"
 
 conditions:
   skeletonQuestDone: "tag skeletonQuestDone"
@@ -2936,33 +2620,37 @@ conditions:
 events:
   locationNotify: "notify &cThe skeletons roam at x\\:123 z\\:456!"
 items:
-  openMenuItem: "BOOK title:Quests"
+  openMenuItem: "simple BOOK title:Quests"
 
-  xpBottle: "EXPERIENCE_BOTTLE"
-  filler: "GRAY_STAINED_GLASS_PANE"
+  xpBottle: "simple EXPERIENCE_BOTTLE"
+  filler: "simple GRAY_STAINED_GLASS_PANE"
 
-  skeletonQuestActiveItem: "BONE"
-  goldQuestActiveItem: "RAW_GOLD"
-  questDone: "LIME_CONCRETE"
+  skeletonQuestActiveItem: "simple BONE"
+  goldQuestActiveItem: "simple RAW_GOLD"
+  questDone: "simple LIME_CONCRETE"
+
 
 Elements
 Events🔗
 Menu Event: menu🔗
-This event can be used to open and close menus. The first argument is the type of action that should be done. It is either open to open a new menu or close to close the currently opened menu of the player. If you want to open a menu you have to add a second argument which should be the id of a menu. If you want to open menus from other packages just use packageName.id format.
+This event can be used to open, close or update menus. The first argument is the type of action that should be done. It is either open to open a new menu, close to close the currently opened menu, or update to update the content of the currently opened menu.
+If you want to open a menu you have to add a second argument which should be the id of a menu. If you want to open menus from other packages just use the cross package format.
 
 Example: menu open quest_gui
 
 Example: menu close
 
+Example: menu update
+
 Conditions🔗
 Menu Condition: menu🔗
-This condition can be used to check if the player has currently opened any menu. You can add id: optional and specify the id of a menu to check if the player has opened the menu with this id. If you want to check for menus from other packages just use packageName.id format.
+This condition can be used to check if the player has currently opened any menu. You can add id: optional and specify the id of a menu to check if the player has opened the menu with this id. If you want to check for menus from other packages just use the cross package format.
 
 Example: menu id:quest_gui
 
 Objectives🔗
 Menu Objective: menu🔗
-This objective is completed when the player opens the menu with the given id. The only required argument is the id of the menu. If you want to use menus from other packages just use packageName.id format.
+This objective is completed when the player opens the menu with the given id. The only required argument is the id of the menu. If you want to use menus from other packages just use the cross package format.
 
 The objective also has the property menu which can be used by the objective variable. It returns the title of the menu which should be opened.
 
@@ -2973,265 +2661,3 @@ Menu Variable: menu🔗
 This variable displays the title of the menu that is currently opened by the player. If no menu is opened it will be just empty.
 
 Example: %menu%
-
-Plugin configuration🔗
-The plugin's config is stored in a file called menuConfig.yml which is located in the plugin folder of BetonQuest, right near the config file of BetonQuest.
-It contains some default settings as well as all messages which are sent to the player by the plugin.
-On first start of the plugin the default config file will be created including all default settings which you are then able to change to customize the plugin.
-
-The config options🔗
-default_close: (boolean)
-Sets if menus should close by default when an item is clicked (true) or if they should stay open (false).
-This can also be overridden by each individual menu.
-Default value: true
-The messages section🔗
-This section contains all messages which are displayed to the player by the plugin.
-You can change them to fit all your needs.
-It's also possible to add additional languages, it works the same way as with BetonQuests messages.yml:
-Just add another section with the short name of your language as key and the translated messages.
-It's not required to specify all messages, if a message is missing for your language it will just pick the message in BetonQuests default language.
-
-Journal
-The journal is a book which can be used to display any quest related information in an immersive way.
-
-Basic Information🔗
-The journal can be obtained with the /journal command or by selecting it from the quest item backpack (/backpack). It's a quest item, so you cannot put it into any chests, item frames and so on. If you ever feel the need to get rid of your journal: Just drop it! It will safely return to your backpack.
-
-The journal is updated with the journal event, based on the text entries written inside a journal section. The entries can use color codes, but the color will be lost between pages. If you update these texts and reload the plugin, all players' journals will reflect changes.
-
-If you want to translate the entry do the same thing as with conversation options - go to new line, add language ID and the journal text for every language you want to include.
-
-Main Page🔗
-You can also add a main page to the journal. It's a list of texts, which will show only if specified conditions are met. You can define them in the journal_main_page section:
-
-
-journal_main_page:
-  title:
-    priority: 1
-    text:
-      en: '&eThe Journal'
-      pl: '&eDziennik'
-    conditions: 'quest_started,!quest_completed'
-Each string can have text in different languages, list of conditions separated by commas (these must be met for the text to show in the journal) and priority, which controls the order of texts. You can use conversation variables in the texts, but they will only be updated when the player gets his journal with the /journal command. Color codes are supported.
-
-If you want your main page take a separate page (so entries will be displayed on next free page), set full_main_page in config.yml to "true". If you want to manually wrap the page, use the pipe | character. Use \n to create a new line.
-
-Configuration🔗
-You can control behavior of the journal in config.yml file, in the journal section. chars_per_page specifies how many characters will be placed on a single page. If you set it too high, the text will overflow outside the page, too low, there will be too many pages. one_entry_per_page allows you to place every entry on a single page. The chars_per_page setting is in this case ignored, BetonQuest will put entire entry on that page. reversed_order allows you to reverse order of entries and hide_date lets you remove the date from journal entries.
-
-The journal by default appears in the last slot of the hotbar. If you want to change that use default_journal_slot option in config.yml, experiment with different settings until you're ok with it.
-
-You can control colors in the journal in journal_colors section in config.yml: date is a color of date of every entry, line is a color of lines separating entries and text is just a color of a text. You need to use standard color codes without & (eg. '4' for dark red).
-
-Quest Items
-Item Basics🔗
-Items in BetonQuest are defined in the items section. Each item has an instruction string, similarly to events, conditions etc. Basic syntax is very simple:
-
-
-item: BLOCK_SELECTOR other arguments...
-BLOCK_SELECTOR is a type of the item. It doesn't have to be all in uppercase. Other arguments specify data like name of the item, lore, enchantments or potion effects. There are two categories of these arguments: the ones you can apply to every item and type specific arguments. Examples would be name (for every item type) and text (only in books).
-
-Every argument is used in two ways: when creating an item and when checking if some existing item matches the instruction. The first case is pretty straightforward - BetonQuest takes all data you specified and creates an item, simple as that. Second case is more complicated. You can require some property of the item to exist, other not to exist, or skip this property check altogether. You can also accept an item only if some value (like enchantment level) is greater/less than x. You can use wildcards in the BLOCK_SELECTOR to match multiple types of items.
-
-These are arguments that can be applied to every item:
-
-name - the display name of the item. Underscores will be replaced with spaces. You can escape them with \_ and you can also escape the \ with \\_. You can also use & color codes. If you want to specifically say that the item must not have any name, use none keyword.
-
-lore - text under the item's name. Default styling of lore is purple and italic. You can escape them with \_ and you can also escape the \ with \\_. You can also use & color codes. To make a new line use ; character. If you require the item not to have a lore at all, use none keyword. By default, lore will match only if all lines are exactly the same. If you want to accept all items that contain specified lines (and/or more lines), add lore-containing argument to the instruction string.
-
-enchants - a list of enchantments and their levels. Each enchantment consists of these things, separated by colons:
-
-name
-level (only positive numbers, including zero)
-For example damage_all:3 is Sharpness III. You can specify additional enchantments by separating them with commas.
-
-You can require the item not to have any enchantments by using none keyword. You can also add +/- character to the enchantment level to make the check require levels greater/less (and equal) than specified. If you don't care about the level, replace the number with a question mark.
-
-By default, all specified enchantments are required. If you want to check if the item contains a matching enchantment (and/or more enchants), add enchants-containing argument to the instruction string. Each specified enchantment will be required on the item by default unless you prefix its name with none-, for example none-knockback means that the item must not have any knockback enchantment. Do not use none- prefix unless you're using enchants-containing argument, it doesn't make any sense and will break the check!
-
-unbreakable - this makes the item unbreakable. You can specify it either as unbreakable or unbreakable:true to require an item to be unbreakable. If you want to check if the item is breakable, use unbreakable:false.
-
-custom-model-data - set the custom model data of the item. You have to specify the data value: custom-model-data:3. To check that an item does not have custom model data set no-custom-model-data.
-
-flags - item flags that govern the visibility of some item info (comma delimited) including:
-
-HIDE_ENCHANTS: Hide the item's enchants
-HIDE_ATTRIBUTES: Hide attributes like damage
-HIDE_UNBREAKABLE: Hide the unbreakable of the item state
-HIDE_DESTROYS: Hide what the item can break or destroy
-HIDE_PLACED_ON: Hide where the item can be placed
-HIDE_POTION_EFFECTS: Hide potion effects, book and firework info, map tool tips, banner patters, and enchantments
-HIDE_DYE: Hide the dye labels on colored leather armor
-Examples
-
-name:&4Sword_made_of_Holy_Concrete
-name:none
-lore:&cOnly_this_sword_can_kill_the_Lord_Ruler
-lore:&2Quest_Item lore-containing
-lore:none
-enchants:damage_all:3+,none-knockback
-enchants:power:? enchants-containing
-enchants:none
-unbreakable
-unbreakable:false
-flags:HIDE_ENCHANTS,HIDE_ATTRIBUTES,HIDE_UNBREAKABLE
-Special Item Types🔗
-Books🔗
-This applies to a written book and a book and quill.
-
-title - the title of a book. All underscores will be replaced with spaces and you can use & color codes. If you want to specifically say that the book must not have any title, use none keyword.
-
-author - the author of a book. All underscores will be replaced with spaces, you cannot use color codes here. If you want to specifically say that the book must not have any author, use none keyword.
-
-text - the text of the book. All underscores will be replaced with spaces and you can use & color codes. The text will wrap to the next page if amount of characters exceeds journal.chars_per_page setting in config.yml. If you want to manually wrap the page, use | character. To go to new line use \n. Keep in mind that you can't use any spaces here, you must only use underscores (_). This needs to be a single argument, even if it's really long. If you don't want the book to have any text, use none keyword instead.
-
-Examples
-
-title:Malleus_Maleficarum
-author:&eGallus_Anonymus
-text:Lorem_ipsum_dolor_sit_amet,\nconsectetur_adipiscing_elit.|Pellentesque_ligula_urna(...)
-Potions🔗
-This applies to potions, splash potions and lingering potions.
-
-type - type of a potion. Here's the list of possible types. Do not mistake this for a custom effect, this argument corresponds to the default vanilla potion types.
-
-extended - extended property of the potion (you can achieve it in-game by adding redstone). It can be specified as extended or extended:true. If you want to check the potion that is NOT extended, use extended:false.
-
-upgraded - upgraded property of the potion (you can achieve it in-game by adding glowstone). It can be specified as upgraded or upgraded:true. If you want to check the potion that is NOT upgraded, use upgraded:false.
-
-effects - a list of custom effects. These are independent of the potion type. The effects must be separated by commas. Each effect consists of these things, separated by colons:
-
-type (this is different stuff that the link above!)
-power
-duration (in seconds)
-An example would be WITHER:2:30, which is a wither effect of level 2 for 30 seconds.
-
-If you want to target only potions without custom effects, use none keyword. You can target potions with level and time greater/less (and equal) than specified with +/- character after the number. If you don't care about the level/time, you can replace them with question mark.
-
-By default, all specified effects are required. If you want to check if the potion contains these effects among others, add effects-containing argument to the instruction string. Now if you want to make sure the potion doesn't contain a specific effect, prefix the effect name with none-. Don't use that prefix unless you're also using effects-containing argument, it doesn't make any sense and it will break the check.
-
-Examples:
-
-
-type:instant_heal
-extended
-upgraded:false
-effects:poison:1+:?,slow:?:45-
-effects:none-weakness,invisibility:?:? effects-containing
-Heads🔗
-Player Heads🔗
-owner - this is the name of the head owner. It will not use color codes nor replace underscores with spaces. If you want to check for heads without any owner, use none keyword.
-Use %player% to get the current players head.
-Examples
-
-owner:Co0sh
-owner:none
-Custom Heads🔗
-This applies to heads with custom texture (Base64 encoded).
-
-player-id - this is the UUID of the head owner.
-texture - this is the Base64 encoded JSON for the texture metadata.
-Examples:
-
-On Paper, the metadata will be automatically extracted from an item in your hand when using the item command and produce something like the following item data:
-
-
-player-id:66ab473e-d118-4e55-9717-431dfe7a69bc
-texture:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmIwNmIxOGQzZGZlZGFiNDQ0NjZlMGE3NGUxNTVhOGYyMTc4NzIwNDBhMDg1NTIwYTVhMGYzMGU4Y2QxODg1YyJ9fX0=
-On Spigot/Bukkit, player-id and texture must be manually configured in the item.yml file. It must be in the same format as the example above.
-
-Note: The texture data is Base64 encoded version of the following JSON, which is the same as the minecraft built-in give command and what is available on heads websites:
-
-
-{"textures":{"SKIN":{"url":"http://textures.minecraft.net/texture/bb06b18d3dfedab44466e0a74e155a8f217872040a085520a5a0f30e8cd1885c"}}}
-Leather armor🔗
-This applies to all parts of leather armor.
-
-color - this is the color of the armor piece. It can be either one of these values, a hexadecimal RGB value prefixed with # character or its decimal representation without the prefix. You can also check if the armor piece doesn't have any color with none keyword.
-Examples:
-
-
-color:light_blue
-color:#ff00ff
-color:none
-Fireworks🔗
-This applies to fireworks.
-
-firework - this is a list of effects of the firework rocket. They are separated by commas. Each effect consists of these things separated by colons:
-
-effect type
-a list of main colors (refer to leather armor colors above for syntax) separated by semicolons
-a list of fade colors
-true/false keyword for trail effect
-true/false keyword for flicker.
-Note the separation characters, this is important: commas separate effects, colons separate effect properties, semicolons separate colors.
-
-If you want to target fireworks without any effects, use none keyword. If you want to target any effect type, use question mark instead of the effect name. If you don't want the effect to have any main/fade colors, use none keyword in the place of colors. If you don't care about main/fade colors, use question marks in that place. If you don't care about trail/flicker effect, use question marks instead of true/false keyword.
-
-By default, the check will require all specified effects to be present on the firework. You can check if the firework contains specified effects among others by adding firework-containing argument to the instruction string. To match the item which must not have an effect, prefix the effect name with none- keyword. Don't use that prefix unless you're also using firework-containing argument, it doesn't make any sense and will break the check.
-
-power - flight duration of the firework, in levels. You can use +/- character to target greater/less (and equal) levels.
-
-Examples
-
-firework:ball:red;white:green;blue:true:true,ball_large:green;yellow:pink;black:false:false
-firework:burst:?:none:?:? firework-containing
-firework:none-creeper firework-containing
-firework:none
-power:3
-power:2+
-Firework charges🔗
-This applies to firework charges.
-
-firework - this is almost the same as fireworks. You can only specify a single effect and the power argument has no effects.
-Backpack🔗
-Sometimes you'll want some items to be persistent over death. The quest could be broken if the player loses them. Such an item wouldn't be dropped (on death), instead it would be placed in the player's backpack.
-
-You can add a specific line to an item's lore to make it persistent. It's &2Quest_Item (_ is a space in an item's definition) if your default language is english. The translation of the line can be found in messages.yml if a different default language is configured. It's also possible to change the translation.
-
-Note that this must be an entirely new line in the lore!
-
-Example
-
-important_sword: "DIAMOND_SWORD name:Sword_for_destroying__The_Concrete lore:Made_of_pure_Mithril;&2Quest_Item"
-The backpack can be opened with the /backpack command. The inventory window will open, displaying your stored items. The first slot is always the journal, and if you get it, the slot will stay empty. You can transfer quest items back and forth between inventories by clicking on them. Left click will transfer just one item, right click will try to transfer all items. Normal items cannot be stored into the backpack, so it's not an infinite inventory.
-
-If you will ever have more than one page of quest items, the buttons will appear. You can customize those buttons by creating previous_button and next_button items in the items section. Their name will be overwritten with the one defined in messages.yml.
-
-Quest items cannot be dropped in any way other than using them. This way you can create a quest for eating cookies by giving the player a stack of cookies flagged as quest items and not continuing until there are no more cookies in his inventory/backpack. The player cannot drop the cookies, so he must eat every one of them to complete the quest.
-
-Creative Mode
-
-Don't worry if the item-dropping filter isn't working for your items when you're in creative mode - it's not a bug. It's a feature. Creative-mode players should be able to easily put quest items in containers like TreasureChests.
-
-Quest Cancelers🔗
-You can easily let players cancel their quests using the cancel option in the quest backpack (or /cancelquest). Cancelers also provide an easy way to clean up all the data that was created during the quest. They can also be triggered by events.
-
-Setup🔗
-Define a cancel section anywhere in your quest package. This section will contain all cancelers. Each canceler has an identifier.
-
-Example
-
-cancel:
-  woodQuest:
-    name: "&2Wood for the Innkeeper" 
-    conditions: "wood_started,!wood_paid" 
-    objectives: "farmWood" 
-    tags: "wood_started,wood_done,wood_paid" 
-    points: "wood" 
-    journal: "wood_started,wood_done,wood_paid" 
-    events: "punishPlayer,sendMessage" 
-    location: "100;200;300;world" 
-  dragonQuest:
-    name: "&4Dragon Slayer"
-    conditions: "dragon_started,!dragon_done"
-    objectives: "killDragon"
-Related Events🔗
-Cancel a quest: cancel🔗
-This event works in the same way as a quest canceler in the backpack.
-
-Running this event is equal to the player canceling a quest using the backpack. The only argument is the identifier of a quest canceler, as defined in the cancel section.
-
-Example
-
-cancelQuest: "cancel woodQuest"
