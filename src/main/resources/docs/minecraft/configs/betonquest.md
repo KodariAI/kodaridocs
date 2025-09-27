@@ -2116,6 +2116,215 @@ So be very cautious when using ALL catchup strategy!
 By deleting .cache/schedules.yml before startup you can make BetonQuest forget about any missed schedules 
 
 Conversations
+In this tutorial, you will learn the basics of the conversations. These allow you to create a dialog between the player and a NPC. Therefore, these are the basic tool for story telling.
+
+Requirements
+
+Setup Guide
+Related Docs
+
+Conversations
+Download Tutorial Setup
+
+Enter this command in the chat to download the pre-made setup for this tutorial:
+
+
+/bq download BetonQuest/Quest-Tutorials 59a315b91279827533555e36b37dbea2f3238409 QuestPackages /Basics/Conversations/1-DirectoryStructure /tutorialQuest overwrite
+You can now find all files needed for this tutorial in this location: "YOUR-SERVER-LOCATION/plugins/BetonQuest/QuestPackages/tutorialQuest"
+1. Linking a conversation to a NPC🔗
+Usually, conversations happen between a NPC and the player. Therefore, we need to create the npcs and npc_conversations sections in the package.yml so that the plugin knows which NPC uses which conversation. In this tutorial we will use Citizens. This is how it works:
+
+package.yml
+
+npcs:
+  JackNpc: "citizens 1"
+npc_conversations:
+  JackNpc: "Jack"
+This links the NPC with the given Citizens ID (1) to the conversation with the given identifier (Jack). Save the file after editing.
+How to create a Citizens NPC? Where do I find the NPC's ID?
+2. Creating your first conversation🔗
+It's time to create the first conversation with Jack! This chapter will teach you the basic structure of a conversation.
+
+Let's take a look at how a conversation is defined in the plugin's files:
+
+Tip: Click the plus buttons next to the text for explanations!
+
+jack.yml
+
+conversations:
+  Jack: 
+    quester: "Jack" 
+    first: "firstGreeting" 
+    NPC_options: 
+      firstGreeting:
+        text: "Hello and welcome to my town traveler! Nice to see you. Where are you from?"
+        pointers: "whereYouFrom" 
+
+    player_options: 
+      whereYouFrom:
+        text: "First I want to know who you are!"
+A BetonQuest conversation is a cycle of responses between the NPC and the player. Anything the NPC says is called NPC_options, everything the player answers is called player_options.
+
+A conversation always starts with an NPC_option. Now the player must answer the NPC using a player_option.
+
+Options point to each other using the pointer argument. In the case of an NPC_option, the pointer argument would contain the name of a player_option. Usually, a player has more than one answer to choose from. This is done by adding multiple player_option names to a NPC_option.
+
+After the player responded, they are shown another NPC_option that the previously chosen player_option points to.
+
+Whenever either a player_option or a NPC_option point to no other option the conversation ends as there are no more responses or answers.
+
+The Conversation Cycle
+
+Pointer
+
+Pointer
+
+No pointer present
+
+No pointer present
+
+Conversation Starts
+
+First NPC_option
+
+player_option
+
+NPC_option
+
+Conversation Ends
+
+3. Trying the Conversation ingame🔗
+You can easily check if your quest is working on the server. Open the file "jack.yml" in the "conversations" folder. Copy the above conversation into it and save the file.
+
+Now type /bq reload in the chat and right-click the NPC.
+
+You can select the answer by pressing the jump key (Space by default).
+
+4. Conversations with multiple choices🔗
+Let's see how to create multiple responses for the player to choose from using the pointer argument.
+
+A NPC_option can point to multiple player options at the same time. As soon as a pointer argument contains more than one player_option, the player can choose.
+
+Tip: Highlighted lines in blue are new compared with the previous example.
+
+jack.yml
+
+conversations:
+  Jack:
+    quester: "Jack"
+    first: "firstGreeting"
+    NPC_options:
+      firstGreeting:
+        text: "Hello and welcome to my town traveler! Nice to see you. Where are you from?"
+        pointers: "whereYouFrom"
+      whoAmI:
+        text: "I am &6Jack&r. The mayor of this beautiful town. We have some big farms and good old taverns well worth checking out! So now where are you from?"
+        pointers: "smallIsland,bigCity" 
+      islandAnswer: 
+        text: "That sounds familiar! I grew up in a small town with few people. So we already have something in common! Do you want something to eat?"
+      cityAnswer: 
+        text: "Oh I know! I think you're from Kayra, right? Nice city but to be honest I prefer country life... You look a bit hungry. Do you want something to eat?"
+
+    player_options:
+      whereYouFrom: 
+        text: "First I want to know who you are!"
+        pointers: "whoAmI" 
+      smallIsland: 
+        text: "From a small island located east."
+        pointers: "islandAnswer" 
+      bigCity:  
+        text: "From a big city located west."
+        pointers: "cityAnswer" 
+With these changes, the mayor asks the player where he is from. The player can either say that they are from a smallIsland or from a bigCity. This creates two different paths through the conversation.
+
+5. Joining conversation paths🔗
+Let's join these paths again to show the same ending:
+Add the same pointer argument to both paths' NPC_options. They point to the new yesPlease player_option.
+
+jack.yml
+
+conversations:
+  Jack:
+    quester: "Jack"
+    first: "firstGreeting"
+    NPC_options:
+      firstGreeting:
+        text: "Hello and welcome to my town traveler! Nice to see you. Where are you from?"
+        pointers: "whereYouFrom"
+      whoAmI:
+        text: "I am &6Jack&r. The mayor of this beautiful town. We have some big farms and good old taverns well worth checking out! So now where are you from?"
+        pointers: "smallIsland,bigCity"
+      islandAnswer:
+        text: "That sounds familiar! I grew up in a small town with few people. So we already have something in common! Do you want something to eat?"
+        pointers: "yesPlease" 
+      cityAnswer:
+        text: "Oh I know! I think you're from Kayra, right? Nice city but to be honest I prefer country life... You look a bit hungry. Do you want something to eat?"
+        pointers: "yesPlease" 
+      foodAnswer:
+        text: "You're welcome! Take it... &7*gives food*"
+
+    player_options:
+      whereYouFrom:
+        text: "First I want to know who you are!"
+        pointers: "whoAmI"
+      smallIsland:
+        text: "From a small island located east."
+        pointers: "islandAnswer"
+      bigCity:
+        text: "From a big city located west."
+        pointers: "cityAnswer"
+      yesPlease: 
+        text: "Oh yes I'm starving! Thank you."
+        pointers: "foodAnswer"
+The following graph shows the paths through the conversation. Since there are two pointers assigned to the whoAmI option, the player can choose between one of the paths.
+
+Conversation Flow Graph
+
+Interaction with NPC
+
+points to
+
+points to
+
+points to
+
+points to
+
+points to
+
+points to
+
+points to
+
+points to
+
+points to
+
+firstGreeting
+
+whereYouFrom
+
+whoAmI
+
+smallIsland
+
+bigCity
+
+islandAnswer
+
+cityAnswer
+
+yesPlease
+
+foodAnswer
+
+Try the conversation ingame by saving the file and executing the /bq reload command! Then right-click Jack. Select different options by using the keys for walking forwards and backwards (W and S by default). Confirm options by jumping (Space by default).
+
+Is the example not working?
+Summary🔗
+You've learned how to create simple conversations in which the player can choose different paths. In the next part of the basics tutorial you will learn how Jack the mayor can give food to the player using events!
+
+Conversations
 Conversations are the main way to interact with players in BetonQuest. They are used to display text, ask questions and execute commands. This page contains the reference documentation for all conversation related features. Consider doing the conversation tutorial if you are just getting started.
 
 General Information🔗
