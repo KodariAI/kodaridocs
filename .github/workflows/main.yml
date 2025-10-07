@@ -22,7 +22,8 @@ jobs:
                 },
                 "fields": [
                   {"name": "Service", "value": "`kodari-docs`", "inline": true},
-                  {"name": "Status", "value": "🔄 Deploying", "inline": true}
+                  {"name": "Status", "value": "🔄 Deploying", "inline": true},
+                  {"name": "Extra Info", "value": "Service may be briefly unavailable during deployment.", "inline": false}
                 ],
                 "color": 3447003,
                 "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'"
