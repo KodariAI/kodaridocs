@@ -9,6 +9,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v5
+
+    - name: Notify deployment starting
+      run: |
+        curl -H "Content-Type: application/json" \
+          -X POST \
+          -d '{
+            "content": "🔄 **Docs Service** is restarting...",
+            "embeds": [{
+              "description": "Deployment in progress. The service may be temporarily unavailable.",
+              "color": 16776960
+            }]
+          }' \
+          ${{ secrets.DISCORD_WEBHOOK }}
     
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
@@ -55,3 +68,33 @@ jobs:
             --tmpfs /tmp:size=100M \
             --security-opt=no-new-privileges:true \
             ${{ secrets.DOCKER_USERNAME }}/kodari-docs:latest
+
+    - name: Notify deployment complete
+      if: success()
+      run: |
+        curl -H "Content-Type: application/json" \
+             -X POST \
+             -d '{
+               "content": "✅ **Docs Service** is back online!",
+               "embeds": [{
+                 "description": "Deployment completed successfully. Service is fully operational.",
+                 "color": 65280,
+                 "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'"
+               }]
+             }' \
+             ${{ secrets.DISCORD_WEBHOOK }}
+
+    - name: Notify deployment failed
+      if: failure()
+      run: |
+        curl -H "Content-Type: application/json" \
+             -X POST \
+             -d '{
+               "content": "❌ **Docs Service** deployment failed!",
+               "embeds": [{
+                 "description": "Deployment failed. The previous version should still be running.",
+                 "color": 16711680,
+                 "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'"
+               }]
+             }' \
+             ${{ secrets.DISCORD_WEBHOOK }}
