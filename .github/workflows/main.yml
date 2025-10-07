@@ -3,98 +3,117 @@ on:
   push:
     branches:
       - 'master'
-      
+
 jobs:
   Docs-CICD:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v5
+      - uses: actions/checkout@v5
 
-    - name: Notify deployment starting
-      run: |
-        curl -H "Content-Type: application/json" \
-          -X POST \
-          -d '{
-            "content": "🔄 **Docs Service** is restarting...",
-            "embeds": [{
-              "description": "Deployment in progress. The service may be temporarily unavailable.",
-              "color": 16776960
-            }]
-          }' \
-          ${{ secrets.DISCORD_WEBHOOK }}
-    
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
-      with:
-        driver: docker-container
-        buildkitd-flags: --debug
-    
-    - name: Log in to DockerHub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-    
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v6
-      with:
-        context: .
-        push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/kodari-docs:latest
-        provenance: true
-        sbom: true
-    
-    - name: Deploy on remote server
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.SERVER_HOST }}
-        username: ${{ secrets.SERVER_USER }}
-        key: ${{ secrets.SERVER_SSH_KEY }}
-        port: ${{ secrets.SERVER_PORT }}
-        script: |
-          docker pull ${{ secrets.DOCKER_USERNAME }}/kodari-docs:latest
-          docker stop kodari-docs || true
-          docker rm kodari-docs || true
-          
-          docker run -d --name kodari-docs \
-            --network kodari-net \
-            --network-alias docs \
-            --env-file /home/worker/.env.production.docs \
-            --restart unless-stopped \
-            --memory="512m" \
-            --memory-swap="512m" \
-            --cpus="0.5" \
-            --read-only \
-            --tmpfs /tmp:size=100M \
-            --security-opt=no-new-privileges:true \
-            ${{ secrets.DOCKER_USERNAME }}/kodari-docs:latest
+      - name: Notify deployment starting
+        run: |
+          curl -H "Content-Type: application/json" \
+            -X POST \
+            -d '{
+              "embeds": [{
+                "author": {
+                  "name": "Kodari Deployment",
+                  "icon_url": "https://kodari.ai/kodari_snowy.png"
+                },
+                "fields": [
+                  {"name": "Service", "value": "`kodari-docs`", "inline": true},
+                  {"name": "Status", "value": "🔄 Deploying", "inline": true}
+                ],
+                "color": 3447003,
+                "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'"
+              }]
+            }' \
+            ${{ secrets.DISCORD_WEBHOOK }}
 
-    - name: Notify deployment complete
-      if: success()
-      run: |
-        curl -H "Content-Type: application/json" \
-             -X POST \
-             -d '{
-               "content": "✅ **Docs Service** is back online!",
-               "embeds": [{
-                 "description": "Deployment completed successfully. Service is fully operational.",
-                 "color": 65280,
-                 "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'"
-               }]
-             }' \
-             ${{ secrets.DISCORD_WEBHOOK }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: docker-container
+          buildkitd-flags: --debug
 
-    - name: Notify deployment failed
-      if: failure()
-      run: |
-        curl -H "Content-Type: application/json" \
-             -X POST \
-             -d '{
-               "content": "❌ **Docs Service** deployment failed!",
-               "embeds": [{
-                 "description": "Deployment failed. The previous version should still be running.",
-                 "color": 16711680,
-                 "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'"
-               }]
-             }' \
-             ${{ secrets.DISCORD_WEBHOOK }}
+      - name: Log in to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/kodari-docs:latest
+          provenance: true
+          sbom: true
+
+      - name: Deploy on remote server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          port: ${{ secrets.SERVER_PORT }}
+          script: |
+            docker pull ${{ secrets.DOCKER_USERNAME }}/kodari-docs:latest
+            docker stop kodari-docs || true
+            docker rm kodari-docs || true
+            
+            docker run -d --name kodari-docs \
+              --network kodari-net \
+              --network-alias docs \
+              --env-file /home/worker/.env.production.docs \
+              --restart unless-stopped \
+              --memory="512m" \
+              --memory-swap="512m" \
+              --cpus="0.5" \
+              --read-only \
+              --tmpfs /tmp:size=100M \
+              --security-opt=no-new-privileges:true \
+              ${{ secrets.DOCKER_USERNAME }}/kodari-docs:latest
+
+      - name: Notify deployment complete
+        if: success()
+        run: |
+          curl -H "Content-Type: application/json" \
+            -X POST \
+            -d '{
+              "embeds": [{
+                "author": {
+                  "name": "Kodari Deployment",
+                  "icon_url": "https://kodari.ai/kodari_snowy.png"
+                },
+                "fields": [
+                  {"name": "Service", "value": "`kodari-docs`", "inline": true},
+                  {"name": "Status", "value": "✅ Online", "inline": true}
+                ],
+                "color": 65280,
+                "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'"
+              }]
+            }' \
+            ${{ secrets.DISCORD_WEBHOOK }}
+
+      - name: Notify deployment failed
+        if: failure()
+        run: |
+          curl -H "Content-Type: application/json" \
+            -X POST \
+            -d '{
+              "embeds": [{
+                "author": {
+                  "name": "Kodari Deployment",
+                  "icon_url": "https://kodari.ai/kodari_snowy.png"
+                },
+                "fields": [
+                  {"name": "Service", "value": "`kodari-docs`", "inline": true},
+                  {"name": "Status", "value": "❌ Failed", "inline": true}
+                ],
+                "color": 16711680,
+                "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%S.000Z)'"
+              }]
+            }' \
+            ${{ secrets.DISCORD_WEBHOOK }}
