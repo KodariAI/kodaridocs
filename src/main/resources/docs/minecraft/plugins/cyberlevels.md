@@ -1,430 +1,516 @@
-# CyberLevels-1.0.2-com-bitaspire-cyberlevels API Reference
+# CyberLevels-0.5.9 (1)-net-zerotoil-dev-cyberlevels API Reference
 
-**Package Filter:** `com.bitaspire.cyberlevels`
+**Package Filter:** `net.zerotoil.dev.cyberlevels`
 
-## Package: com.bitaspire.cyberlevels
+## Package: net.zerotoil.dev.cyberlevels
 
-### Class: com.bitaspire.cyberlevels.CyberLevels
+### Class: net.zerotoil.dev.cyberlevels.CyberLevels
 Type: Class
 Extends: org.bukkit.plugin.java.JavaPlugin
 
 Methods:
-- GlobalScheduler scheduler()
-- CyberCore core()
-- Cache cache()
-- double serverVersion()
-- **static** CyberLevels instance()
-- String getAuthors()
-- boolean isEnabled(String)
+- String serverFork()
+- int serverVersion()
+- LangUtils langUtils()
+- LevelUtils levelUtils()
 - void logger(String[])
-- void reloadPlugin()
-- UserManager userManager()
-- LevelSystem levelSystem()
 - void onEnable()
 - void onDisable()
+- void reloadClasses(boolean)
+- String getAuthors()
+- PlayerUtils playerUtils()
+- Files files()
+- LevelCache levelCache()
+- EXPListeners expListeners()
+- EXPCache expCache()
 
-### Class: com.bitaspire.cyberlevels.Message
+## Package: net.zerotoil.dev.cyberlevels.addons
+
+### Class: net.zerotoil.dev.cyberlevels.addons.Metrics
 Type: Class
 
 Methods:
-- Message single(Function)
-- Message$Values keys(String[])
-- Message placeholder(String, Object)
-- Message list(List)
-- Message list(String[])
-- Message list(Function)
-- boolean send(Player)
-- boolean send(LevelUser)
-- boolean send()
-- Message operator(UnaryOperator)
-- Message player(Player)
-- Message player(LevelUser)
+- void addCustomChart(Metrics$CustomChart)
 
-### Class: com.bitaspire.cyberlevels.Message$Values
+### Class: net.zerotoil.dev.cyberlevels.addons.Metrics$AdvancedBarChart
+Type: Class
+Extends: net.zerotoil.dev.cyberlevels.addons.Metrics$CustomChart
+
+No public methods found
+
+### Class: net.zerotoil.dev.cyberlevels.addons.Metrics$AdvancedPie
+Type: Class
+Extends: net.zerotoil.dev.cyberlevels.addons.Metrics$CustomChart
+
+No public methods found
+
+### Class: net.zerotoil.dev.cyberlevels.addons.Metrics$CustomChart
+Type: Abstract Class
+
+Methods:
+- Metrics$JsonObjectBuilder$JsonObject getRequestJsonObject(BiConsumer, boolean)
+
+### Class: net.zerotoil.dev.cyberlevels.addons.Metrics$DrilldownPie
+Type: Class
+Extends: net.zerotoil.dev.cyberlevels.addons.Metrics$CustomChart
+
+Methods:
+- Metrics$JsonObjectBuilder$JsonObject getChartData() throws Exception
+
+### Class: net.zerotoil.dev.cyberlevels.addons.Metrics$JsonObjectBuilder
 Type: Class
 
 Methods:
-- Message values(Object[])
+- Metrics$JsonObjectBuilder$JsonObject build()
+- Metrics$JsonObjectBuilder appendNull(String)
+- Metrics$JsonObjectBuilder appendField(String, String)
+- Metrics$JsonObjectBuilder appendField(String, int)
+- Metrics$JsonObjectBuilder appendField(String, Metrics$JsonObjectBuilder$JsonObject)
+- Metrics$JsonObjectBuilder appendField(String, String[])
+- Metrics$JsonObjectBuilder appendField(String, int[])
+- Metrics$JsonObjectBuilder appendField(String, Metrics$JsonObjectBuilder$JsonObject[])
 
-## Package: com.bitaspire.cyberlevels.cache
-
-### Class: com.bitaspire.cyberlevels.cache.AntiAbuse
+### Class: net.zerotoil.dev.cyberlevels.addons.Metrics$JsonObjectBuilder$JsonObject
 Type: Class
 
 Methods:
-- boolean isSilkTouchEnabled()
-- boolean includeNaturalCrops()
-- Map getModules()
-- void unregister()
-- boolean onlyNaturalBlocks()
-- Map getAntiAbuses()
-- CyberLevels getMain()
-- void register()
+- String toString()
 
-### Class: com.bitaspire.cyberlevels.cache.Cache
+### Class: net.zerotoil.dev.cyberlevels.addons.Metrics$MetricsBase
 Type: Class
 
 Methods:
-- EarnExp earnExp()
-- AntiAbuse antiAbuse()
-- void loadSecondaryFiles()
-- Lang lang()
-- Config config()
-- Rewards rewards()
-- Levels levels()
+- void addCustomChart(Metrics$CustomChart)
 
-### Class: com.bitaspire.cyberlevels.cache.Config
+### Class: net.zerotoil.dev.cyberlevels.addons.Metrics$MultiLineChart
 Type: Class
+Extends: net.zerotoil.dev.cyberlevels.addons.Metrics$CustomChart
+
+No public methods found
+
+### Class: net.zerotoil.dev.cyberlevels.addons.Metrics$SimpleBarChart
+Type: Class
+Extends: net.zerotoil.dev.cyberlevels.addons.Metrics$CustomChart
+
+No public methods found
+
+### Class: net.zerotoil.dev.cyberlevels.addons.Metrics$SimplePie
+Type: Class
+Extends: net.zerotoil.dev.cyberlevels.addons.Metrics$CustomChart
+
+No public methods found
+
+### Class: net.zerotoil.dev.cyberlevels.addons.Metrics$SingleLineChart
+Type: Class
+Extends: net.zerotoil.dev.cyberlevels.addons.Metrics$CustomChart
+
+No public methods found
+
+### Class: net.zerotoil.dev.cyberlevels.addons.PlaceholderAPI
+Type: Class
+Extends: me.clip.placeholderapi.expansion.PlaceholderExpansion
 
 Methods:
-- boolean isMultiplierCommands()
-- boolean isExpIntegerOnly()
-- boolean preventDuplicateRewards()
-- boolean isAutoSaveEnabled()
-- boolean isMessagesOnConsole()
-- boolean isLeaderboardEnabled()
-- boolean syncLeaderboardOnAutoSave()
-- boolean isMessagesOnAutoSave()
-- boolean stackComboExp()
-- void update()
-- boolean autoUpdateEarnExp()
-- boolean useBigDecimalSystem()
-- CLVFile getFile()
-- int getAutoSaveInterval()
-- Config$Database database()
-- boolean leaderboardInstantUpdate()
-- boolean roundEarnExp()
-- int getRoundingDigits()
-- boolean autoUpdateLang()
-- boolean isMultiplierEvents()
-- boolean addLevelRewards()
-- boolean isRoundingEnabled()
-- boolean autoUpdateConfig()
+- String getVersion()
+- String onRequest(OfflinePlayer, String)
+- String getAuthor()
+- String getIdentifier()
+- boolean persist()
 
-### Class: com.bitaspire.cyberlevels.cache.Config$Database
+## Package: net.zerotoil.dev.cyberlevels.api.events
+
+### Class: net.zerotoil.dev.cyberlevels.api.events.XPChangeEvent
 Type: Class
+Extends: org.bukkit.event.Event
 
 Methods:
-- String getPassword()
-- String getDatabase()
-- String getPort()
-- String getType()
-- String getTable()
-- boolean isEnabled()
-- String getSqliteFile()
-- String getHost()
-- String getUsername()
-- boolean isSsl()
+- Player getPlayer()
+- double getOldXP()
+- HandlerList getHandlers()
+- **static** HandlerList getHandlerList()
+- double getNewXP()
+- void setAmount(double)
+- double getAmount()
 
-### Class: com.bitaspire.cyberlevels.cache.EarnExp
-Type: Class
+## Package: net.zerotoil.dev.cyberlevels.commands
 
-Methods:
-- Map getExpSources()
-- void unregister()
-- void update()
-- void register()
-
-### Class: com.bitaspire.cyberlevels.cache.Lang
-Type: Class
-
-Methods:
-- List getGainedExp()
-- List getLostExp()
-- List getSetExp()
-- String getProgressIncompleteColor()
-- void update()
-- List getHelpPlayer()
-- List getHelpAdmin()
-- CLVFile getFile()
-- List getNotNumber()
-- List getAddedExp()
-- List getNoPermission()
-- List getRemovedExp()
-- List getPlayerNotFound()
-- List getTopFooter()
-- Lang$LeaderboardKeys leaderboardKeys()
-- List getAutoSave()
-- List getSetLevel()
-- String getPrefix()
-- List getReloaded()
-- List getTopHeader()
-- boolean sendMessage(Player, Function, String[], Object[])
-- boolean sendMessage(Player, Function, String, Object)
-- boolean sendMessage(Player, Function)
-- List getLevelInfo()
-- List getLostLevels()
-- String getProgressCompleteColor()
-- String getProgressEndColor()
-- List getGainedLevels()
-- List getPurgePlayer()
-- List getRemovedLevels()
-- String getProgressBar()
-- List getTopContent()
-- List getReloading()
-- List getAddedLevels()
-
-### Class: com.bitaspire.cyberlevels.cache.Lang$LeaderboardKeys
-Type: Class
-
-Methods:
-- String getLoadingName()
-- String getLoadingExp()
-- String getNoPlayerLevel()
-- String getLoadingLevel()
-- String getNoPlayerExp()
-- String getNoPlayerName()
-
-### Class: com.bitaspire.cyberlevels.cache.Levels
-Type: Class
-
-Methods:
-- long getStartLevel()
-- int getStartExp()
-- Map getCustomFormulas()
-- String getFormula()
-- long getMaxLevel()
-
-### Class: com.bitaspire.cyberlevels.cache.Rewards
-Type: Class
-
-Methods:
-- Map getRewards()
-
-## Package: com.bitaspire.cyberlevels.command
-
-### Class: com.bitaspire.cyberlevels.command.CLVCommand
+### Class: net.zerotoil.dev.cyberlevels.commands.CLVCommand
 Type: Class
 Implements: org.bukkit.command.CommandExecutor
 
 Methods:
 - boolean onCommand(CommandSender, Command, String, String[])
 
-### Class: com.bitaspire.cyberlevels.command.CLVTabComplete
+### Class: net.zerotoil.dev.cyberlevels.commands.CLVTabComplete
 Type: Class
 Implements: org.bukkit.command.TabCompleter
 
 Methods:
 - List onTabComplete(CommandSender, Command, String, String[])
 
-## Package: com.bitaspire.cyberlevels.hook
+## Package: net.zerotoil.dev.cyberlevels.interfaces
 
-### Class: com.bitaspire.cyberlevels.hook.HookManager
+### Class: net.zerotoil.dev.cyberlevels.interfaces.Reflection
+Type: Interface
+
+Methods:
+- void sendPacket(Player, Object)
+- Class getNMSClass(String)
+
+## Package: net.zerotoil.dev.cyberlevels.listeners
+
+### Class: net.zerotoil.dev.cyberlevels.listeners.AntiAbuseListeners
 Type: Class
+Implements: org.bukkit.event.Listener
 
-Methods:
-- void unregister()
-- void register()
+No public methods found
 
-## Package: com.bitaspire.cyberlevels.level
-
-### Class: com.bitaspire.cyberlevels.level.AntiAbuse
-Type: Interface
-
-Methods:
-- boolean isLimited(Player, ExpSource)
-- boolean isLimiterEnabled()
-- long getLimiterAmount()
-- void resetLimiter(Player)
-- void resetCooldown(Player)
-- boolean isWorldsWhitelist()
-- void resetLimiters()
-- void cancelTimer()
-- boolean isWorldsEnabled()
-- int getCooldownLeft(Player)
-- int getCooldownTime()
-- void resetCooldowns()
-- AntiAbuse$Timer getTimer()
-- int getLimiter(Player)
-- boolean isCooldownEnabled()
-
-### Class: com.bitaspire.cyberlevels.level.ExpSource
-Type: Interface
-
-Methods:
-- boolean isInList(String, boolean)
-- boolean isInList(String)
-- int getInterval()
-- String getName()
-- String getCategory()
-- List getIncludeList()
-- boolean includes()
-- boolean useSpecifics()
-- double getPartialMatchesExp(String)
-- boolean isWhitelist()
-- ExpSource$Range getRange()
-- boolean hasPermission(Player, boolean)
-- boolean hasPermission(Player)
-- boolean isEnabled()
-- ExpSource$Range getSpecificRange(String)
-- ExpSource$Registrable getRegistrable()
-- List getSpecificList()
-
-### Class: com.bitaspire.cyberlevels.level.ExpSource$Range
-Type: Interface
-
-Methods:
-- double getRandom()
-- double getMin()
-- double getMax()
-
-### Class: com.bitaspire.cyberlevels.level.ExpSource$Registrable
-Type: Interface
-
-Methods:
-- void unregister()
-- void register()
-
-### Class: com.bitaspire.cyberlevels.level.Formula
-Type: Interface
-
-Methods:
-- String getAsString()
-- Number evaluate(Player)
-
-### Class: com.bitaspire.cyberlevels.level.Leaderboard
-Type: Interface
-
-Methods:
-- void update()
-- boolean isUpdating()
-- int checkPosition(LevelUser)
-- int checkPosition(Player)
-- LevelUser getTopPlayer(int)
-- List getTopTenPlayers()
-
-### Class: com.bitaspire.cyberlevels.level.LevelSystem
-Type: Interface
-
-Methods:
-- boolean checkAntiAbuse(Player, ExpSource)
-- String replacePlaceholders(String, Player, boolean)
-- Leaderboard getLeaderboard()
-- int getStartExp()
-- List getRewards(long)
-- String roundDecimalAsString(Number)
-- long getMaxLevel()
-- Number getRequiredExp(long, Player)
-- long getStartLevel()
-- Map getExpSources()
-- String getProgressBar(Number, Number)
-- String getPercent(Number, Number)
-- Number roundDecimal(Number)
-- Map getAntiAbuses()
-- Formula getCustomFormula(long)
-- Formula getFormula()
-- Operator getOperator()
-
-### Class: com.bitaspire.cyberlevels.level.Operator
-Type: Interface
-
-Methods:
-- Number add(Number, Number)
-- Number zero()
-- int compare(Number, Number)
-- Number abs(Number)
-- Number min(Number, Number)
-- Number max(Number, Number)
-- Number negate(Number)
-- Number valueOf(String) throws NumberFormatException
-- Number subtract(Number, Number)
-- Number fromDouble(double)
-- String toString(Number)
-- Number divide(Number, Number)
-- Number divide(Number, Number, int, RoundingMode)
-- Number multiply(Number, Number)
-
-### Class: com.bitaspire.cyberlevels.level.Reward
-Type: Interface
-
-Methods:
-- void executeCommands(Player)
-- void sendMessages(Player)
-- void playSound(Player)
-- void giveAll(Player)
-
-### Class: com.bitaspire.cyberlevels.level.AntiAbuse$Timer
+### Class: net.zerotoil.dev.cyberlevels.listeners.EXPListeners
 Type: Class
+Implements: org.bukkit.event.Listener
 
 Methods:
-- void start()
-- void purge()
-- long getResetEpochTime()
+- boolean checkAbuse(Player, EXPEarnEvent)
+- void sendExp(Player, EXPEarnEvent, String)
+- void sendPermissionExp(Player, EXPEarnEvent)
 
-## Package: com.bitaspire.cyberlevels.listener
-
-### Class: com.bitaspire.cyberlevels.listener.Listeners
+### Class: net.zerotoil.dev.cyberlevels.listeners.EXPListenersV10
 Type: Class
+Implements: org.bukkit.event.Listener
+
+No public methods found
+
+### Class: net.zerotoil.dev.cyberlevels.listeners.JoinListener
+Type: Class
+Implements: org.bukkit.event.Listener
+
+No public methods found
+
+## Package: net.zerotoil.dev.cyberlevels.listeners.hooks
+
+### Class: net.zerotoil.dev.cyberlevels.listeners.hooks.RivalHarvesterHoesHook
+Type: Class
+Implements: org.bukkit.event.Listener
 
 Methods:
-- void unregister()
-- void register()
+- boolean checkAbuse(Player, EXPEarnEvent)
+- void onRivalBlockBreak(RivalBlockBreakEvent)
+- void sendExp(Player, EXPEarnEvent, String)
 
-## Package: com.bitaspire.cyberlevels.user
+## Package: net.zerotoil.dev.cyberlevels.objects
 
-### Class: com.bitaspire.cyberlevels.user.Database
+### Class: net.zerotoil.dev.cyberlevels.objects.ActionBar$GetActionBar
 Type: Interface
+
+Methods:
+- void send(Player, String)
+
+### Class: net.zerotoil.dev.cyberlevels.objects.Title$GetTitle
+Type: Interface
+
+Methods:
+- void send(Player, String, String, int, int, int)
+
+### Class: net.zerotoil.dev.cyberlevels.objects.ActionBar
+Type: Class
+Implements: net.zerotoil.dev.cyberlevels.interfaces.Reflection
+
+Methods:
+- ActionBar$GetActionBar getMethod()
+
+### Class: net.zerotoil.dev.cyberlevels.objects.MySQL
+Type: Class
 
 Methods:
 - void disconnect()
-- void removeUser(UUID)
-- void addUser(LevelUser, boolean)
-- void addUser(LevelUser)
-- Set getUuids()
-- LevelUser getUser(UUID)
-- LevelUser getUser(Player)
+- PlayerData getPlayerData(Player)
+- void updatePlayer(Player)
+- List getAllPlayers()
 - boolean isConnected()
-- void updateUser(LevelUser)
-- boolean isUserLoaded(LevelUser)
-- void connect()
+- boolean playerInTable(Player)
+- boolean playerInTable(String)
+- void addTable(String)
+- void addTable(String, String)
 
-### Class: com.bitaspire.cyberlevels.user.LevelUser
-Type: Interface
+### Class: net.zerotoil.dev.cyberlevels.objects.RewardObject
+Type: Class
+
+Methods:
+- void giveReward(Player)
+- void sendMessage(Player)
+
+### Class: net.zerotoil.dev.cyberlevels.objects.Title
+Type: Class
+Implements: net.zerotoil.dev.cyberlevels.interfaces.Reflection
+
+Methods:
+- Title$GetTitle newTitle()
+- Title$GetTitle getMethod()
+
+## Package: net.zerotoil.dev.cyberlevels.objects.antiabuse
+
+### Class: net.zerotoil.dev.cyberlevels.objects.antiabuse.AntiAbuse
+Type: Class
+
+Methods:
+- boolean isLimited(Player, String)
+- long getPlayerLimiter(Player)
+- void resetLimiters()
+- boolean isCoolingDown(Player, String)
+- void cancelTimer()
+- long getPlayerCooldown(Player)
+- void resetLimiter(Player)
+- void resetCooldowns()
+- boolean isWorldLimited(Player, String)
+- void resetCooldown(Player)
+
+### Class: net.zerotoil.dev.cyberlevels.objects.antiabuse.TimedAbuseReset
+Type: Class
+
+Methods:
+- long timeToReset()
+- void formatTime(boolean) throws ParseException
+- void run(long)
+
+## Package: net.zerotoil.dev.cyberlevels.objects.exp
+
+### Class: net.zerotoil.dev.cyberlevels.objects.exp.EXPCache
+Type: Class
+
+Methods:
+- void startTimedEXP()
+- boolean isOnlyNaturalBlocks()
+- Map expEarnEvents()
+- void cancelAntiAbuseTimers()
+- boolean roundExp()
+- boolean isPreventSilkTouchAbuse()
+- boolean isAntiAbuse(Player, String)
+- void loadAntiAbuse()
+- boolean useDouble()
+- void cancelTimedEXP()
+- void loadExpEvents()
+- boolean isIncludeNaturalCrops()
+
+### Class: net.zerotoil.dev.cyberlevels.objects.exp.EXPEarnEvent
+Type: Class
+
+Methods:
+- boolean hasPartialMatches(String, boolean)
+- String getName()
+- boolean isSpecificEnabled()
+- HashMap getSpecificMax()
+- String getCategory()
+- double getMaxEXP()
+- boolean isInGeneralList(String)
+- double getPartialMatchesExp(String)
+- double getSpecificExp(String)
+- HashMap getSpecificMin()
+- **static** Random getRandom()
+- double getMinEXP()
+- boolean isWhitelist()
+- List getList()
+- Boolean getEnabled()
+- boolean hasPermission(Player)
+- boolean isEnabled()
+- boolean isIncludedEnabled()
+- boolean isInSpecificList(String)
+- boolean hasGeneralPermission(Player)
+- double getGeneralExp()
+
+## Package: net.zerotoil.dev.cyberlevels.objects.files
+
+### Class: net.zerotoil.dev.cyberlevels.objects.files.ConfigUpdater
+Type: Class
+
+Methods:
+- **static** void update(Plugin, String, File, List) throws IOException
+
+### Class: net.zerotoil.dev.cyberlevels.objects.files.Files
+Type: Class
+
+Methods:
+- YAMLFile get(String)
+- HashMap getFiles()
+- Configuration getConfig(String)
+- void addFile(String, String)
+- void loadFiles()
+
+### Class: net.zerotoil.dev.cyberlevels.objects.files.KeyBuilder
+Type: Class
+Implements: java.lang.Cloneable
+
+Methods:
+- **static** String getIndents(String, char)
+- boolean isSubKey(String)
+- boolean isConfigSectionWithKeys()
+- boolean isSubKeyOf(String)
+- **static** boolean isSubKeyOf(String, String, char)
+- boolean isConfigSection()
+- void removeLastKey()
+- boolean isEmpty()
+- String toString()
+- String getLastKey()
+- void parseLine(String)
+
+### Class: net.zerotoil.dev.cyberlevels.objects.files.YAMLFile
+Type: Class
+
+Methods:
+- void updateConfig()
+- void reloadConfig()
+- void saveDefaultConfig()
+- FileConfiguration getConfig()
+- void saveConfig() throws IOException
+
+## Package: net.zerotoil.dev.cyberlevels.objects.leaderboard
+
+### Class: net.zerotoil.dev.cyberlevels.objects.leaderboard.Leaderboard
+Type: Class
+
+Methods:
+- void updateLeaderboard()
+- int checkFrom(Player)
+- boolean isUpdating()
+- List getTopTenPlayers()
+- LeaderboardPlayer getTopPlayer(int)
+
+### Class: net.zerotoil.dev.cyberlevels.objects.leaderboard.LeaderboardPlayer
+Type: Class
 Implements: java.lang.Comparable
 
 Methods:
-- Player getPlayer()
-- String getName()
-- void addLevel(long)
-- void addExp(Number, boolean)
-- void addExp(String, boolean)
-- boolean isOnline()
-- void removeLevel(long)
-- Number getExp()
-- void setLevel(long, boolean)
 - long getLevel()
-- Number getRemainingExp()
-- Number getRequiredExp()
-- OfflinePlayer getOffline()
-- boolean hasParentPerm(String, boolean)
-- void removeExp(Number)
-- void removeExp(String)
-- String getProgressBar()
-- UUID getUuid()
-- void setExp(Number, boolean, boolean, boolean)
-- void setExp(String, boolean, boolean, boolean)
-- void setExp(Number, boolean, boolean)
-- void setExp(String, boolean, boolean)
-- String getPercent()
-- double getMultiplier()
+- OfflinePlayer getPlayer()
+- String getUUID()
+- int compareTo(Object)
+- double getExp()
 
-### Class: com.bitaspire.cyberlevels.user.UserManager
-Type: Interface
+## Package: net.zerotoil.dev.cyberlevels.objects.levels
+
+### Class: net.zerotoil.dev.cyberlevels.objects.levels.LevelCache
+Type: Class
 
 Methods:
+- boolean addLevelReward()
+- Long maxLevel()
 - void loadOnlinePlayers()
-- void savePlayer(Player, boolean)
-- List getUsersList()
+- boolean isMessageConsole()
+- boolean isPreventDuplicateRewards()
+- Leaderboard getLeaderboard()
 - void cancelAutoSave()
-- Database getDatabase()
+- Map playerLevels()
 - void saveOnlinePlayers(boolean)
-- void removeUser(UUID)
-- Set getUsers()
-- LevelUser getUser(UUID)
-- LevelUser getUser(Player)
-- LevelUser getUser(String)
-- void startAutoSave()
-- void loadPlayer(OfflinePlayer)
+- boolean isLeaderboardEnabled()
+- Double startExp()
+- boolean doEventMultiplier()
+- boolean doCommandMultiplier()
+- void loadLeaderboard()
+- boolean isLeaderboardInstantUpdate()
+- Long startLevel()
 - void loadPlayer(Player)
-- void saveUser(LevelUser)
+- Map levelData()
+- void loadLevelData()
+- void savePlayer(Player, boolean)
+- void clearLevelData()
+- boolean isStackComboExp()
+- void loadRewards()
+- MySQL getMySQL()
+- void startAutoSave()
+
+### Class: net.zerotoil.dev.cyberlevels.objects.levels.LevelData
+Type: Class
+
+Methods:
+- Double getRequiredExp(Player)
+- void addReward(RewardObject)
+- void clearRewards()
+- List getRewards()
+- void setRewards(List)
+- void setLevel(Long)
+
+### Class: net.zerotoil.dev.cyberlevels.objects.levels.PlayerData
+Type: Class
+
+Methods:
+- Long getLevel()
+- void setMaxLevel(Long)
+- Player getPlayer()
+- double nextExpRequirement()
+- void removeExp(double)
+- void addLevel(long)
+- void setExp(double, boolean, boolean)
+- void setExp(double, boolean, boolean, boolean)
+- void addExp(double, boolean)
+- void addExp(double, double, boolean, boolean)
+- String toString()
+- Long getMaxLevel()
+- void removeLevel(long)
+- Double getExp()
+- void setLevel(long, boolean)
+
+## Package: net.zerotoil.dev.cyberlevels.utilities
+
+### Class: net.zerotoil.dev.cyberlevels.utilities.FontInfo
+Type: Enum
+Extends: java.lang.Enum
+
+Methods:
+- **static** FontInfo valueOf(String)
+- **static** FontInfo[] values()
+- **static** FontInfo getDefaultFontInfo(char)
+- int getLength()
+- int getBoldLength()
+- char getCharacter()
+
+### Class: net.zerotoil.dev.cyberlevels.utilities.LangUtils
+Type: Class
+
+Methods:
+- void sendCentered(Player, String)
+- List convertList(ConfigurationSection, String)
+- String colorize(Player, String)
+- String parseFormat(String, String)
+- void sendMixed(Player, String)
+- String parsePAPI(Player, String)
+- void sendMessage(Player, Player, String)
+- void sendMessage(Player, String)
+- void sendMessage(Player, String, boolean)
+- void sendMessage(Player, String, boolean, boolean)
+- void sendMessage(Player, Player, String, boolean, boolean, String[], String[])
+- void sendHelp(Player, boolean)
+- void title(Player, String[], String[])
+- void actionBar(Player, String)
+- void typeMessage(Player, String)
+
+### Class: net.zerotoil.dev.cyberlevels.utilities.LevelUtils
+Type: Class
+
+Methods:
+- int getDecimals()
+- String progressBar(Double, Double)
+- String roundStringDecimal(double)
+- String generalFormula()
+- String getPercent(Double, Double)
+- double roundDecimal(double)
+- String getPlaceholders(String, Player, boolean)
+- String getPlaceholders(String, Player, boolean, boolean)
+- Configuration levelsYML()
+- String levelFormula(long)
+- Configuration langYML()
+
+### Class: net.zerotoil.dev.cyberlevels.utilities.Logger
+Type: Class
+
+Methods:
+- void log(CommandSender, String[])
+- void log(String[])
+- void playerLog(Player, String[])
+- void rawLog(String[])
+
+### Class: net.zerotoil.dev.cyberlevels.utilities.PlayerUtils
+Type: Class
+
+Methods:
+- boolean hasParentPerm(Player, String, boolean)
+- double getMultiplier(Player)
 
