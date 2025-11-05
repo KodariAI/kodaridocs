@@ -162,6 +162,14 @@ public class ApiDocGenerator {
 
         markdown.append("\n");
 
+        if (clazz.isEnum && !clazz.enumConstants.isEmpty()) {
+            markdown.append("Enum Constants:\n");
+            for (String constant : clazz.enumConstants) {
+                markdown.append("- ").append(constant).append("\n");
+            }
+            markdown.append("\n");
+        }
+
         if (clazz.methods.isEmpty()) {
             markdown.append("No public methods found\n\n");
             return;
@@ -290,6 +298,15 @@ public class ApiDocGenerator {
             }
             return null;
         }
+
+        @Override
+        public FieldVisitor visitField(int access, String name, String descriptor,
+                                       String signature, Object value) {
+            if (info.isEnum && (access & Opcodes.ACC_ENUM) != 0) {
+                info.enumConstants.add(name);
+            }
+            return null;
+        }
     }
 
     private static class ClassInfo {
@@ -299,6 +316,7 @@ public class ApiDocGenerator {
         String superClass;
         List<String> interfaces = new ArrayList<>();
         List<MethodInfo> methods = new ArrayList<>();
+        List<String> enumConstants = new ArrayList<>();
         boolean isPublic;
         boolean isInterface;
         boolean isEnum;

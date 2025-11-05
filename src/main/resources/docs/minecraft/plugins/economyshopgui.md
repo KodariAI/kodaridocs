@@ -1,4 +1,4 @@
-# EconomyShopGUI-API-1.8.0 API Reference
+# EconomyShopGUI-API-1.9.0 API Reference
 
 ## Package: me.gypopo.economyshopgui.api
 
@@ -6,48 +6,48 @@
 Type: Class
 
 Methods:
-- boolean hasPermissions(ShopItem, Player)
-- boolean hasPermissions(ShopItem, Player, String)
-- void sellItemStock(ShopItem, UUID, int)
-- AdvancedBuyPrice getMultipleBuyPrices(ShopItem)
-- Optional getBuyPrice(OfflinePlayer, ItemStack)
-- boolean isSellAble(ShopItem)
-- EconomyProvider getEcon(EcoType)
-- AdvancedSellPrice getMultipleSellPrices(ShopItem)
-- ShopSection getShopSection(String)
-- void sellItem(ItemStack, int)
-- void sellItem(ShopItem, int)
-- int sellItemLimit(ShopItem, UUID, int)
-- int getSellLimit(ShopItem, UUID)
-- ShopItem getShopItem(ItemStack)
-- ShopItem getShopItem(Player, ItemStack)
-- ShopItem getShopItem(String)
-- Double getItemSellPrice(ItemStack)
-- Double getItemSellPrice(Player, ItemStack)
-- Double getItemSellPrice(ShopItem, ItemStack)
-- Double getItemSellPrice(ShopItem, ItemStack, Player)
-- Double getItemSellPrice(ShopItem, ItemStack, Player, int, int)
-- Double getItemSellPrice(ShopItem, ItemStack, int, int)
-- Double getItemBuyPrice(ItemStack)
-- Double getItemBuyPrice(Player, ItemStack)
-- Double getItemBuyPrice(ShopItem, ItemStack)
-- Double getItemBuyPrice(ShopItem, ItemStack, Player)
-- double getItemBuyPrice(ShopItem, int)
-- double getItemBuyPrice(ShopItem, Player, int)
-- Long getSellLimitRestockTime(ShopItem, UUID)
-- int getItemStock(ShopItem, UUID)
-- boolean hasMultipleBuyPrices(ShopItem)
-- Optional getSellPrice(OfflinePlayer, ItemStack)
-- SellPrices getSellPrices(OfflinePlayer, ItemStack[])
-- void buyItem(ItemStack, int)
-- void buyItem(ShopItem, int)
-- SellPrices getCutSellPrices(OfflinePlayer, ItemStack[], boolean)
-- List getShopSections()
-- boolean isBuyAble(ShopItem)
-- int buyItemStock(ShopItem, UUID, int)
-- Long getItemStockRestockTime(ShopItem, UUID)
-- boolean hasMultipleSellPrices(ShopItem)
-- Map getSections()
+- **static** boolean hasPermissions(ShopItem, Player)
+- **static** boolean hasPermissions(ShopItem, Player, String)
+- **static** void sellItemStock(ShopItem, UUID, int)
+- **static** AdvancedBuyPrice getMultipleBuyPrices(ShopItem)
+- **static** Optional getBuyPrice(OfflinePlayer, ItemStack)
+- **static** boolean isSellAble(ShopItem)
+- **static** EconomyProvider getEcon(EcoType)
+- **static** AdvancedSellPrice getMultipleSellPrices(ShopItem)
+- **static** ShopSection getShopSection(String)
+- **static** void sellItem(ItemStack, int)
+- **static** void sellItem(ShopItem, int)
+- **static** int sellItemLimit(ShopItem, UUID, int)
+- **static** int getSellLimit(ShopItem, UUID)
+- **static** ShopItem getShopItem(ItemStack)
+- **static** ShopItem getShopItem(Player, ItemStack)
+- **static** ShopItem getShopItem(String)
+- **static** Double getItemSellPrice(ItemStack)
+- **static** Double getItemSellPrice(Player, ItemStack)
+- **static** Double getItemSellPrice(ShopItem, ItemStack)
+- **static** Double getItemSellPrice(ShopItem, ItemStack, Player)
+- **static** Double getItemSellPrice(ShopItem, ItemStack, Player, int, int)
+- **static** Double getItemSellPrice(ShopItem, ItemStack, int, int)
+- **static** Double getItemBuyPrice(ItemStack)
+- **static** Double getItemBuyPrice(Player, ItemStack)
+- **static** Double getItemBuyPrice(ShopItem, ItemStack)
+- **static** Double getItemBuyPrice(ShopItem, ItemStack, Player)
+- **static** double getItemBuyPrice(ShopItem, int)
+- **static** double getItemBuyPrice(ShopItem, Player, int)
+- **static** Long getSellLimitRestockTime(ShopItem, UUID)
+- **static** int getItemStock(ShopItem, UUID)
+- **static** boolean hasMultipleBuyPrices(ShopItem)
+- **static** Optional getSellPrice(OfflinePlayer, ItemStack)
+- **static** SellPrices getSellPrices(OfflinePlayer, ItemStack[])
+- **static** void buyItem(ItemStack, int)
+- **static** void buyItem(ShopItem, int)
+- **static** SellPrices getCutSellPrices(OfflinePlayer, ItemStack[], boolean)
+- **static** List getShopSections()
+- **static** boolean isBuyAble(ShopItem)
+- **static** int buyItemStock(ShopItem, UUID, int)
+- **static** Long getItemStockRestockTime(ShopItem, UUID)
+- **static** boolean hasMultipleSellPrices(ShopItem)
+- **static** Map getSections()
 
 ## Package: me.gypopo.economyshopgui.api.events
 
@@ -57,7 +57,14 @@ Extends: org.bukkit.event.Event
 
 Methods:
 - HandlerList getHandlers()
-- HandlerList getHandlerList()
+- **static** HandlerList getHandlerList()
+
+### Class: me.gypopo.economyshopgui.api.events.EconomyPreLoadEvent
+Type: Class
+Extends: me.gypopo.economyshopgui.api.events.CustomEvent
+
+Methods:
+- void registerExternal(ExternalEconomy)
 
 ### Class: me.gypopo.economyshopgui.api.events.PostTransactionEvent
 Type: Class
@@ -112,6 +119,20 @@ Methods:
 - double getPrice(EcoType)
 - ShopItem getShopItem()
 - int getAmount()
+
+### Class: me.gypopo.economyshopgui.api.objects.ExternalEconomy
+Type: Abstract Class
+Extends: me.gypopo.economyshopgui.providers.economys.ExternalEconomyProvider
+
+Methods:
+- void depositBalance(OfflinePlayer, double)
+- String getName()
+- double getBalance(OfflinePlayer)
+- String getPlural()
+- void withdrawBalance(OfflinePlayer, double)
+- boolean isDecimal()
+- String getFriendly()
+- String getSingular()
 
 ### Class: me.gypopo.economyshopgui.api.objects.SellPrice
 Type: Class
@@ -203,9 +224,15 @@ Methods:
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- BUY
+- SELL
+- SELL_ALL
+- GUI_EDITOR
+
 Methods:
-- ClickAction valueOf(String)
-- ClickAction[] values()
+- **static** ClickAction valueOf(String)
+- **static** ClickAction[] values()
 
 ## Package: me.gypopo.economyshopgui.objects.shops
 
@@ -237,9 +264,13 @@ Methods:
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- CATEGORY
+- ROTATING
+
 Methods:
-- ShopType valueOf(String)
-- ShopType[] values()
+- **static** ShopType valueOf(String)
+- **static** ShopType[] values()
 
 ## Package: me.gypopo.economyshopgui.providers
 
@@ -254,6 +285,25 @@ Methods:
 - void withdrawBalance(OfflinePlayer, double)
 - String getFriendly()
 - boolean isDecimal()
+- String getSingular()
+- String formatPrice(double)
+
+## Package: me.gypopo.economyshopgui.providers.economys
+
+### Class: me.gypopo.economyshopgui.providers.economys.ExternalEconomyProvider
+Type: Class
+Implements: me.gypopo.economyshopgui.providers.EconomyProvider
+
+Methods:
+- void depositBalance(OfflinePlayer, double)
+- String getName()
+- double getBalance(OfflinePlayer)
+- String getPlural()
+- EcoType getType()
+- void withdrawBalance(OfflinePlayer, double)
+- boolean isDecimal()
+- String getFriendly()
+- String getCurrencyName()
 - String getSingular()
 - String formatPrice(double)
 
@@ -273,14 +323,88 @@ Methods:
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- EXP
+- ITEM
+- VAULT
+- LEVELS
+- ECOBITS
+- COINS_ENGINE
+- PLAYER_POINTS
+- GEMS_ECONOMY
+- ULTRA_ECONOMY
+- VOTING_PLUGIN
+- EXTERNAL
+
 Methods:
-- EcoType getFromString(String)
+- **static** EcoType getFromString(String)
 - String getName()
-- EconomyType valueOf(String)
-- EconomyType[] values()
+- **static** EconomyType valueOf(String)
+- **static** EconomyType[] values()
 
 ### Class: me.gypopo.economyshopgui.util.Transaction
 Type: Class
 
 No public methods found
+
+### Class: me.gypopo.economyshopgui.util.Transaction$Mode
+Type: Enum
+Extends: java.lang.Enum
+
+Enum Constants:
+- BUY
+- SELL
+
+Methods:
+- **static** Transaction$Mode getFromType(Transaction$Type)
+- String getName()
+- **static** Transaction$Mode valueOf(String)
+- **static** Transaction$Mode[] values()
+
+### Class: me.gypopo.economyshopgui.util.Transaction$Result
+Type: Enum
+Extends: java.lang.Enum
+
+Enum Constants:
+- SUCCESS
+- SUCCESS_COMMANDS_EXECUTED
+- NOT_ALL_ITEMS_ADDED
+- CANT_STORE_PAYMENT
+- NOT_ENOUGH_SPACE
+- INSUFFICIENT_FUNDS
+- NO_INVENTORY_SPACE
+- NEGATIVE_ITEM_PRICE
+- TRANSACTION_CANCELLED
+- NO_ITEMS_FOUND
+- NO_ITEM_STOCK_LEFT
+- HIGHER_LEVEL_REQUIRED
+- REACHED_SELL_LIMIT
+- NOT_ENOUGH_ITEMS
+
+Methods:
+- **static** Transaction$Result valueOf(String)
+- **static** Transaction$Result[] values()
+
+### Class: me.gypopo.economyshopgui.util.Transaction$Type
+Type: Enum
+Extends: java.lang.Enum
+
+Enum Constants:
+- SELL_GUI_SCREEN
+- SELL_ALL_COMMAND
+- SELL_ALL_SCREEN
+- SELL_SCREEN
+- BUY_SCREEN
+- BUY_STACKS_SCREEN
+- QUICK_SELL
+- QUICK_BUY
+- SHOPSTAND_BUY_SCREEN
+- SHOPSTAND_SELL_SCREEN
+- AUTO_SELL_CHEST
+
+Methods:
+- String getName()
+- **static** Transaction$Type valueOf(String)
+- **static** Transaction$Type[] values()
+- String getMode()
 
