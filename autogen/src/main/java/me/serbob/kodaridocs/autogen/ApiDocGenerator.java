@@ -206,14 +206,28 @@ public class ApiDocGenerator {
             sb.append("**static** ");
         }
 
-        sb.append(typeToSimpleName(method.returnType));
+        if (method.returnTypeSignature != null) {
+            sb.append(simplifyGenericSignature(method.returnTypeSignature));
+        } else {
+            sb.append(typeToSimpleName(method.returnType));
+        }
+
         sb.append(" ");
         sb.append(method.name);
         sb.append("(");
 
         for (int i = 0; i < method.parameterTypes.size(); i++) {
             if (i > 0) sb.append(", ");
-            sb.append(typeToSimpleName(method.parameterTypes.get(i)));
+            if (i < method.parameterTypeSignatures.size() && method.parameterTypeSignatures.get(i) != null) {
+                String paramSig = method.parameterTypeSignatures.get(i);
+                if (paramSig.startsWith("L") || paramSig.startsWith("[")) {
+                    sb.append(simplifyGenericSignature(paramSig));
+                } else {
+                    sb.append(typeToSimpleName(paramSig));
+                }
+            } else {
+                sb.append(typeToSimpleName(method.parameterTypes.get(i)));
+            }
         }
 
         sb.append(")");
@@ -226,6 +240,70 @@ public class ApiDocGenerator {
         }
 
         return sb.toString();
+    }
+
+    private String simplifyGenericSignature(String signature) {
+        signature = signature.replace('/', '.');
+
+        if (signature.startsWith("L") && signature.endsWith(";")) {
+            signature = signature.substring(1, signature.length() - 1);
+        }
+
+        StringBuilder result = new StringBuilder();
+        StringBuilder currentClass = new StringBuilder();
+        int depth = 0;
+
+        for (int i = 0; i < signature.length(); i++) {
+            char c = signature.charAt(i);
+
+            if (c == '<') {
+                if (currentClass.length() > 0) {
+                    result.append(getSimpleName(currentClass.toString()));
+                    currentClass.setLength(0);
+                }
+                result.append('<');
+                depth++;
+            } else if (c == '>') {
+                if (currentClass.length() > 0) {
+                    result.append(getSimpleName(currentClass.toString()));
+                    currentClass.setLength(0);
+                }
+                result.append('>');
+                depth--;
+            } else if (c == ';') {
+                if (currentClass.length() > 0) {
+                    result.append(getSimpleName(currentClass.toString()));
+                    currentClass.setLength(0);
+                }
+                if (depth > 0 && i + 1 < signature.length() && signature.charAt(i + 1) != '>') {
+                    result.append(", ");
+                }
+            } else if (c == ',') {
+                if (currentClass.length() > 0) {
+                    result.append(getSimpleName(currentClass.toString()));
+                    currentClass.setLength(0);
+                }
+                result.append(", ");
+            } else if (c == ' ') {
+                if (result.length() > 0 && result.charAt(result.length() - 1) != ' ') {
+                    result.append(' ');
+                }
+            } else {
+                currentClass.append(c);
+            }
+        }
+
+        if (currentClass.length() > 0) {
+            result.append(getSimpleName(currentClass.toString()));
+        }
+
+        return result.toString();
+    }
+
+    private String getSimpleName(String fullName) {
+        if (fullName.isEmpty()) return fullName;
+        int lastDot = fullName.lastIndexOf('.');
+        return lastDot >= 0 ? fullName.substring(lastDot + 1) : fullName;
     }
 
     private String typeToSimpleName(String type) {
@@ -290,6 +368,10 @@ public class ApiDocGenerator {
                     method.parameterTypes.add(arg.getDescriptor());
                 }
 
+                if (signature != null) {
+                    parseMethodSignature(signature, method);
+                }
+
                 if (exceptions != null) {
                     method.exceptions.addAll(Arrays.asList(exceptions));
                 }
@@ -297,6 +379,68 @@ public class ApiDocGenerator {
                 info.methods.add(method);
             }
             return null;
+        }
+
+        private void parseMethodSignature(String signature, MethodInfo method) {
+            int returnTypeStart = signature.lastIndexOf(')') + 1;
+            if (returnTypeStart > 0 && returnTypeStart < signature.length()) {
+                method.returnTypeSignature = signature.substring(returnTypeStart);
+            }
+
+            int paramStart = signature.indexOf('(');
+            int paramEnd = signature.indexOf(')');
+            if (paramStart >= 0 && paramEnd > paramStart) {
+                String params = signature.substring(paramStart + 1, paramEnd);
+                parseParameterSignatures(params, method);
+            }
+        }
+
+        private void parseParameterSignatures(String params, MethodInfo method) {
+            int i = 0;
+            while (i < params.length()) {
+                char c = params.charAt(i);
+
+                if (c == 'L') {
+                    int end = i + 1;
+                    int depth = 0;
+                    while (end < params.length()) {
+                        char ch = params.charAt(end);
+                        if (ch == '<') depth++;
+                        else if (ch == '>') depth--;
+                        else if (ch == ';' && depth == 0) break;
+                        end++;
+                    }
+                    method.parameterTypeSignatures.add(params.substring(i, end + 1));
+                    i = end + 1;
+                } else if (c == '[') {
+                    int start = i;
+                    i++;
+                    while (i < params.length() && params.charAt(i) == '[') i++;
+
+                    if (i < params.length()) {
+                        char next = params.charAt(i);
+                        if (next == 'L') {
+                            int end = i + 1;
+                            int depth = 0;
+                            while (end < params.length()) {
+                                char ch = params.charAt(end);
+                                if (ch == '<') depth++;
+                                else if (ch == '>') depth--;
+                                else if (ch == ';' && depth == 0) break;
+                                end++;
+                            }
+                            method.parameterTypeSignatures.add(params.substring(start, end + 1));
+                            i = end + 1;
+                        } else {
+                            method.parameterTypeSignatures.add(params.substring(start, i + 1));
+                            i++;
+                        }
+                    }
+                } else {
+                    method.parameterTypeSignatures.add(String.valueOf(c));
+                    i++;
+                }
+            }
         }
 
         @Override
@@ -327,7 +471,9 @@ public class ApiDocGenerator {
         String name;
         String descriptor;
         String returnType;
+        String returnTypeSignature;
         List<String> parameterTypes = new ArrayList<>();
+        List<String> parameterTypeSignatures = new ArrayList<>();
         List<String> exceptions = new ArrayList<>();
         boolean isStatic;
     }

@@ -10,7 +10,7 @@ Methods:
 - **static** boolean hasPermissions(ShopItem, Player, String)
 - **static** void sellItemStock(ShopItem, UUID, int)
 - **static** AdvancedBuyPrice getMultipleBuyPrices(ShopItem)
-- **static** Optional getBuyPrice(OfflinePlayer, ItemStack)
+- **static** Optional<BuyPrice> getBuyPrice(OfflinePlayer, ItemStack)
 - **static** boolean isSellAble(ShopItem)
 - **static** EconomyProvider getEcon(EcoType)
 - **static** AdvancedSellPrice getMultipleSellPrices(ShopItem)
@@ -37,17 +37,17 @@ Methods:
 - **static** Long getSellLimitRestockTime(ShopItem, UUID)
 - **static** int getItemStock(ShopItem, UUID)
 - **static** boolean hasMultipleBuyPrices(ShopItem)
-- **static** Optional getSellPrice(OfflinePlayer, ItemStack)
+- **static** Optional<SellPrice> getSellPrice(OfflinePlayer, ItemStack)
 - **static** SellPrices getSellPrices(OfflinePlayer, ItemStack[])
 - **static** void buyItem(ItemStack, int)
 - **static** void buyItem(ShopItem, int)
 - **static** SellPrices getCutSellPrices(OfflinePlayer, ItemStack[], boolean)
-- **static** List getShopSections()
+- **static** List<String> getShopSections()
 - **static** boolean isBuyAble(ShopItem)
 - **static** int buyItemStock(ShopItem, UUID, int)
 - **static** Long getItemStockRestockTime(ShopItem, UUID)
 - **static** boolean hasMultipleSellPrices(ShopItem)
-- **static** Map getSections()
+- **static** Map<String, ShopSection> getSections()
 
 ## Package: me.gypopo.economyshopgui.api.events
 
@@ -71,12 +71,12 @@ Type: Class
 Extends: me.gypopo.economyshopgui.api.events.CustomEvent
 
 Methods:
-- Map getItems()
+- Map<ShopItem, Integer> getItems()
 - Player getPlayer()
 - Transaction$Type getTransactionType()
 - ItemStack getItemStack()
 - Transaction$Result getTransactionResult()
-- Map getPrices()
+- Map<EcoType, Double> getPrices()
 - double getPrice()
 - ShopItem getShopItem()
 - int getAmount()
@@ -87,15 +87,15 @@ Extends: me.gypopo.economyshopgui.api.events.CustomEvent
 Implements: org.bukkit.event.Cancellable
 
 Methods:
-- Map getOriginalPrices()
-- Map getItems()
+- Map<EcoType, Double> getOriginalPrices()
+- Map<ShopItem, Integer> getItems()
 - Player getPlayer()
 - boolean isCancelled()
 - void setCancelled(boolean)
 - Transaction$Type getTransactionType()
 - ItemStack getItemStack()
 - void setPrice(double)
-- Map getPrices()
+- Map<EcoType, Double> getPrices()
 - double getOriginalPrice()
 - double getPrice()
 - ShopItem getShopItem()
@@ -115,7 +115,7 @@ Type: Class
 Methods:
 - OfflinePlayer getPlayer()
 - BuyPrice updateLimits()
-- Map getPrices()
+- Map<EcoType, Double> getPrices()
 - double getPrice(EcoType)
 - ShopItem getShopItem()
 - int getAmount()
@@ -140,7 +140,7 @@ Type: Class
 Methods:
 - OfflinePlayer getPlayer()
 - SellPrice updateLimits()
-- Map getPrices()
+- Map<EcoType, Double> getPrices()
 - double getPrice(EcoType)
 - ShopItem getShopItem()
 - int getAmount()
@@ -149,11 +149,11 @@ Methods:
 Type: Class
 
 Methods:
-- Map getItems()
+- Map<ShopItem, Integer> getItems()
 - OfflinePlayer getPlayer()
 - SellPrices updateLimits()
 - boolean isEmpty()
-- Map getPrices()
+- Map<EcoType, Double> getPrices()
 - double getPrice(EcoType)
 
 ## Package: me.gypopo.economyshopgui.api.prices
@@ -162,22 +162,22 @@ Methods:
 Type: Class
 
 Methods:
-- List getBuyTypes()
+- List<EcoType> getBuyTypes()
 - boolean isBuyAble()
 - boolean requireAll()
-- Map getBuyPrices(EcoType, int)
-- Map getBuyPrices(EcoType, Player, int)
+- Map<EcoType, Double> getBuyPrices(EcoType, int)
+- Map<EcoType, Double> getBuyPrices(EcoType, Player, int)
 
 ### Class: me.gypopo.economyshopgui.api.prices.AdvancedSellPrice
 Type: Class
 
 Methods:
 - boolean isSellAble()
-- List getSellTypes()
-- Map getSellPrices(EcoType, ItemStack)
-- Map getSellPrices(EcoType, ItemStack, int, int)
-- Map getSellPrices(EcoType, Player, ItemStack)
-- Map getSellPrices(EcoType, Player, ItemStack, int, int)
+- List<EcoType> getSellTypes()
+- Map<EcoType, Double> getSellPrices(EcoType, ItemStack)
+- Map<EcoType, Double> getSellPrices(EcoType, ItemStack, int, int)
+- Map<EcoType, Double> getSellPrices(EcoType, Player, ItemStack)
+- Map<EcoType, Double> getSellPrices(EcoType, Player, ItemStack, int, int)
 - boolean giveAll()
 
 ## Package: me.gypopo.economyshopgui.objects
@@ -214,7 +214,7 @@ Methods:
 Type: Class
 
 Methods:
-- Map getItems()
+- Map<Integer, ItemStack> getItems()
 - int getSize()
 - String getItem(int)
 
@@ -244,16 +244,16 @@ Methods:
 - void openShopSection(Player, boolean, String)
 - void openShopSection(Player, int, boolean)
 - void openShopSection(Player, int, boolean, String)
-- List getClickCommands()
+- List<String> getClickCommands()
 - boolean isCommandItem()
 - boolean isSubSection()
-- Collection getShopItems()
+- Collection<ShopItem> getShopItems()
 - boolean isHidden()
 - ClickAction getClickAction(ClickType)
 - String getSection()
 - ShopType getType()
 - ShopPageItems getShopPageItems(int)
-- List getItemLocs()
+- List<String> getItemLocs()
 - boolean isCloseMenu()
 - int getPages()
 - void reloadItem(String)
