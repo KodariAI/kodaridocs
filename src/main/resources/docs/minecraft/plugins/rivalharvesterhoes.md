@@ -1,4 +1,4 @@
-# RivalHarvesterHoesAPI API Reference
+# RivalHarvesterHoesAPI (2) API Reference
 
 ## Package: me.rivaldev.harvesterhoes
 
@@ -10,16 +10,16 @@ Methods:
 - void setupBentoBox()
 - CacheHandler getCacheHandler()
 - LevelManager getLevelManager()
-- ArrayList getAllEnchants()
+- ArrayList<String> getAllEnchants()
 - void setupShopGUIPlus()
 - void setupAureliumSkills()
 - void generateFiles()
 - void registerPlugins()
 - void openPage(String, Player)
 - void versionDetector()
-- String timeAsStringSmall(long)
+- **static** String timeAsStringSmall(long)
 - boolean is1_20Version()
-- boolean isHoeMaterial(ItemStack)
+- **static** boolean isHoeMaterial(ItemStack)
 - String getFormattedInt(int)
 - void registerCommands()
 - boolean getProtocolLibEnabled()
@@ -32,21 +32,21 @@ Methods:
 - boolean isAboveVersion(String, String)
 - void setupJobs()
 - void setupProtocolLib()
-- String timeAsString(long)
+- **static** String timeAsString(long)
 - SQLManager getSQLManager()
 - void delayedFullInventory(Player)
 - void cacheZoneBlocks()
 - boolean getSuperiorSkyBlockHookIsEnabled()
 - void setupEcoSkills()
-- ArrayList nbtProcEnchants()
+- ArrayList<String> nbtProcEnchants()
 - boolean isDouble(String)
 - NMSManager setupNMS()
 - String extractMinecraftVersion(String)
 - void setupMCMMO()
-- ArrayList enchantBooks()
-- boolean isAHoe(ItemStack)
+- ArrayList<String> enchantBooks()
+- **static** boolean isAHoe(ItemStack)
 - void handleShop(Player, String, String)
-- boolean isHoe(Player)
+- **static** boolean isHoe(Player)
 - boolean getFactionsEnabled()
 - ItemStack addGlow(ItemStack, boolean)
 - void onEnable()
@@ -78,7 +78,7 @@ Methods:
 - boolean isPerPlayerHoe()
 - boolean getQuestsEnabled()
 - EconomyManager getEconomy()
-- ArrayList CapProcEnchants()
+- ArrayList<String> CapProcEnchants()
 - boolean getUltimateCollectionsEnabled()
 - void setupWorldGuard()
 - boolean getWorldGuardEnabled()
@@ -99,9 +99,84 @@ Methods:
 - void setupSuperBoosters()
 - void onLoad()
 - void registerEconomy(EconomyManager)
-- String longToDate(long)
+- **static** String longToDate(long)
 - StandModelLib getStandModelLib()
 - String getFormattedDouble(double)
+
+### Class: me.rivaldev.harvesterhoes.Metrics$AdvancedBarChart
+Type: Class
+Extends: me.rivaldev.harvesterhoes.Metrics$CustomChart
+
+No public methods found
+
+### Class: me.rivaldev.harvesterhoes.Metrics$AdvancedPie
+Type: Class
+Extends: me.rivaldev.harvesterhoes.Metrics$CustomChart
+
+No public methods found
+
+### Class: me.rivaldev.harvesterhoes.Metrics$CustomChart
+Type: Abstract Class
+
+Methods:
+- Metrics$JsonObjectBuilder$JsonObject getRequestJsonObject(BiConsumer<String, Throwable>, boolean)
+
+### Class: me.rivaldev.harvesterhoes.Metrics$DrilldownPie
+Type: Class
+Extends: me.rivaldev.harvesterhoes.Metrics$CustomChart
+
+Methods:
+- Metrics$JsonObjectBuilder$JsonObject getChartData() throws Exception
+
+### Class: me.rivaldev.harvesterhoes.Metrics$JsonObjectBuilder
+Type: Class
+
+Methods:
+- Metrics$JsonObjectBuilder$JsonObject build()
+- Metrics$JsonObjectBuilder appendNull(String)
+- Metrics$JsonObjectBuilder appendField(String, String)
+- Metrics$JsonObjectBuilder appendField(String, int)
+- Metrics$JsonObjectBuilder appendField(String, Metrics$JsonObjectBuilder$JsonObject)
+- Metrics$JsonObjectBuilder appendField(String, String[])
+- Metrics$JsonObjectBuilder appendField(String, int[])
+- Metrics$JsonObjectBuilder appendField(String, Metrics$JsonObjectBuilder$JsonObject[])
+
+### Class: me.rivaldev.harvesterhoes.Metrics$JsonObjectBuilder$JsonObject
+Type: Class
+
+Methods:
+- String toString()
+
+### Class: me.rivaldev.harvesterhoes.Metrics$MetricsBase
+Type: Class
+
+Methods:
+- void shutdown()
+- void addCustomChart(Metrics$CustomChart)
+
+### Class: me.rivaldev.harvesterhoes.Metrics$MultiLineChart
+Type: Class
+Extends: me.rivaldev.harvesterhoes.Metrics$CustomChart
+
+No public methods found
+
+### Class: me.rivaldev.harvesterhoes.Metrics$SimpleBarChart
+Type: Class
+Extends: me.rivaldev.harvesterhoes.Metrics$CustomChart
+
+No public methods found
+
+### Class: me.rivaldev.harvesterhoes.Metrics$SimplePie
+Type: Class
+Extends: me.rivaldev.harvesterhoes.Metrics$CustomChart
+
+No public methods found
+
+### Class: me.rivaldev.harvesterhoes.Metrics$SingleLineChart
+Type: Class
+Extends: me.rivaldev.harvesterhoes.Metrics$CustomChart
+
+No public methods found
 
 ## Package: me.rivaldev.harvesterhoes.api.events
 
@@ -114,7 +189,7 @@ Methods:
 - Player getPlayer()
 - void setBoost(double)
 - HandlerList getHandlers()
-- HandlerList getHandlerList()
+- **static** HandlerList getHandlerList()
 - String getEnchant()
 - String getAbility()
 - double getBoost()
@@ -131,7 +206,7 @@ Methods:
 - Player getPlayer()
 - void setBoost(double)
 - HandlerList getHandlers()
-- HandlerList getHandlerList()
+- **static** HandlerList getHandlerList()
 - double getBoost()
 - void setMultiplier(double)
 - double getMultiplier()
@@ -146,11 +221,11 @@ Methods:
 - Player getPlayer()
 - HandlerList getHandlers()
 - void setItems(double)
-- HandlerList getHandlerList()
-- List getMessage()
+- **static** HandlerList getHandlerList()
+- List<String> getMessage()
 - double getMoney()
 - void setEssence(double)
-- void setMessage(List)
+- V setMessage(List<String>)
 - double getEssence()
 
 ### Class: me.rivaldev.harvesterhoes.api.events.HoeCropBoostEvent
@@ -162,7 +237,7 @@ Methods:
 - Player getPlayer()
 - void setBoost(double)
 - HandlerList getHandlers()
-- HandlerList getHandlerList()
+- **static** HandlerList getHandlerList()
 - double getBoost()
 - void setAmount(double)
 - void setMultiplier(double)
@@ -178,7 +253,7 @@ Methods:
 - Player getPlayer()
 - void setBoost(double)
 - HandlerList getHandlers()
-- HandlerList getHandlerList()
+- **static** HandlerList getHandlerList()
 - String getEnchant()
 - double getBoost()
 - void setMultiplier(double)
@@ -194,7 +269,7 @@ Methods:
 - Player getPlayer()
 - void setBoost(double)
 - HandlerList getHandlers()
-- HandlerList getHandlerList()
+- **static** HandlerList getHandlerList()
 - double getBoost()
 - void setMultiplier(double)
 - double getMultiplier()
@@ -207,7 +282,7 @@ Methods:
 - Player getPlayer()
 - void setBoost(double)
 - HandlerList getHandlers()
-- HandlerList getHandlerList()
+- **static** HandlerList getHandlerList()
 - double getBoost()
 - void setEssence(double)
 - double getEssence()
@@ -221,7 +296,7 @@ Extends: org.bukkit.event.Event
 Methods:
 - Player getPlayer()
 - HandlerList getHandlers()
-- HandlerList getHandlerList()
+- **static** HandlerList getHandlerList()
 - void setEssence(double)
 - double getEssence()
 
@@ -234,7 +309,7 @@ Methods:
 - boolean isGiveToInventory()
 - void setGiveToInventory(boolean)
 - HandlerList getHandlers()
-- HandlerList getHandlerList()
+- **static** HandlerList getHandlerList()
 - ItemStack getItemStack()
 
 ### Class: me.rivaldev.harvesterhoes.api.events.HoeLoreUpdateEvent
@@ -243,11 +318,11 @@ Extends: org.bukkit.event.Event
 
 Methods:
 - Player getPlayer()
-- void setLore(List)
+- V setLore(List<String>)
 - HandlerList getHandlers()
-- HandlerList getHandlerList()
+- **static** HandlerList getHandlerList()
 - ItemStack getItemStack()
-- List getLore()
+- List<String> getLore()
 
 ### Class: me.rivaldev.harvesterhoes.api.events.HoeMenuOpenEvent
 Type: Class
@@ -259,7 +334,7 @@ Methods:
 - boolean isCancelled()
 - void setCancelled(boolean)
 - HandlerList getHandlers()
-- HandlerList getHandlerList()
+- **static** HandlerList getHandlerList()
 
 ### Class: me.rivaldev.harvesterhoes.api.events.HoeMetaPreUpdateEvent
 Type: Class
@@ -269,12 +344,12 @@ Methods:
 - void setName(String)
 - Player getPlayer()
 - String getName()
-- void setLore(List)
+- V setLore(List<String>)
 - HandlerList getHandlers()
-- HandlerList getHandlerList()
+- **static** HandlerList getHandlerList()
 - void setItemStack(ItemStack)
 - ItemStack getItemStack()
-- List getLore()
+- List<String> getLore()
 
 ### Class: me.rivaldev.harvesterhoes.api.events.HoeMoneyReceiveEnchant
 Type: Class
@@ -285,7 +360,7 @@ Methods:
 - Player getPlayer()
 - void setBoost(double)
 - HandlerList getHandlers()
-- HandlerList getHandlerList()
+- **static** HandlerList getHandlerList()
 - double getBoost()
 - double getMoney()
 - void setMultiplier(double)
@@ -298,7 +373,7 @@ Extends: org.bukkit.event.Event
 Methods:
 - Player getPlayer()
 - HandlerList getHandlers()
-- HandlerList getHandlerList()
+- **static** HandlerList getHandlerList()
 - Inventory getInventory()
 
 ### Class: me.rivaldev.harvesterhoes.api.events.HoeXPGainEvent
@@ -312,7 +387,7 @@ Methods:
 - void setBoost(double)
 - double getXP()
 - HandlerList getHandlers()
-- HandlerList getHandlerList()
+- **static** HandlerList getHandlerList()
 - double getBoost()
 - void setXP(double)
 - void setMultiplier(double)
@@ -326,7 +401,7 @@ Methods:
 - Player getPlayer()
 - void setBoost(double)
 - HandlerList getHandlers()
-- HandlerList getHandlerList()
+- **static** HandlerList getHandlerList()
 - double getBoost()
 - void setMultiplier(double)
 - double getMultiplier()
@@ -343,7 +418,7 @@ Methods:
 - int getHoePrestige()
 - void setCancelled(boolean)
 - HandlerList getHandlers()
-- HandlerList getHandlerList()
+- **static** HandlerList getHandlerList()
 - Block getCrop()
 - ItemStack getHoeItem()
 - int getHoeLevel()
@@ -357,7 +432,7 @@ Extends: org.bukkit.event.Event
 Methods:
 - Player getPlayer()
 - HandlerList getHandlers()
-- HandlerList getHandlerList()
+- **static** HandlerList getHandlerList()
 - void setAmount(long)
 - long getAmount()
 
@@ -386,7 +461,7 @@ Methods:
 - Player getPlayer()
 - void setBoost(double)
 - HandlerList getHandlers()
-- HandlerList getHandlerList()
+- **static** HandlerList getHandlerList()
 - double getBoost()
 - void setMultiplier(double)
 - double getMultiplier()
@@ -398,19 +473,19 @@ Type: Class
 Implements: org.bukkit.event.Listener
 
 Methods:
-- void executeCommands(Material, Player, long, long)
-- void loadRewards()
+- **static** void executeCommands(Material, Player, long, long)
+- **static** void loadRewards()
 - void listen(RivalBlockBreakEvent)
 
 ### Class: me.rivaldev.harvesterhoes.customcommands.CommandReward
 Type: Class
 
 Methods:
-- List getRegions()
+- List<String> getRegions()
 - double getChance()
 - int getHoePrestigeRequirement()
 - int getHoeLevelRequirement()
-- List getCommands()
+- List<String> getCommands()
 
 ## Package: me.rivaldev.harvesterhoes.ecomanager
 
