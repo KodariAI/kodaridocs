@@ -67,7 +67,7 @@ jobs:
             docker run -d --name kodari-docs \
               --network kodari-net \
               --network-alias docs \
-              -e ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }}
+              -e ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }} \
               --restart unless-stopped \
               --memory="512m" \
               --memory-swap="512m" \
