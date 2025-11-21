@@ -1,22 +1,22 @@
-# ModernHomes-API-Complete-Documentation
+# ModernHome-API-Complete-Documentation
 
-**Plugin:** ModernHomes
+**Plugin:** ModernHome
 **Package:** me.serbob.commons.api
 
 ## Plugin Setup
 
 ### Plugin.yml Configuration
-softdepend: [ModernHomes]
+softdepend: [ModernHome]
 
 ## Getting Started
 
-### Check if ModernHomes is Present
+### Check if ModernHome is Present
 ```java
-public static boolean hasModernHomes = false;
-Plugin modernHomes;
-if(modernHomes = Bukkit.getPluginManager().getPlugin("ModernHomes") != null && modernHomes.isEnabled()) {
-    getLogger().info("[YourPlugin] ModernHomes hooked!");
-    hasModernHomes = true;
+public static boolean hasModernHome = false;
+Plugin ModernHome;
+if(ModernHome = Bukkit.getPluginManager().getPlugin("ModernHome") != null && ModernHome.isEnabled()) {
+    getLogger().info("[YourPlugin] ModernHome hooked!");
+    hasModernHome = true;
 }
 ```
 
