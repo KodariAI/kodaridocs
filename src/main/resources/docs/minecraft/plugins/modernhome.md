@@ -48,9 +48,9 @@ for(Map.Entry<Integer, HomeData> entry : homes.entrySet()) {
 }
 ```
 
-### Set Home for Player
+### Set Home with Auto Index
 ```java
-// Set home at player's current location
+// Set home at player's current location (auto-assigns next available index)
 Player player = event.getPlayer();
 String homeName = "spawn";
 boolean success = ModernHomeAPI.getInstance().setHome(player, homeName);
@@ -60,26 +60,66 @@ if(success) {
 } else {
     player.sendMessage("Failed to set home - check limits or blacklisted worlds");
 }
-```
 
-### Set Home at Specific Location
-```java
+// Set home at specific location with auto index
 Location customLocation = new Location(world, 100, 64, 100);
 boolean success = ModernHomeAPI.getInstance().setHome(player, "base", customLocation);
 ```
 
+### Set Home at Specific Index
+```java
+// Set home at specific index slot
+int index = 3;
+String homeName = "farm";
+boolean success = ModernHomeAPI.getInstance().setHome(player, index, homeName);
+
+// Set home at specific index and location
+Location location = new Location(world, 200, 70, 300);
+boolean success = ModernHomeAPI.getInstance().setHome(player, index, homeName, location);
+
+// This will overwrite existing home at index if one exists
+```
+
 ### Force Set Home (Bypass Restrictions)
 ```java
-// Force set home ignoring limits and restrictions
+// Force set home with auto index
 boolean success = ModernHomeAPI.getInstance().setHomeForce(player, "admin_home");
 
-// Force set at specific location
+// Force set at specific location with auto index
 Location loc = new Location(world, 0, 100, 0);
 ModernHomeAPI.getInstance().setHomeForce(player, "forced", loc);
 
-// Force set for offline player by UUID
+// Force set at specific index
+int index = 5;
+ModernHomeAPI.getInstance().setHomeForce(player, index, "forced_index");
+
+// Force set at specific index and location
+ModernHomeAPI.getInstance().setHomeForce(player, index, "forced_index", loc);
+
+// Force set for offline player by UUID with auto index
 UUID targetUUID = UUID.fromString("uuid-here");
 ModernHomeAPI.getInstance().setHomeForce(targetUUID, "offline_home", location);
+
+// Force set for offline player at specific index
+ModernHomeAPI.getInstance().setHomeForce(targetUUID, 2, "offline_indexed", location);
+```
+
+### Delete Home
+```java
+// Delete home by index for online player
+Player player = event.getPlayer();
+int homeIndex = 1;
+boolean success = ModernHomeAPI.getInstance().deleteHome(player, homeIndex);
+
+if(success) {
+    player.sendMessage("Home deleted successfully!");
+} else {
+    player.sendMessage("Home not found or invalid index!");
+}
+
+// Delete home for offline player by UUID
+UUID targetUUID = UUID.fromString("uuid-here");
+boolean deleted = ModernHomeAPI.getInstance().deleteHome(targetUUID, 2);
 ```
 
 ### Working with HomeData
@@ -102,42 +142,36 @@ for(HomeData home : homes.values()) {
 }
 ```
 
-### Create Custom ImaginaryLocation
+### Home Slot Management
 ```java
-// From coordinates
-ImaginaryLocation loc1 = new ImaginaryLocation("world", 100, 64, 200);
-
-// From Bukkit Location
-Location bukkitLoc = player.getLocation();
-ImaginaryLocation loc2 = new ImaginaryLocation(bukkitLoc);
-
-// Convert back to Bukkit Location
-Location converted = loc2.adaptToBukkitLocation();
-```
-
-### Check if Home Can Be Set
-```java
-public boolean canSetHome(Player player, Location location) {
-    // This example shows the checks that setHome() performs internally
+public class HomeSlotManager {
     
-    // Check height limit
-    if(location.getY() > getHeightLimit()) {
-        return false;
+    // Replace home at specific slot
+    public void replaceHomeAtSlot(Player player, int slot, String newName, Location newLocation) {
+        // This will overwrite any existing home at this slot
+        boolean success = ModernHomeAPI.getInstance().setHome(player, slot, newName, newLocation);
+        
+        if(success) {
+            player.sendMessage("Home at slot " + slot + " replaced!");
+        }
     }
     
-    // Check blacklisted worlds
-    if(isBlacklistedWorld(location.getWorld().getName())) {
-        return false;
+    // Find first empty slot and set home
+    public void setHomeAtFirstEmpty(Player player, String homeName) {
+        Map<Integer, HomeData> homes = ModernHomeAPI.getInstance().getHomes(player.getUniqueId());
+        
+        // Find first empty slot (1-based index)
+        for(int i = 1; i <= 10; i++) { // Assuming max 10 homes
+            if(!homes.containsKey(i)) {
+                if(ModernHomeAPI.getInstance().setHome(player, i, homeName)) {
+                    player.sendMessage("Home set at slot " + i);
+                    return;
+                }
+            }
+        }
+        
+        player.sendMessage("No empty slots available!");
     }
-    
-    // Check player's home limit
-    Map<Integer, HomeData> currentHomes = ModernHomeAPI.getInstance().getHomes(player.getUniqueId());
-    int maxHomes = getMaxHomesForPlayer(player);
-    if(currentHomes.size() >= maxHomes) {
-        return false;
-    }
-    
-    return true;
 }
 ```
 
@@ -152,15 +186,50 @@ public class HomeCommands implements CommandExecutor {
         
         if(label.equalsIgnoreCase("sethome")) {
             if(args.length < 1) {
-                player.sendMessage("Usage: /sethome <name>");
+                player.sendMessage("Usage: /sethome <name> [index]");
                 return true;
             }
             
             String homeName = args[0];
-            if(ModernHomeAPI.getInstance().setHome(player, homeName)) {
-                player.sendMessage("Home '" + homeName + "' set!");
+            
+            if(args.length >= 2) {
+                // Set at specific index
+                try {
+                    int index = Integer.parseInt(args[1]);
+                    if(ModernHomeAPI.getInstance().setHome(player, index, homeName)) {
+                        player.sendMessage("Home '" + homeName + "' set at slot " + index);
+                    } else {
+                        player.sendMessage("Failed to set home at slot " + index);
+                    }
+                } catch(NumberFormatException e) {
+                    player.sendMessage("Invalid index!");
+                }
             } else {
-                player.sendMessage("Failed to set home!");
+                // Auto-assign index
+                if(ModernHomeAPI.getInstance().setHome(player, homeName)) {
+                    player.sendMessage("Home '" + homeName + "' set!");
+                } else {
+                    player.sendMessage("Failed to set home!");
+                }
+            }
+            return true;
+        }
+        
+        if(label.equalsIgnoreCase("delhome")) {
+            if(args.length < 1) {
+                player.sendMessage("Usage: /delhome <index>");
+                return true;
+            }
+            
+            try {
+                int index = Integer.parseInt(args[0]);
+                if(ModernHomeAPI.getInstance().deleteHome(player, index)) {
+                    player.sendMessage("Home deleted!");
+                } else {
+                    player.sendMessage("Home not found!");
+                }
+            } catch(NumberFormatException e) {
+                player.sendMessage("Invalid home index!");
             }
             return true;
         }
@@ -175,7 +244,7 @@ public class HomeCommands implements CommandExecutor {
             
             player.sendMessage("Your homes:");
             for(HomeData home : homes.values()) {
-                player.sendMessage("- " + home.getNameFancy() + " at " + 
+                player.sendMessage("- [" + home.getIndex() + "] " + home.getNameFancy() + " at " + 
                     home.getLocation().getX() + ", " + 
                     home.getLocation().getY() + ", " + 
                     home.getLocation().getZ());
@@ -184,6 +253,40 @@ public class HomeCommands implements CommandExecutor {
         }
         
         return false;
+    }
+}
+```
+
+### Admin Home Management
+```java
+public class AdminHomeManager {
+    
+    public void setHomeForOfflinePlayer(String playerName, int index, String homeName, Location location) {
+        OfflinePlayer target = Bukkit.getOfflinePlayer(playerName);
+        UUID targetUUID = target.getUniqueId();
+        
+        // Force set home at specific index for offline player
+        boolean success = ModernHomeAPI.getInstance().setHomeForce(targetUUID, index, homeName, location);
+        
+        if(success) {
+            Bukkit.getLogger().info("Home set at index " + index + " for " + playerName);
+        }
+    }
+    
+    public void reorganizeHomes(Player player) {
+        Map<Integer, HomeData> homes = ModernHomeAPI.getInstance().getHomes(player.getUniqueId());
+        
+        // Delete all homes
+        for(int index : homes.keySet()) {
+            ModernHomeAPI.getInstance().deleteHome(player, index);
+        }
+        
+        // Re-add homes with sequential indexes
+        int newIndex = 1;
+        for(HomeData home : homes.values()) {
+            Location loc = home.getLocation().adaptToBukkitLocation();
+            ModernHomeAPI.getInstance().setHomeForce(player, newIndex++, home.getName(), loc);
+        }
     }
 }
 ```
@@ -198,11 +301,18 @@ Methods:
 - **static** ModernHomeAPI getInstance() - Get API instance
 - Map<Integer, HomeData> getHomes(UUID uuid) - Get homes by player UUID
 - Map<Integer, HomeData> getHomes(OfflinePlayer offlinePlayer) - Get homes by offline player
-- boolean setHome(Player player, String homeName) - Set home at player location
-- boolean setHome(Player player, String homeName, Location location) - Set home at specific location
-- boolean setHomeForce(Player player, String homeName) - Force set home at player location
-- boolean setHomeForce(Player player, String homeName, Location location) - Force set home at location
-- boolean setHomeForce(UUID uuid, String homeName, Location location) - Force set home for UUID
+- boolean setHome(Player player, String homeName) - Set home at player location with auto index
+- boolean setHome(Player player, String homeName, Location location) - Set home at location with auto index
+- boolean setHome(Player player, int index, String homeName) - Set home at player location with specific index
+- boolean setHome(Player player, int index, String homeName, Location location) - Set home at location with specific index
+- boolean setHomeForce(Player player, String homeName) - Force set home at player location with auto index
+- boolean setHomeForce(Player player, String homeName, Location location) - Force set home at location with auto index
+- boolean setHomeForce(UUID uuid, String homeName, Location location) - Force set home for UUID with auto index
+- boolean setHomeForce(Player player, int index, String homeName) - Force set home at player location with specific index
+- boolean setHomeForce(Player player, int index, String homeName, Location location) - Force set home at location with specific index
+- boolean setHomeForce(UUID uuid, int index, String homeName, Location location) - Force set home for UUID with specific index
+- boolean deleteHome(Player player, int index) - Delete home by index for player
+- boolean deleteHome(UUID uuid, int index) - Delete home by index for UUID
 
 ### HomeData Class
 Package: me.serbob.commons.api.util.HomeData
@@ -247,21 +357,36 @@ Methods:
 
 ### Return Values and Validation
 
-#### setHome() Validation Checks:
+#### setHome() Validation (Auto Index):
 1. Height limit check - Returns false if Y > configured limit
 2. Blacklisted worlds check - Returns false if world is blacklisted
 3. Home limit check - Returns false if player reached max homes
 4. WorldGuard region check - Returns false if not allowed in region
 
+#### setHome() Validation (Specific Index):
+1. Index validation - Returns false if index < 1
+2. Height limit check - Returns false if Y > configured limit
+3. Blacklisted worlds check - Returns false if world is blacklisted
+4. Index limit check - Returns false if index > max homes for player
+5. WorldGuard region check - Returns false if not allowed in region
+
 #### setHomeForce() Behavior:
-- Bypasses all validation checks
-- Always creates home if player data exists
-- Returns false only if player data cannot be found (for UUID method)
+- Auto index version: Bypasses all validation checks
+- Specific index version: Only validates index >= 1
+- Returns false only if player data cannot be found (for UUID method) or index < 1
+
+#### deleteHome() Validation:
+- Returns false if index < 1 (invalid index)
+- Returns false if player data not found
+- Returns false if home at index doesn't exist
+- Returns true only if home successfully removed and saved
 
 ### Home Slot Assignment
-- Automatically assigns next available slot number
-- Fills gaps in slot numbers if homes were deleted
-- Starts from slot 1
+- Auto index: Automatically assigns next available slot number
+- Specific index: Sets home at exact index (overwrites if exists)
+- Fills gaps in slot numbers if homes were deleted (auto index only)
+- Indexes start from 1
+- Indexes must be >= 1 for valid homes
 
 ### Server ID Tracking
 - Each home stores the server ID where it was created
