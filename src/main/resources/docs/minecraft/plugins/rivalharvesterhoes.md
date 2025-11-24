@@ -1,4 +1,4 @@
-# RivalHarvesterHoesAPI (2) API Reference
+# RivalHarvesterHoesAPI (3) API Reference
 
 ## Package: me.rivaldev.harvesterhoes
 
@@ -184,63 +184,75 @@ No public methods found
 Type: Class
 Extends: org.bukkit.event.Event
 
+Constructors:
+- HoeAbilityModifyChance(Player player, HarvesterHoeObject object, String enchant, double amount)
+
 Methods:
 - HarvesterHoeObject getCache()
 - Player getPlayer()
-- void setBoost(double)
+- void setBoost(double amount)
 - HandlerList getHandlers()
 - **static** HandlerList getHandlerList()
 - String getEnchant()
 - String getAbility()
 - double getBoost()
-- void setMultiplier(double)
+- void setMultiplier(double amount)
 - double getMultiplier()
 
 ### Class: me.rivaldev.harvesterhoes.api.events.HoeAbilityProcBoostEvent
 Type: Class
 Extends: org.bukkit.event.Event
 
+Constructors:
+- HoeAbilityProcBoostEvent(Player player, HarvesterHoeObject itemStack, double amount, long prestige)
+
 Methods:
 - long getPrestige()
 - HarvesterHoeObject getCache()
 - Player getPlayer()
-- void setBoost(double)
+- void setBoost(double amount)
 - HandlerList getHandlers()
 - **static** HandlerList getHandlerList()
 - double getBoost()
-- void setMultiplier(double)
+- void setMultiplier(double amount)
 - double getMultiplier()
 
 ### Class: me.rivaldev.harvesterhoes.api.events.HoeAutoSellEvent
 Type: Class
 Extends: org.bukkit.event.Event
 
+Constructors:
+- HoeAutoSellEvent(Player player, List<String> message, double essence, double money, double items)
+
 Methods:
 - double getItems()
-- void setMoney(double)
+- void setMoney(double money)
 - Player getPlayer()
 - HandlerList getHandlers()
-- void setItems(double)
+- void setItems(double items)
 - **static** HandlerList getHandlerList()
 - List<String> getMessage()
 - double getMoney()
-- void setEssence(double)
-- V setMessage(List<String>)
+- void setEssence(double essence)
+- V setMessage(List<String> message)
 - double getEssence()
 
 ### Class: me.rivaldev.harvesterhoes.api.events.HoeCropBoostEvent
 Type: Class
 Extends: org.bukkit.event.Event
 
+Constructors:
+- HoeCropBoostEvent(Player player, double amount, double boost, HarvesterHoeObject cache)
+
 Methods:
 - HarvesterHoeObject getCache()
 - Player getPlayer()
-- void setBoost(double)
+- void setBoost(double boost)
 - HandlerList getHandlers()
 - **static** HandlerList getHandlerList()
 - double getBoost()
-- void setAmount(double)
-- void setMultiplier(double)
+- void setAmount(double amount)
+- void setMultiplier(double boost)
 - double getMultiplier()
 - double getAmount()
 
@@ -248,66 +260,81 @@ Methods:
 Type: Class
 Extends: org.bukkit.event.Event
 
+Constructors:
+- HoeEnchantModifyChance(Player player, HarvesterHoeObject object, String enchant, double amount)
+
 Methods:
 - HarvesterHoeObject getCache()
 - Player getPlayer()
-- void setBoost(double)
+- void setBoost(double amount)
 - HandlerList getHandlers()
 - **static** HandlerList getHandlerList()
 - String getEnchant()
 - double getBoost()
-- void setMultiplier(double)
+- void setMultiplier(double amount)
 - double getMultiplier()
 
 ### Class: me.rivaldev.harvesterhoes.api.events.HoeEnchantProcBoostEvent
 Type: Class
 Extends: org.bukkit.event.Event
 
+Constructors:
+- HoeEnchantProcBoostEvent(Player player, HarvesterHoeObject itemStack, double amount, long prestige)
+
 Methods:
 - long getPrestige()
 - HarvesterHoeObject getCache()
 - Player getPlayer()
-- void setBoost(double)
+- void setBoost(double amount)
 - HandlerList getHandlers()
 - **static** HandlerList getHandlerList()
 - double getBoost()
-- void setMultiplier(double)
+- void setMultiplier(double amount)
 - double getMultiplier()
 
 ### Class: me.rivaldev.harvesterhoes.api.events.HoeEssenceReceiveEnchantEvent
 Type: Class
 Extends: org.bukkit.event.Event
 
+Constructors:
+- HoeEssenceReceiveEnchantEvent(Player player, double amount, double boost)
+
 Methods:
 - Player getPlayer()
-- void setBoost(double)
+- void setBoost(double boost)
 - HandlerList getHandlers()
 - **static** HandlerList getHandlerList()
 - double getBoost()
-- void setEssence(double)
+- void setEssence(double amount)
 - double getEssence()
-- void setMultiplier(double)
+- void setMultiplier(double boost)
 - double getMultiplier()
 
 ### Class: me.rivaldev.harvesterhoes.api.events.HoeEssenceReceivePreEnchantEvent
 Type: Class
 Extends: org.bukkit.event.Event
 
+Constructors:
+- HoeEssenceReceivePreEnchantEvent(Player player, double amount)
+
 Methods:
 - Player getPlayer()
 - HandlerList getHandlers()
 - **static** HandlerList getHandlerList()
-- void setEssence(double)
+- void setEssence(double amount)
 - double getEssence()
 
 ### Class: me.rivaldev.harvesterhoes.api.events.HoeItemReceiveEvent
 Type: Class
 Extends: org.bukkit.event.Event
 
+Constructors:
+- HoeItemReceiveEvent(Player player, Block block, ItemStack itemStack, boolean shouldGive)
+
 Methods:
 - Player getPlayer()
 - boolean isGiveToInventory()
-- void setGiveToInventory(boolean)
+- void setGiveToInventory(boolean shouldGive)
 - HandlerList getHandlers()
 - **static** HandlerList getHandlerList()
 - ItemStack getItemStack()
@@ -316,9 +343,12 @@ Methods:
 Type: Class
 Extends: org.bukkit.event.Event
 
+Constructors:
+- HoeLoreUpdateEvent(Player player, List<String> lore, ItemStack itemStack)
+
 Methods:
 - Player getPlayer()
-- V setLore(List<String>)
+- V setLore(List<String> lore)
 - HandlerList getHandlers()
 - **static** HandlerList getHandlerList()
 - ItemStack getItemStack()
@@ -329,10 +359,13 @@ Type: Class
 Extends: org.bukkit.event.Event
 Implements: org.bukkit.event.Cancellable
 
+Constructors:
+- HoeMenuOpenEvent(Player player)
+
 Methods:
 - Player getPlayer()
 - boolean isCancelled()
-- void setCancelled(boolean)
+- void setCancelled(boolean isCancelled)
 - HandlerList getHandlers()
 - **static** HandlerList getHandlerList()
 
@@ -340,14 +373,17 @@ Methods:
 Type: Class
 Extends: org.bukkit.event.Event
 
+Constructors:
+- HoeMetaPreUpdateEvent(Player player, List<String> lore, String name, ItemStack itemStack)
+
 Methods:
-- void setName(String)
+- void setName(String name)
 - Player getPlayer()
 - String getName()
-- V setLore(List<String>)
+- V setLore(List<String> lore)
 - HandlerList getHandlers()
 - **static** HandlerList getHandlerList()
-- void setItemStack(ItemStack)
+- void setItemStack(ItemStack itemStack)
 - ItemStack getItemStack()
 - List<String> getLore()
 
@@ -355,20 +391,26 @@ Methods:
 Type: Class
 Extends: org.bukkit.event.Event
 
+Constructors:
+- HoeMoneyReceiveEnchant(Player player, double amount, double boost)
+
 Methods:
-- void setMoney(double)
+- void setMoney(double amount)
 - Player getPlayer()
-- void setBoost(double)
+- void setBoost(double boost)
 - HandlerList getHandlers()
 - **static** HandlerList getHandlerList()
 - double getBoost()
 - double getMoney()
-- void setMultiplier(double)
+- void setMultiplier(double boost)
 - double getMultiplier()
 
 ### Class: me.rivaldev.harvesterhoes.api.events.HoeUpgradeMenuOpen
 Type: Class
 Extends: org.bukkit.event.Event
+
+Constructors:
+- HoeUpgradeMenuOpen(Player player, Inventory inventory)
 
 Methods:
 - Player getPlayer()
@@ -380,30 +422,36 @@ Methods:
 Type: Class
 Extends: org.bukkit.event.Event
 
+Constructors:
+- HoeXPGainEvent(Player player, HarvesterHoeObject itemStack, double amount, double boost, long level)
+
 Methods:
 - long getLevel()
 - HarvesterHoeObject getCache()
 - Player getPlayer()
-- void setBoost(double)
+- void setBoost(double amount)
 - double getXP()
 - HandlerList getHandlers()
 - **static** HandlerList getHandlerList()
 - double getBoost()
-- void setXP(double)
-- void setMultiplier(double)
+- void setXP(double amount)
+- void setMultiplier(double boost)
 - double getMultiplier()
 
 ### Class: me.rivaldev.harvesterhoes.api.events.KeyFinderChanceBoostEvent
 Type: Class
 Extends: org.bukkit.event.Event
 
+Constructors:
+- KeyFinderChanceBoostEvent(Player player, double amount)
+
 Methods:
 - Player getPlayer()
-- void setBoost(double)
+- void setBoost(double amount)
 - HandlerList getHandlers()
 - **static** HandlerList getHandlerList()
 - double getBoost()
-- void setMultiplier(double)
+- void setMultiplier(double amount)
 - double getMultiplier()
 
 ### Class: me.rivaldev.harvesterhoes.api.events.RivalBlockBreakEvent
@@ -411,29 +459,35 @@ Type: Class
 Extends: org.bukkit.event.Event
 Implements: org.bukkit.event.Cancellable
 
+Constructors:
+- RivalBlockBreakEvent(Player player, Block crop, int amount, int hoe_level, int hoe_prestige, ItemStack hoeItem, Material material)
+
 Methods:
 - Material getMaterial()
 - Player getPlayer()
 - boolean isCancelled()
 - int getHoePrestige()
-- void setCancelled(boolean)
+- void setCancelled(boolean isCancelled)
 - HandlerList getHandlers()
 - **static** HandlerList getHandlerList()
 - Block getCrop()
 - ItemStack getHoeItem()
 - int getHoeLevel()
-- void setAmount(int)
+- void setAmount(int amount)
 - int getAmount()
 
 ### Class: me.rivaldev.harvesterhoes.api.events.RivalEXPFinderReceive
 Type: Class
 Extends: org.bukkit.event.Event
 
+Constructors:
+- RivalEXPFinderReceive(Player player, long amount)
+
 Methods:
 - Player getPlayer()
 - HandlerList getHandlers()
 - **static** HandlerList getHandlerList()
-- void setAmount(long)
+- void setAmount(long amount)
 - long getAmount()
 
 ### Class: me.rivaldev.harvesterhoes.api.events.RivalHarvesterHoesAPI
@@ -441,29 +495,32 @@ Type: Class
 
 Methods:
 - Material getMaterial()
-- void setEnchants(ItemStack, Player, String)
-- void registerEconomyManager(EconomyManager)
-- void removeEssence(OfflinePlayer, double)
-- void setCropBalance(OfflinePlayer, long, String)
-- void setCropBalance(OfflinePlayer, long, Material)
-- boolean isHoe(Player)
-- long getCropBalance(OfflinePlayer, String)
-- void giveEssence(OfflinePlayer, double)
-- double getEssence(OfflinePlayer)
-- void openMainMenu(Player)
-- void applyMetaToHoe(ItemStack, Player)
+- void setEnchants(ItemStack item, Player player, String data)
+- void registerEconomyManager(EconomyManager eco)
+- void removeEssence(OfflinePlayer player, double value)
+- void setCropBalance(OfflinePlayer player, long value, String)
+- void setCropBalance(OfflinePlayer player, long value, Material)
+- boolean isHoe(Player player)
+- long getCropBalance(OfflinePlayer player, String material)
+- void giveEssence(OfflinePlayer player, double value)
+- double getEssence(OfflinePlayer player)
+- void openMainMenu(Player player)
+- void applyMetaToHoe(ItemStack itemStack, Player player)
 
 ### Class: me.rivaldev.harvesterhoes.api.events.SpawnerFinderChanceBoostEvent
 Type: Class
 Extends: org.bukkit.event.Event
 
+Constructors:
+- SpawnerFinderChanceBoostEvent(Player player, double amount)
+
 Methods:
 - Player getPlayer()
-- void setBoost(double)
+- void setBoost(double amount)
 - HandlerList getHandlers()
 - **static** HandlerList getHandlerList()
 - double getBoost()
-- void setMultiplier(double)
+- void setMultiplier(double amount)
 - double getMultiplier()
 
 ## Package: me.rivaldev.harvesterhoes.customcommands

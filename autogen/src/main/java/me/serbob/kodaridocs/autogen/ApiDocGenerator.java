@@ -82,7 +82,7 @@ public class ApiDocGenerator {
                 try (InputStream is = jar.getInputStream(entry)) {
                     ClassReader reader = new ClassReader(is);
                     ClassInfoVisitor visitor = new ClassInfoVisitor();
-                    reader.accept(visitor, ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
+                    reader.accept(visitor, 0);
 
                     if (visitor.info.isPublic) {
                         classes.add(visitor.info);
@@ -170,6 +170,18 @@ public class ApiDocGenerator {
             markdown.append("\n");
         }
 
+        List<MethodInfo> validConstructors = clazz.constructors.stream()
+                .filter(this::hasValidParameterNames)
+                .collect(Collectors.toList());
+
+        if (!validConstructors.isEmpty()) {
+            markdown.append("Constructors:\n");
+            for (MethodInfo constructor : validConstructors) {
+                markdown.append("- ").append(formatConstructor(constructor, clazz.simpleName)).append("\n");
+            }
+            markdown.append("\n");
+        }
+
         if (clazz.methods.isEmpty()) {
             markdown.append("No public methods found\n\n");
             return;
@@ -199,6 +211,74 @@ public class ApiDocGenerator {
         return "Class";
     }
 
+    private boolean hasValidParameterNames(MethodInfo method) {
+        if (method.parameterNames.isEmpty()) return false;
+
+        int validNames = 0;
+        for (String name : method.parameterNames) {
+            if (name != null && !isGeneratedParamName(name)) {
+                validNames++;
+            }
+        }
+
+        return validNames > 0;
+    }
+
+    private boolean isGeneratedParamName(String name) {
+        if (name.startsWith("param") || name.startsWith("arg")) {
+            String suffix = name.replaceFirst("^(param|arg)", "");
+            if (suffix.matches("\\d+") ||
+                    suffix.matches("[A-Z][a-z]+\\d*") ||
+                    suffix.matches("[a-z]+\\d+")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private String formatConstructor(MethodInfo constructor, String className) {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(className);
+        sb.append("(");
+
+        for (int i = 0; i < constructor.parameterTypes.size(); i++) {
+            if (i > 0) sb.append(", ");
+
+            String paramType;
+            if (i < constructor.parameterTypeSignatures.size() && constructor.parameterTypeSignatures.get(i) != null) {
+                String paramSig = constructor.parameterTypeSignatures.get(i);
+                if (paramSig.startsWith("L") || paramSig.startsWith("[")) {
+                    paramType = simplifyGenericSignature(paramSig);
+                } else {
+                    paramType = typeToSimpleName(paramSig);
+                }
+            } else {
+                paramType = typeToSimpleName(constructor.parameterTypes.get(i));
+            }
+
+            sb.append(paramType);
+
+            if (i < constructor.parameterNames.size() && constructor.parameterNames.get(i) != null) {
+                String paramName = constructor.parameterNames.get(i);
+                if (!isGeneratedParamName(paramName)) {
+                    sb.append(" ").append(paramName);
+                }
+            }
+        }
+
+        sb.append(")");
+
+        if (!constructor.exceptions.isEmpty()) {
+            sb.append(" throws ");
+            sb.append(constructor.exceptions.stream()
+                    .map(this::typeToSimpleName)
+                    .collect(Collectors.joining(", ")));
+        }
+
+        return sb.toString();
+    }
+
     private String formatMethod(MethodInfo method) {
         StringBuilder sb = new StringBuilder();
 
@@ -216,17 +296,30 @@ public class ApiDocGenerator {
         sb.append(method.name);
         sb.append("(");
 
+        boolean includeNames = hasValidParameterNames(method);
+
         for (int i = 0; i < method.parameterTypes.size(); i++) {
             if (i > 0) sb.append(", ");
+
+            String paramType;
             if (i < method.parameterTypeSignatures.size() && method.parameterTypeSignatures.get(i) != null) {
                 String paramSig = method.parameterTypeSignatures.get(i);
                 if (paramSig.startsWith("L") || paramSig.startsWith("[")) {
-                    sb.append(simplifyGenericSignature(paramSig));
+                    paramType = simplifyGenericSignature(paramSig);
                 } else {
-                    sb.append(typeToSimpleName(paramSig));
+                    paramType = typeToSimpleName(paramSig);
                 }
             } else {
-                sb.append(typeToSimpleName(method.parameterTypes.get(i)));
+                paramType = typeToSimpleName(method.parameterTypes.get(i));
+            }
+
+            sb.append(paramType);
+
+            if (includeNames && i < method.parameterNames.size() && method.parameterNames.get(i) != null) {
+                String paramName = method.parameterNames.get(i);
+                if (!isGeneratedParamName(paramName)) {
+                    sb.append(" ").append(paramName);
+                }
             }
         }
 
@@ -356,27 +449,51 @@ public class ApiDocGenerator {
         @Override
         public MethodVisitor visitMethod(int access, String name, String descriptor,
                                          String signature, String[] exceptions) {
-            if ((access & Opcodes.ACC_PUBLIC) != 0 && !name.equals("<init>") && !name.equals("<clinit>")) {
-                MethodInfo method = new MethodInfo();
-                method.name = name;
-                method.descriptor = descriptor;
-                method.isStatic = (access & Opcodes.ACC_STATIC) != 0;
+            if ((access & Opcodes.ACC_PUBLIC) != 0) {
+                if (name.equals("<init>")) {
+                    MethodInfo constructor = new MethodInfo();
+                    constructor.name = name;
+                    constructor.descriptor = descriptor;
+                    constructor.isStatic = false;
 
-                Type methodType = Type.getMethodType(descriptor);
-                method.returnType = methodType.getReturnType().getDescriptor();
-                for (Type arg : methodType.getArgumentTypes()) {
-                    method.parameterTypes.add(arg.getDescriptor());
+                    Type methodType = Type.getMethodType(descriptor);
+                    for (Type arg : methodType.getArgumentTypes()) {
+                        constructor.parameterTypes.add(arg.getDescriptor());
+                    }
+
+                    if (signature != null) {
+                        parseMethodSignature(signature, constructor);
+                    }
+
+                    if (exceptions != null) {
+                        constructor.exceptions.addAll(Arrays.asList(exceptions));
+                    }
+
+                    info.constructors.add(constructor);
+                    return new ConstructorAnalyzer(constructor, info.fields);
+                } else if (!name.equals("<clinit>")) {
+                    MethodInfo method = new MethodInfo();
+                    method.name = name;
+                    method.descriptor = descriptor;
+                    method.isStatic = (access & Opcodes.ACC_STATIC) != 0;
+
+                    Type methodType = Type.getMethodType(descriptor);
+                    method.returnType = methodType.getReturnType().getDescriptor();
+                    for (Type arg : methodType.getArgumentTypes()) {
+                        method.parameterTypes.add(arg.getDescriptor());
+                    }
+
+                    if (signature != null) {
+                        parseMethodSignature(signature, method);
+                    }
+
+                    if (exceptions != null) {
+                        method.exceptions.addAll(Arrays.asList(exceptions));
+                    }
+
+                    info.methods.add(method);
+                    return new ParameterNameVisitor(method, method.isStatic);
                 }
-
-                if (signature != null) {
-                    parseMethodSignature(signature, method);
-                }
-
-                if (exceptions != null) {
-                    method.exceptions.addAll(Arrays.asList(exceptions));
-                }
-
-                info.methods.add(method);
             }
             return null;
         }
@@ -446,10 +563,113 @@ public class ApiDocGenerator {
         @Override
         public FieldVisitor visitField(int access, String name, String descriptor,
                                        String signature, Object value) {
+            info.fields.put(name, descriptor);
             if (info.isEnum && (access & Opcodes.ACC_ENUM) != 0) {
                 info.enumConstants.add(name);
             }
             return null;
+        }
+    }
+
+    private static class ConstructorAnalyzer extends MethodVisitor {
+        private final MethodInfo constructor;
+        private final Map<String, String> classFields;
+        private int lastLoadedVar = -1;
+        private final Map<Integer, Integer> varIndexToParamIndex = new HashMap<>();
+
+        public ConstructorAnalyzer(MethodInfo constructor, Map<String, String> classFields) {
+            super(Opcodes.ASM9);
+            this.constructor = constructor;
+            this.classFields = classFields;
+
+            int varIndex = 1;
+            for (int i = 0; i < constructor.parameterTypes.size(); i++) {
+                varIndexToParamIndex.put(varIndex, i);
+                String type = constructor.parameterTypes.get(i);
+                if (type.equals("J") || type.equals("D")) {
+                    varIndex += 2;
+                } else {
+                    varIndex += 1;
+                }
+            }
+        }
+
+        @Override
+        public void visitParameter(String name, int access) {
+            constructor.parameterNames.add(name);
+        }
+
+        @Override
+        public void visitLocalVariable(String name, String descriptor, String signature, Label start, Label end, int index) {
+            if (index == 0) return;
+
+            Integer paramIndex = varIndexToParamIndex.get(index);
+            if (paramIndex != null) {
+                while (constructor.parameterNames.size() <= paramIndex) {
+                    constructor.parameterNames.add(null);
+                }
+                if (constructor.parameterNames.get(paramIndex) == null) {
+                    constructor.parameterNames.set(paramIndex, name);
+                }
+            }
+        }
+
+        @Override
+        public void visitVarInsn(int opcode, int var) {
+            if (opcode == Opcodes.ALOAD || opcode == Opcodes.ILOAD ||
+                    opcode == Opcodes.LLOAD || opcode == Opcodes.FLOAD ||
+                    opcode == Opcodes.DLOAD) {
+                if (var > 0 && varIndexToParamIndex.containsKey(var)) {
+                    lastLoadedVar = var;
+                }
+            }
+        }
+
+        @Override
+        public void visitFieldInsn(int opcode, String owner, String name, String descriptor) {
+            if (opcode == Opcodes.PUTFIELD && classFields.containsKey(name)) {
+                if (lastLoadedVar > 0 && varIndexToParamIndex.containsKey(lastLoadedVar)) {
+                    int paramIndex = varIndexToParamIndex.get(lastLoadedVar);
+
+                    while (constructor.parameterNames.size() <= paramIndex) {
+                        constructor.parameterNames.add(null);
+                    }
+                    if (constructor.parameterNames.get(paramIndex) == null) {
+                        constructor.parameterNames.set(paramIndex, name);
+                    }
+                }
+                lastLoadedVar = -1;
+            }
+        }
+    }
+
+    private static class ParameterNameVisitor extends MethodVisitor {
+        private final MethodInfo method;
+        private final boolean isStatic;
+
+        public ParameterNameVisitor(MethodInfo method, boolean isStatic) {
+            super(Opcodes.ASM9);
+            this.method = method;
+            this.isStatic = isStatic;
+        }
+
+        @Override
+        public void visitParameter(String name, int access) {
+            method.parameterNames.add(name);
+        }
+
+        @Override
+        public void visitLocalVariable(String name, String descriptor, String signature, Label start, Label end, int index) {
+            int paramIndex = isStatic ? index : index - 1;
+
+            if (paramIndex >= 0 && paramIndex < method.parameterTypes.size()) {
+                while (method.parameterNames.size() <= paramIndex) {
+                    method.parameterNames.add(null);
+                }
+                if (method.parameterNames.get(paramIndex) == null) {
+                    method.parameterNames.set(paramIndex, name);
+                }
+            }
         }
     }
 
@@ -460,7 +680,9 @@ public class ApiDocGenerator {
         String superClass;
         List<String> interfaces = new ArrayList<>();
         List<MethodInfo> methods = new ArrayList<>();
+        List<MethodInfo> constructors = new ArrayList<>();
         List<String> enumConstants = new ArrayList<>();
+        Map<String, String> fields = new HashMap<>();
         boolean isPublic;
         boolean isInterface;
         boolean isEnum;
@@ -474,6 +696,7 @@ public class ApiDocGenerator {
         String returnTypeSignature;
         List<String> parameterTypes = new ArrayList<>();
         List<String> parameterTypeSignatures = new ArrayList<>();
+        List<String> parameterNames = new ArrayList<>();
         List<String> exceptions = new ArrayList<>();
         boolean isStatic;
     }
