@@ -1,5 +1,5 @@
 plugins {
-    id 'org.springframework.boot' version '3.5.6'
+    id 'org.springframework.boot' version '4.0.0'
     id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -14,17 +14,17 @@ allprojects {
     }
 
     dependencies {
-        implementation("org.slf4j:slf4j-api:2.0.17")
-
         compileOnly 'org.projectlombok:lombok:1.18.42'
         annotationProcessor 'org.projectlombok:lombok:1.18.42'
         testCompileOnly 'org.projectlombok:lombok:1.18.42'
         testAnnotationProcessor 'org.projectlombok:lombok:1.18.42'
+
+        implementation 'org.slf4j:slf4j-api:2.0.17'
     }
 
     java {
         toolchain {
-            languageVersion = JavaLanguageVersion.of(21)
+            languageVersion = JavaLanguageVersion.of(25)
         }
     }
 }
@@ -33,7 +33,13 @@ repositories {}
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'me.paulschwarz:spring-dotenv:4.0.0'
+//    implementation 'me.paulschwarz:spring-dotenv:4.0.0'
+    implementation 'io.github.cdimascio:dotenv-java:3.2.0'
 
-    implementation 'com.anthropic:anthropic-java:2.10.0'
+    implementation 'com.anthropic:anthropic-java:2.11.1'
+
+    /*
+     * Modules
+     */
+    compileOnly project(':autogen')
 }
