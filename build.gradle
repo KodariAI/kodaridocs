@@ -37,9 +37,4 @@ dependencies {
     implementation 'io.github.cdimascio:dotenv-java:3.2.0'
 
     implementation 'com.anthropic:anthropic-java:2.11.1'
-
-    /*
-     * Modules
-     */
-    compileOnly project(':autogen')
 }
