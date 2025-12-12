@@ -18,14 +18,14 @@ implementation("org.bstats:bstats-bukkit:3.1.0")
 // your other dependencies
 }
 
-### Manifest Configuration
-Add bstats-bukkit to your manifest.mf to include it in your plugin:
+### Manifest Configuration (IMPORTANT)
+Add bstats-bukkit to your manifest.kod to include it in your plugin:
 Class-Path: bstats-bukkit.jar
 
 ## Getting Started
 
 ### Basic Implementation
-\`java
+```java
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -45,7 +45,7 @@ public class ExamplePlugin extends JavaPlugin {
         );
     }
 }
-\`
+```
 
 ## API Components Documentation
 
