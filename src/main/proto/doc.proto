@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+option java_multiple_files = true;
+option java_package = "me.serbob.kodaridocs.proto";
+option java_outer_classname = "DocProto";
+
+service Doc {
+  rpc GetDocInformation(DocRequestProto) returns (DocResponseProto) {}
+  rpc GetCategoryTree(google.protobuf.Empty) returns (CategoryTreeResponse) {}
+}
+
+message DocResponseProto {
+  string content = 1;
+  int64 tokens = 2;
+}
+
+message DocRequestProto {
+  string category = 1;
+  string subcategory = 2;
+  string docId = 3;
+}
+
+message CategoryTreeResponse {
+  map<string, DocList> category_tree = 1;
+}
+
+message DocList {
+  repeated string doc_id = 1;
+}

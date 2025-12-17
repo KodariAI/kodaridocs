@@ -4,6 +4,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.serbob.kodaridocs.dto.DocResponse;
+import me.serbob.kodaridocs.proto.DocList;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.ResourcePatternUtils;
@@ -44,8 +45,8 @@ public class DocsService {
                     continue;
 
                 String uri = resource.getURI().toString();
-                String relativePath = extractRelativePath(uri);
 
+                String relativePath = extractRelativePath(uri);
                 if (relativePath == null)
                     continue;
 
@@ -62,9 +63,6 @@ public class DocsService {
 
                 log.info("Loaded doc: {} ({} chars, {} tokens)", docPath, content.length(), tokens);
             }
-
-            log.info("Loaded {} documentation files in {} categories",
-                    docsCache.size(), categoryCache.size());
         } catch (IOException e) {
             log.error("Failed to load documentation files", e);
         }
@@ -102,11 +100,11 @@ public class DocsService {
             String category = String.join("/", Arrays.copyOf(parts, parts.length - 1));
             String docName = parts[parts.length - 1];
 
-            categoryCache.computeIfAbsent(category, k -> new HashSet<>()).add(docName);
+            categoryCache.computeIfAbsent(category, _ -> new TreeSet<>()).add(docName);
             return;
         }
 
-        categoryCache.computeIfAbsent("", k -> new HashSet<>()).add(docPath);
+        categoryCache.computeIfAbsent("", _ -> new TreeSet<>()).add(docPath);
     }
 
     public DocResponse getDoc(String category, String docId) {
@@ -120,9 +118,17 @@ public class DocsService {
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         entry -> new ArrayList<>(entry.getValue())
-                                .stream()
-                                .sorted()
-                                .toList()
+                ));
+    }
+
+    public Map<String, DocList> getCategoryTreeProto() {
+        return categoryCache.entrySet().stream()
+                .filter(entry -> !entry.getKey().isEmpty())
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> DocList.newBuilder()
+                                .addAllDocId(entry.getValue())
+                                .build()
                 ));
     }
 
