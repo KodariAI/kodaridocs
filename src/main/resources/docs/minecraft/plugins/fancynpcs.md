@@ -1,4 +1,4 @@
-# FancyNpcs-2.7.0-de-oliver-fancynpcs-api API Reference
+# FancyNpcs-2.9.0-de-oliver-fancynpcs-api API Reference
 
 **Package Filter:** `de.oliver.fancynpcs.api`
 
@@ -8,8 +8,8 @@
 Type: Interface
 
 Methods:
-- List getAllAttributesForEntityType(EntityType)
-- List getAllAttributes()
+- List<NpcAttribute> getAllAttributesForEntityType(EntityType)
+- List<NpcAttribute> getAllAttributes()
 - NpcAttribute getAttributeByName(EntityType, String)
 - void registerAttribute(NpcAttribute)
 
@@ -19,15 +19,16 @@ Type: Interface
 Methods:
 - int getRemoveNpcsFromPlayerlistDelay()
 - boolean isSkipInvisibleNpcs()
-- Map getMaxNpcsPerPermission()
+- Map<String, Integer> getMaxNpcsPerPermission()
 - int getVisibilityDistance()
 - String getMineSkinApiKey()
 - boolean isMuteVersionNotification()
 - boolean isInteractionCooldownMessageDisabled()
-- List getBlockedCommands()
+- List<String> getBlockedCommands()
 - int getAutoSaveInterval()
 - boolean isEnableAutoSave()
 - boolean setTurnToPlayerDistance(int)
+- boolean isSwingArmOnUpdate()
 - int getTurnToPlayerDistance()
 - int getNpcUpdateVisibilityInterval()
 - int getNpcUpdateInterval()
@@ -37,25 +38,26 @@ Methods:
 Type: Interface
 
 Methods:
-- AttributeManager getAttributeManager()
-- ScheduledExecutorService getNpcThread()
 - SkinManager getSkinManager()
-- FancyNpcsConfig getFancyNpcConfig()
 - Thread newThread(String, Runnable)
 - ActionManager getActionManager()
+- Translator getTranslator()
+- AttributeManager getAttributeManager()
+- ScheduledExecutorService getNpcThread()
+- FancyNpcsConfig getFancyNpcConfig()
 - NpcManager getNpcManager()
 - ExtendedFancyLogger getFancyLogger()
 - JavaPlugin getPlugin()
 - **static** FancyNpcsPlugin get()
+- FeatureFlagConfig getFeatureFlagConfig()
 - FancyScheduler getScheduler()
-- Translator getTranslator()
-- Function getNpcAdapter()
+- Function<NpcData, Npc> getNpcAdapter()
 
 ### Class: de.oliver.fancynpcs.api.NpcManager
 Type: Interface
 
 Methods:
-- Collection getAllNpcs()
+- Collection<Npc> getAllNpcs()
 - Npc getNpcById(String)
 - void removeNpc(Npc)
 - Npc getNpc(int)
@@ -65,101 +67,114 @@ Methods:
 - void loadNpcs()
 - void reloadNpcs()
 - void saveNpcs(boolean)
+- boolean isLoaded()
 
 ### Class: de.oliver.fancynpcs.api.Npc
 Type: Abstract Class
 
+Constructors:
+- Npc(NpcData data)
+
 Methods:
-- Map getIsVisibleForPlayer()
+- Map<UUID, Boolean> getIsVisibleForPlayer()
 - void move(Player, boolean)
-- void move(Player)
-- Map getLastPlayerInteraction()
-- void interact(Player)
-- void interact(Player, ActionTrigger)
-- void update(Player)
+- void move(Player player)
+- Map<UUID, Long> getLastPlayerInteraction()
+- void interact(Player player)
+- void interact(Player player, ActionTrigger actionTrigger)
+- void update(Player, boolean)
+- void update(Player player)
 - void lookAt(Player, Location)
 - float getEyeHeight()
-- void setDirty(boolean)
+- void setDirty(boolean dirty)
 - void remove(Player)
-- Map getIsTeamCreated()
-- void setSaveToFile(boolean)
+- Map<UUID, Boolean> getIsTeamCreated()
+- void setSaveToFile(boolean saveToFile)
 - boolean isDirty()
 - void spawn(Player)
 - boolean isSaveToFile()
 - void removeForAll()
-- void checkAndUpdateVisibility(Player)
+- void checkAndUpdateVisibility(Player player)
 - void create()
 - int getEntityId()
 - void spawnForAll()
-- Map getIsLookingAtPlayer()
-- void moveForAll(boolean)
+- Map<UUID, Boolean> getIsLookingAtPlayer()
+- void moveForAll(boolean swingArm)
 - void moveForAll()
 - NpcData getData()
+- void updateForAll(boolean swingArm)
 - void updateForAll()
 
 ### Class: de.oliver.fancynpcs.api.NpcAttribute
 Type: Class
 
+Constructors:
+- NpcAttribute(String name, List<String> possibleValues, List<EntityType> types, BiConsumer<Npc, String> applyFunc)
+
 Methods:
-- boolean isValidValue(String)
-- List getPossibleValues()
+- boolean isValidValue(String value)
+- List<String> getPossibleValues()
 - String getName()
-- void apply(Npc, String)
-- List getTypes()
+- void apply(Npc npc, String value)
+- List<EntityType> getTypes()
 
 ### Class: de.oliver.fancynpcs.api.NpcData
 Type: Class
 
+Constructors:
+- NpcData(String id, String name, UUID creator, String displayName, SkinData skin, Location location, boolean showInTab, boolean spawnEntity, boolean collidable, boolean glowing, NamedTextColor glowingColor, EntityType type, Map<NpcEquipmentSlot, ItemStack> equipment, boolean turnToPlayer, int turnToPlayerDistance, Consumer<Player> onClick, Map<ActionTrigger, List<NpcAction$NpcActionData>> actions, float interactionCooldown, float scale, int visibilityDistance, Map<NpcAttribute, String> attributes, boolean mirrorSkin)
+- NpcData(String name, UUID creator, Location location)
+
 Methods:
-- NpcData setMirrorSkin(boolean)
-- NpcData addEquipment(NpcEquipmentSlot, ItemStack)
+- NpcData setMirrorSkin(boolean mirrorSkin)
+- NpcData addEquipment(NpcEquipmentSlot slot, ItemStack item)
 - Location getLocation()
 - boolean isMirrorSkin()
 - String getName()
-- NpcData setActions(Map)
-- NpcData setActions(ActionTrigger, List)
+- NpcData setActions(Map<ActionTrigger, List<NpcAction$NpcActionData>> actions)
+- NpcData setActions(ActionTrigger trigger, List<NpcAction$NpcActionData> actions)
 - int getVisibilityDistance()
-- NpcData setSkinData(SkinData)
-- Map getActions()
-- List getActions(ActionTrigger)
+- NpcData setSkinData(SkinData skinData)
+- Map<ActionTrigger, List<NpcAction$NpcActionData>> getActions()
+- List<NpcAction$NpcActionData> getActions(ActionTrigger trigger)
 - String getId()
-- Consumer getOnClick()
-- NpcData setGlowing(boolean)
-- NpcData setDisplayName(String)
-- NpcData setOnClick(Consumer)
-- Map getEquipment()
-- void setDirty(boolean)
-- NpcData addAction(ActionTrigger, int, NpcAction, String)
-- NpcData setCollidable(boolean)
+- Consumer<Player> getOnClick()
+- NpcData setGlowing(boolean glowing)
+- NpcData setDisplayName(String displayName)
+- NpcData setOnClick(Consumer<Player> onClick)
+- Map<NpcEquipmentSlot, ItemStack> getEquipment()
+- void setDirty(boolean dirty)
+- NpcData addAction(ActionTrigger trigger, int order, NpcAction action, String value)
+- NpcData setCollidable(boolean collidable)
 - boolean isCollidable()
 - boolean isDirty()
 - int getTurnToPlayerDistance()
-- NpcData setInteractionCooldown(float)
-- NpcData setLocation(Location)
+- NpcData setInteractionCooldown(float interactionCooldown)
+- NpcData setLocation(Location location)
 - boolean isGlowing()
 - NamedTextColor getGlowingColor()
-- NpcData setSpawnEntity(boolean)
-- NpcData removeAction(ActionTrigger, NpcAction)
-- Map getAttributes()
-- NpcData setShowInTab(boolean)
-- NpcData setEquipment(Map)
-- NpcData setScale(float)
+- NpcData setSpawnEntity(boolean spawnEntity)
+- NpcData removeAction(ActionTrigger trigger, NpcAction action)
+- Map<NpcAttribute, String> getAttributes()
+- NpcData setShowInTab(boolean showInTab)
+- NpcData setEquipment(Map<NpcEquipmentSlot, ItemStack> equipment)
+- NpcData setScale(float scale)
 - boolean isSpawnEntity()
 - SkinData getSkinData()
-- NpcData setType(EntityType)
-- NpcData setTurnToPlayer(boolean)
+- NpcData setType(EntityType type)
+- NpcData setTurnToPlayer(boolean turnToPlayer)
 - UUID getCreator()
-- NpcData setVisibilityDistance(int)
+- NpcData setVisibilityDistance(int visibilityDistance)
 - float getInteractionCooldown()
-- NpcData setSkin(String, SkinData$SkinVariant)
-- NpcData setSkin(String)
-- NpcData setTurnToPlayerDistance(int)
-- void addAttribute(NpcAttribute, String)
+- NpcData setSkin(String skin, SkinData$SkinVariant variant)
+- NpcData setSkin(String skin)
+- NpcData setTurnToPlayerDistance(int distance)
+- void addAttribute(NpcAttribute attribute, String value)
 - float getScale()
-- void applyAllAttributes(Npc)
+- void applyAllAttributes(Npc npc)
 - EntityType getType()
 - String getDisplayName()
-- NpcData setGlowingColor(NamedTextColor)
+- NpcData setGlowingColor(NamedTextColor glowingColor)
 - boolean isShowInTab()
 - boolean isTurnToPlayer()
 
@@ -171,20 +186,29 @@ Type: Interface
 Methods:
 - void registerAction(NpcAction)
 - NpcAction getActionByName(String)
-- List getAllActions()
+- List<NpcAction> getAllActions()
 - void unregisterAction(NpcAction)
 
 ### Class: de.oliver.fancynpcs.api.actions.ActionTrigger
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- ANY_CLICK
+- LEFT_CLICK
+- RIGHT_CLICK
+- CUSTOM
+
 Methods:
-- **static** ActionTrigger valueOf(String)
+- **static** ActionTrigger valueOf(String name)
 - **static** ActionTrigger[] values()
-- **static** ActionTrigger getByName(String)
+- **static** ActionTrigger getByName(String name)
 
 ### Class: de.oliver.fancynpcs.api.actions.NpcAction
 Type: Abstract Class
+
+Constructors:
+- NpcAction(String name, boolean requiresValue)
 
 Methods:
 - String getName()
@@ -195,9 +219,12 @@ Methods:
 Type: Class
 Extends: java.lang.Record
 
+Constructors:
+- NpcAction$NpcActionData(int order, NpcAction action, String value)
+
 Methods:
 - int hashCode()
-- boolean equals(Object)
+- boolean equals(Object o)
 - NpcAction action()
 - String toString()
 - String value()
@@ -208,6 +235,10 @@ Methods:
 ### Class: de.oliver.fancynpcs.api.actions.executor.ActionExecutionContext
 Type: Class
 
+Constructors:
+- ActionExecutionContext(ActionTrigger trigger, Npc npc, UUID player)
+- ActionExecutionContext(ActionTrigger trigger, Npc npc)
+
 Methods:
 - Player getPlayer()
 - ActionTrigger getTrigger()
@@ -215,9 +246,9 @@ Methods:
 - int getActionIndex()
 - boolean isTerminated()
 - void reset()
-- List getActions()
+- List<NpcAction$NpcActionData> getActions()
 - boolean hasNext()
-- void run(int)
+- void run(int index)
 - void terminate()
 - UUID getPlayerUUID()
 - boolean shouldBlockUntilDone()
@@ -227,7 +258,7 @@ Methods:
 Type: Class
 
 Methods:
-- **static** void execute(ActionTrigger, Npc, Player)
+- **static** void execute(ActionTrigger trigger, Npc npc, Player player)
 
 ## Package: de.oliver.fancynpcs.api.actions.types
 
@@ -236,70 +267,70 @@ Type: Class
 Extends: de.oliver.fancynpcs.api.actions.NpcAction
 
 Methods:
-- void execute(ActionExecutionContext, String)
+- void execute(ActionExecutionContext context, String value)
 
 ### Class: de.oliver.fancynpcs.api.actions.types.ConsoleCommandAction
 Type: Class
 Extends: de.oliver.fancynpcs.api.actions.NpcAction
 
 Methods:
-- void execute(ActionExecutionContext, String)
+- void execute(ActionExecutionContext context, String value)
 
 ### Class: de.oliver.fancynpcs.api.actions.types.ExecuteRandomActionAction
 Type: Class
 Extends: de.oliver.fancynpcs.api.actions.NpcAction
 
 Methods:
-- void execute(ActionExecutionContext, String)
+- void execute(ActionExecutionContext context, String value)
 
 ### Class: de.oliver.fancynpcs.api.actions.types.MessageAction
 Type: Class
 Extends: de.oliver.fancynpcs.api.actions.NpcAction
 
 Methods:
-- void execute(ActionExecutionContext, String)
+- void execute(ActionExecutionContext context, String value)
 
 ### Class: de.oliver.fancynpcs.api.actions.types.NeedPermissionAction
 Type: Class
 Extends: de.oliver.fancynpcs.api.actions.NpcAction
 
 Methods:
-- void execute(ActionExecutionContext, String)
+- void execute(ActionExecutionContext context, String value)
 
 ### Class: de.oliver.fancynpcs.api.actions.types.PlaySoundAction
 Type: Class
 Extends: de.oliver.fancynpcs.api.actions.NpcAction
 
 Methods:
-- void execute(ActionExecutionContext, String)
+- void execute(ActionExecutionContext context, String value)
 
 ### Class: de.oliver.fancynpcs.api.actions.types.PlayerCommandAction
 Type: Class
 Extends: de.oliver.fancynpcs.api.actions.NpcAction
 
 Methods:
-- void execute(ActionExecutionContext, String)
+- void execute(ActionExecutionContext context, String value)
 
 ### Class: de.oliver.fancynpcs.api.actions.types.PlayerCommandAsOpAction
 Type: Class
 Extends: de.oliver.fancynpcs.api.actions.NpcAction
 
 Methods:
-- void execute(ActionExecutionContext, String)
+- void execute(ActionExecutionContext context, String value)
 
 ### Class: de.oliver.fancynpcs.api.actions.types.SendToServerAction
 Type: Class
 Extends: de.oliver.fancynpcs.api.actions.NpcAction
 
 Methods:
-- void execute(ActionExecutionContext, String)
+- void execute(ActionExecutionContext context, String value)
 
 ### Class: de.oliver.fancynpcs.api.actions.types.WaitAction
 Type: Class
 Extends: de.oliver.fancynpcs.api.actions.NpcAction
 
 Methods:
-- void execute(ActionExecutionContext, String)
+- void execute(ActionExecutionContext context, String value)
 
 ## Package: de.oliver.fancynpcs.api.events
 
@@ -308,11 +339,14 @@ Type: Class
 Extends: org.bukkit.event.Event
 Implements: org.bukkit.event.Cancellable
 
+Constructors:
+- NpcCreateEvent(Npc npc, CommandSender creator)
+
 Methods:
 - boolean isCancelled()
 - Npc getNpc()
 - HandlerList getHandlers()
-- void setCancelled(boolean)
+- void setCancelled(boolean cancel)
 - **static** HandlerList getHandlerList()
 - CommandSender getCreator()
 
@@ -321,15 +355,18 @@ Type: Class
 Extends: org.bukkit.event.Event
 Implements: org.bukkit.event.Cancellable
 
+Constructors:
+- NpcInteractEvent(Npc npc, Consumer<Player> onClick, List<NpcAction$NpcActionData> actions, Player player, ActionTrigger actionTrigger)
+
 Methods:
 - boolean isCancelled()
 - Player getPlayer()
 - Npc getNpc()
 - HandlerList getHandlers()
-- void setCancelled(boolean)
+- void setCancelled(boolean cancel)
 - **static** HandlerList getHandlerList()
-- List getActions()
-- Consumer getOnClick()
+- List<NpcAction$NpcActionData> getActions()
+- Consumer<Player> getOnClick()
 - ActionTrigger getInteractionType()
 
 ### Class: de.oliver.fancynpcs.api.events.NpcModifyEvent
@@ -337,11 +374,14 @@ Type: Class
 Extends: org.bukkit.event.Event
 Implements: org.bukkit.event.Cancellable
 
+Constructors:
+- NpcModifyEvent(Npc npc, NpcModifyEvent$NpcModification modification, Object newValue, CommandSender modifier)
+
 Methods:
 - boolean isCancelled()
 - Npc getNpc()
 - HandlerList getHandlers()
-- void setCancelled(boolean)
+- void setCancelled(boolean cancel)
 - NpcModifyEvent$NpcModification getModification()
 - CommandSender getModifier()
 - **static** HandlerList getHandlerList()
@@ -351,8 +391,44 @@ Methods:
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- ATTRIBUTE
+- COLLIDABLE
+- DISPLAY_NAME
+- EQUIPMENT
+- GLOWING
+- GLOWING_COLOR
+- INTERACTION_COOLDOWN
+- SCALE
+- VISIBILITY_DISTANCE
+- LOCATION
+- MIRROR_SKIN
+- PLAYER_COMMAND
+- ROTATION
+- SERVER_COMMAND
+- SHOW_IN_TAB
+- SKIN
+- TURN_TO_PLAYER
+- TURN_TO_PLAYER_DISTANCE
+- TYPE
+- MESSAGE_ADD
+- MESSAGE_SET
+- MESSAGE_REMOVE
+- MESSAGE_CLEAR
+- MESSAGE_SEND_RANDOMLY
+- PLAYER_COMMAND_ADD
+- PLAYER_COMMAND_SET
+- PLAYER_COMMAND_REMOVE
+- PLAYER_COMMAND_CLEAR
+- PLAYER_COMMAND_SEND_RANDOMLY
+- SERVER_COMMAND_ADD
+- SERVER_COMMAND_SET
+- SERVER_COMMAND_REMOVE
+- SERVER_COMMAND_CLEAR
+- SERVER_COMMAND_SEND_RANDOMLY
+
 Methods:
-- **static** NpcModifyEvent$NpcModification valueOf(String)
+- **static** NpcModifyEvent$NpcModification valueOf(String name)
 - **static** NpcModifyEvent$NpcModification[] values()
 
 ### Class: de.oliver.fancynpcs.api.events.NpcRemoveEvent
@@ -360,11 +436,14 @@ Type: Class
 Extends: org.bukkit.event.Event
 Implements: org.bukkit.event.Cancellable
 
+Constructors:
+- NpcRemoveEvent(Npc npc, CommandSender receiver)
+
 Methods:
 - boolean isCancelled()
 - Npc getNpc()
 - HandlerList getHandlers()
-- void setCancelled(boolean)
+- void setCancelled(boolean cancel)
 - **static** HandlerList getHandlerList()
 - CommandSender getSender()
 
@@ -373,17 +452,23 @@ Type: Class
 Extends: org.bukkit.event.Event
 Implements: org.bukkit.event.Cancellable
 
+Constructors:
+- NpcSpawnEvent(Npc npc, Player player)
+
 Methods:
 - boolean isCancelled()
 - Player getPlayer()
 - Npc getNpc()
 - HandlerList getHandlers()
-- void setCancelled(boolean)
+- void setCancelled(boolean cancel)
 - **static** HandlerList getHandlerList()
 
 ### Class: de.oliver.fancynpcs.api.events.NpcStartLookingEvent
 Type: Class
 Extends: org.bukkit.event.Event
+
+Constructors:
+- NpcStartLookingEvent(Npc npc, Player player)
 
 Methods:
 - Player getPlayer()
@@ -394,6 +479,9 @@ Methods:
 ### Class: de.oliver.fancynpcs.api.events.NpcStopLookingEvent
 Type: Class
 Extends: org.bukkit.event.Event
+
+Constructors:
+- NpcStopLookingEvent(Npc npc, Player player)
 
 Methods:
 - Player getPlayer()
@@ -412,6 +500,9 @@ Methods:
 ### Class: de.oliver.fancynpcs.api.events.PacketReceivedEvent
 Type: Class
 Extends: org.bukkit.event.Event
+
+Constructors:
+- PacketReceivedEvent(Object packet, Player player)
 
 Methods:
 - Player getPlayer()
@@ -434,32 +525,43 @@ Methods:
 ### Class: de.oliver.fancynpcs.api.skins.SkinData
 Type: Class
 
+Constructors:
+- SkinData(String identifier, SkinData$SkinVariant variant, String textureValue, String textureSignature)
+- SkinData(String identifier, SkinData$SkinVariant variant)
+
 Methods:
 - boolean hasTexture()
 - String getTextureValue()
 - String getParsedIdentifier()
 - SkinData$SkinVariant getVariant()
 - int hashCode()
-- void setIdentifier(String)
+- void setIdentifier(String identifier)
 - String getIdentifier()
-- boolean equals(Object)
-- void setVariant(SkinData$SkinVariant)
+- boolean equals(Object o)
+- void setVariant(SkinData$SkinVariant variant)
 - String toString()
-- void setTextureSignature(String)
+- void setTextureSignature(String textureSignature)
 - String getTextureSignature()
-- void setTextureValue(String)
+- void setTextureValue(String textureValue)
 
 ### Class: de.oliver.fancynpcs.api.skins.SkinData$SkinVariant
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- AUTO
+- SLIM
+
 Methods:
-- **static** SkinData$SkinVariant valueOf(String)
+- **static** SkinData$SkinVariant valueOf(String name)
 - **static** SkinData$SkinVariant[] values()
 
 ### Class: de.oliver.fancynpcs.api.skins.SkinGeneratedEvent
 Type: Class
 Extends: org.bukkit.event.Event
+
+Constructors:
+- SkinGeneratedEvent(String id, SkinData skin)
 
 Methods:
 - HandlerList getHandlers()
@@ -471,6 +573,9 @@ Methods:
 Type: Class
 Extends: java.lang.RuntimeException
 
+Constructors:
+- SkinLoadException(SkinLoadException$Reason reason, String message)
+
 Methods:
 - SkinLoadException$Reason getReason()
 
@@ -478,8 +583,14 @@ Methods:
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- INVALID_URL
+- INVALID_FILE
+- INVALID_PLACEHOLDER
+- INVALID_USERNAME
+
 Methods:
-- **static** SkinLoadException$Reason valueOf(String)
+- **static** SkinLoadException$Reason valueOf(String name)
 - **static** SkinLoadException$Reason[] values()
 
 ## Package: de.oliver.fancynpcs.api.utils
@@ -487,29 +598,42 @@ Methods:
 ### Class: de.oliver.fancynpcs.api.utils.Interval
 Type: Class
 
+Constructors:
+- Interval(long value)
+
 Methods:
-- Interval add(Interval)
-- Interval add(long, Interval$Unit)
-- double as(Interval$Unit)
+- Interval add(Interval other)
+- Interval add(long n, Interval$Unit)
+- double as(Interval$Unit unit)
 - Date toDate()
-- **static** Interval of(long, Interval$Unit)
-- **static** Interval of(double, Interval$Unit)
+- **static** Interval of(long interval, Interval$Unit)
+- **static** Interval of(double interval, Interval$Unit)
 - **static** Interval now()
 - String toString()
 - Instant toInstant()
-- Interval remove(Interval)
-- Interval remove(long, Interval$Unit)
-- **static** Interval between(long, long, Interval$Unit)
-- **static** Interval between(double, double, Interval$Unit)
+- Interval remove(Interval other)
+- Interval remove(long n, Interval$Unit)
+- **static** Interval between(long n, long, Interval$Unit m)
+- **static** Interval between(double n, double, Interval$Unit m)
 
 ### Class: de.oliver.fancynpcs.api.utils.Interval$Unit
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- MILLISECONDS
+- TICKS
+- SECONDS
+- MINUTES
+- HOURS
+- DAYS
+- MONTHS
+- YEARS
+
 Methods:
-- **static** Interval$Unit valueOf(String)
+- **static** Interval$Unit valueOf(String name)
 - String getShortCode()
-- **static** Interval$Unit fromShortCode(String)
+- **static** Interval$Unit fromShortCode(String shortCode)
 - **static** Interval$Unit[] values()
 - long getFactor()
 
@@ -517,9 +641,17 @@ Methods:
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- MAINHAND
+- OFFHAND
+- FEET
+- LEGS
+- CHEST
+- HEAD
+
 Methods:
 - String toNmsName()
-- **static** NpcEquipmentSlot valueOf(String)
+- **static** NpcEquipmentSlot valueOf(String name)
 - **static** NpcEquipmentSlot[] values()
-- **static** NpcEquipmentSlot parse(String)
+- **static** NpcEquipmentSlot parse(String s)
 
