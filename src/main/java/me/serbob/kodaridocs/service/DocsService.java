@@ -75,6 +75,7 @@ public class DocsService {
 
         if (path.startsWith("jar:")) {
             int exclamation = path.indexOf("!/");
+
             if (exclamation != -1)
                 path = path.substring(exclamation + 2);
         }
@@ -85,7 +86,6 @@ public class DocsService {
         int docsIndex = path.indexOf("docs/");
         if (docsIndex == -1)
             return null;
-
 
         return path.substring(docsIndex + 5);
     }
@@ -102,15 +102,15 @@ public class DocsService {
     ) {
         String[] parts = docPath.split("/");
 
-        if (parts.length > 1) {
-            String category = String.join("/", Arrays.copyOf(parts, parts.length - 1));
-            String docName = parts[parts.length - 1];
+        String category = parts.length > 1
+                ? String.join("/", Arrays.copyOf(parts, parts.length - 1))
+                : "";
 
-            categoryCache.computeIfAbsent(category, _ -> new TreeSet<>()).add(docName);
-            return;
-        }
+        String docName = parts.length > 1
+                ? parts[parts.length - 1]
+                : docPath;
 
-        categoryCache.computeIfAbsent("", _ -> new TreeSet<>()).add(docPath);
+        categoryCache.computeIfAbsent(category, _ -> new TreeSet<>()).add(docName);
     }
 
     public DocResponse getDoc(

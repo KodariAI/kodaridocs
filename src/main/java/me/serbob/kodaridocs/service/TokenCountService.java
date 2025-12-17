@@ -23,9 +23,8 @@ public class TokenCountService {
     public TokenCountService(
             @Value("${anthropic.api-key}") String apiKey
     ) {
-        if (apiKey == null || apiKey.isEmpty()) {
+        if (apiKey == null || apiKey.isEmpty())
             throw new IllegalStateException("Missing ANTHROPIC_API_KEY");
-        }
 
         this.anthropicClient = AnthropicOkHttpClient.builder()
                 .apiKey(apiKey)
@@ -45,7 +44,6 @@ public class TokenCountService {
 
             return count.inputTokens();
         } catch (Exception e) {
-            log.error("Failed to count tokens", e);
             throw new RuntimeException("Failed to count tokens", e);
         }
     }
