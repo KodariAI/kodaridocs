@@ -7,7 +7,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class KodaridocsApplication {
 
-    public static void main(String[] args) {
+    public static void main(
+            String[] args
+    ) {
         Dotenv.configure().ignoreIfMissing().systemProperties().load();
 
         SpringApplication.run(KodaridocsApplication.class, args);

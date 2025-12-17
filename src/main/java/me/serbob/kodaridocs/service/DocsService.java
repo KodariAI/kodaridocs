@@ -68,7 +68,9 @@ public class DocsService {
         }
     }
 
-    private String extractRelativePath(String uri) {
+    private String extractRelativePath(
+            String uri
+    ) {
         String path = uri;
 
         if (path.startsWith("jar:")) {
@@ -88,12 +90,16 @@ public class DocsService {
         return path.substring(docsIndex + 5);
     }
 
-    private String cleanPath(String path) {
+    private String cleanPath(
+            String path
+    ) {
         return path
                 .replace("build/resources/main/docs/", "");
     }
 
-    private void updateCategoryCache(String docPath) {
+    private void updateCategoryCache(
+            String docPath
+    ) {
         String[] parts = docPath.split("/");
 
         if (parts.length > 1) {
@@ -107,18 +113,12 @@ public class DocsService {
         categoryCache.computeIfAbsent("", _ -> new TreeSet<>()).add(docPath);
     }
 
-    public DocResponse getDoc(String category, String docId) {
+    public DocResponse getDoc(
+            String category,
+            String docId
+    ) {
         String fullPath = normalizePath(category) + "/" + docId;
         return docsCache.get(fullPath);
-    }
-
-    public Map<String, List<String>> getCategoryTree() {
-        return categoryCache.entrySet().stream()
-                .filter(entry -> !entry.getKey().isEmpty())
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        entry -> new ArrayList<>(entry.getValue())
-                ));
     }
 
     public Map<String, DocList> getCategoryTreeProto() {
@@ -132,7 +132,9 @@ public class DocsService {
                 ));
     }
 
-    private String normalizePath(String path) {
+    private String normalizePath(
+            String path
+    ) {
         if (path == null)
             return "";
 
