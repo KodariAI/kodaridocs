@@ -8,6 +8,7 @@ RUN chmod +x ./gradlew
 RUN ./gradlew dependencies --no-daemon
 
 COPY src ./src
+COPY autogen ./autogen
 
 RUN ./gradlew bootJar --no-daemon
 
