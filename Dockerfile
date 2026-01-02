@@ -3,12 +3,13 @@ WORKDIR /app
 
 COPY build.gradle settings.gradle gradlew gradlew.bat ./
 COPY gradle ./gradle
+COPY autogen ./autogen
+
 RUN chmod +x ./gradlew
 
 RUN ./gradlew dependencies --no-daemon
 
 COPY src ./src
-COPY autogen ./autogen
 
 RUN ./gradlew bootJar --no-daemon
 
