@@ -9,6 +9,7 @@ spring:
   grpc:
     server:
       port: 9093 # default
+      max-inbound-message-size: 52428800
 
 anthropic:
   api-key: ${ANTHROPIC_API_KEY}

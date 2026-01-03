@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "me.serbob.kodaridocs.proto";
+option java_outer_classname = "Autogen";
+
+service JarDocGenerator {
+  rpc GenerateDocs(JarUploadRequest) returns (JarDocsResponse);
+}
+
+message JarUploadRequest {
+  bytes jar_content = 1;
+  string file_name = 2;
+  ScanModeProto scan_mode = 3;
+  optional string package_path = 4;
+}
+
+message JarDocsResponse {
+  bool success = 1;
+  string markdown_content = 2;
+  string error_message = 3;
+  int64 classes_found = 4;
+}
+
+enum ScanModeProto {
+  FULL_JAR = 0;
+  PACKAGE_SPECIFIC = 1;
+}

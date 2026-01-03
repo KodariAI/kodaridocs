@@ -37,6 +37,11 @@ ext {
 repositories {}
 
 dependencies {
+    /*
+     * Modules
+     */
+    implementation project(':autogen')
+
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
     implementation 'io.grpc:grpc-services'
