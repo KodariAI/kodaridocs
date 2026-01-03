@@ -1,4 +1,6 @@
-# api-itemsadder-4.0.10 API Reference
+# ItemsAdder_4.0.15-dev-lone-itemsadder-api API Reference
+
+**Package Filter:** `dev.lone.itemsadder.api`
 
 ## Package: dev.lone.itemsadder.api
 
@@ -23,8 +25,8 @@ Methods:
 - **static** boolean playBreakSound(Block)
 - boolean isPlaced()
 - **static** CustomBlock byAlreadyPlaced(Block)
-- boolean remove()
 - **static** boolean remove(Location)
+- boolean remove()
 - void setCurrentLightLevel(int)
 - boolean playBreakEffect()
 - **static** boolean playBreakEffect(Block)
@@ -81,7 +83,7 @@ Type: Class
 Methods:
 - void respawn(Player)
 - Location getLocation()
-- CustomEntity$Bone getBone(int) throws IndexOutOfBoundsException
+- CustomEntity$Bone getBone(int)
 - CustomEntity$Bone getBone(String)
 - String getNamespacedID()
 - void teleport(Location)
@@ -98,6 +100,7 @@ Methods:
 - boolean hasPassenger(LivingEntity)
 - boolean hasPassenger()
 - boolean getFrustumCulling()
+- void internal_changeWrappedCustomEntity(db)
 - void addViewer(Player)
 - **static** List getAnimationsNames(String)
 - List getAnimationsNames()
@@ -111,7 +114,7 @@ Methods:
 - **static** boolean isInRegistry(String)
 - **static** boolean hasAnimation(String, String)
 - boolean hasAnimation(String)
-- boolean setPassenger(LivingEntity, int) throws IllegalArgumentException, IndexOutOfBoundsException
+- boolean setPassenger(LivingEntity, int)
 - void destroy()
 - void removeViewer(Player)
 - void playDamageEffect(boolean)
@@ -233,6 +236,7 @@ Methods:
 - boolean drop(Location)
 - void updateAttackDamageLore(String)
 - void setUsages(int)
+- ov internal()
 - boolean isBlock()
 - String getNamespacedID()
 - void setMaxDurability(int)
@@ -255,6 +259,7 @@ Methods:
 - **static** CustomStack byItemStack(ItemStack)
 - void updateAttackSpeedLore(String)
 - String getConfigPath()
+- **static** CustomStack fromInternal(ov)
 - String getDisplayName()
 - String getNamespace()
 - double getDamageMainhand()
@@ -268,7 +273,7 @@ Methods:
 
 ### Class: dev.lone.itemsadder.api.Examples
 Type: Class
-Implements: org.bukkit.event.Listener
+Implements: itemsadder.m.ab
 
 No public methods found
 
@@ -324,11 +329,14 @@ Methods:
 - **static** void injectItemModifier(Plugin, String, ItemsAdder$Advanced$ModifierHandler)
 - **static** void injectItemModifier(Plugin, ItemsAdder$Advanced$ModifierHandler)
 
-### Class: dev.lone.itemsadder.api.NotActuallyItemsAdderException
+### Class: dev.lone.itemsadder.api.ItemsAdder$Advanced$InjectedItemModifier
 Type: Class
-Extends: java.lang.UnsupportedOperationException
 
-No public methods found
+Constructors:
+- ItemsAdder$Advanced$InjectedItemModifier(String owner, String item, ItemsAdder$Advanced$ModifierHandler handler)
+
+Methods:
+- void call(String, ItemStack)
 
 ## Package: dev.lone.itemsadder.api.Events
 
@@ -336,6 +344,9 @@ No public methods found
 Type: Class
 Extends: org.bukkit.event.player.PlayerEvent
 Implements: org.bukkit.event.Cancellable
+
+Constructors:
+- CustomBlockBreakEvent(Player, Block block, ou internal)
 
 Methods:
 - Block getBlock()
@@ -350,6 +361,9 @@ Methods:
 Type: Class
 Extends: org.bukkit.event.player.PlayerEvent
 Implements: org.bukkit.event.Cancellable
+
+Constructors:
+- CustomBlockInteractEvent(Player, Action action, ItemStack item, Block blockClicked, BlockFace blockFace, EquipmentSlot hand, ou internal)
 
 Methods:
 - boolean isCancelled()
@@ -369,6 +383,10 @@ Type: Class
 Extends: org.bukkit.event.player.PlayerEvent
 Implements: org.bukkit.event.Cancellable
 
+Constructors:
+- CustomBlockPlaceEvent(Player, Block block, ou internal, boolean canBuild, Block placedAgainst, BlockState replacedBlockState, ItemStack itemInHand)
+- CustomBlockPlaceEvent(BlockPlaceEvent canBuild, ou internal)
+
 Methods:
 - Block getBlock()
 - boolean isCancelled()
@@ -385,6 +403,9 @@ Methods:
 ### Class: dev.lone.itemsadder.api.Events.CustomEntityDeathEvent
 Type: Class
 Extends: org.bukkit.event.Event
+
+Constructors:
+- CustomEntityDeathEvent(LivingEntity entity, db internal)
 
 Methods:
 - HandlerList getHandlers()
@@ -412,6 +433,9 @@ Type: Class
 Extends: dev.lone.itemsadder.api.Events.FurnitureEvent
 Implements: org.bukkit.event.Cancellable
 
+Constructors:
+- FurnitureInteractEvent(Player, Entity, ij isCancelled)
+
 Methods:
 - Entity getBukkitEntity()
 - boolean isCancelled()
@@ -425,6 +449,9 @@ Methods:
 Type: Class
 Extends: org.bukkit.event.player.PlayerEvent
 Implements: org.bukkit.event.Cancellable
+
+Constructors:
+- FurniturePlaceEvent(Player, ij internal)
 
 Methods:
 - boolean isCancelled()
@@ -440,14 +467,17 @@ Extends: dev.lone.itemsadder.api.Events.FurnitureEvent
 Methods:
 - Entity getBukkitEntity()
 - HandlerList getHandlers()
-- String getNamespacedID()
 - **static** HandlerList getHandlerList()
+- String getNamespacedID()
 - CustomFurniture getFurniture()
 
 ### Class: dev.lone.itemsadder.api.Events.FurniturePlacedEvent
 Type: Class
 Extends: dev.lone.itemsadder.api.Events.FurnitureEvent
 Implements: org.bukkit.event.Cancellable
+
+Constructors:
+- FurniturePlacedEvent(Player, Entity, ij internal)
 
 Methods:
 - Entity getBukkitEntity()
@@ -462,6 +492,9 @@ Methods:
 Type: Class
 Extends: org.bukkit.event.player.PlayerEvent
 Implements: org.bukkit.event.Cancellable
+
+Constructors:
+- FurniturePrePlaceEvent(Player, ij internal, Location location)
 
 Methods:
 - Location getLocation()
@@ -485,6 +518,9 @@ Methods:
 Type: Class
 Extends: org.bukkit.event.Event
 
+Constructors:
+- ItemsAdderLoadDataEvent(boolean cause)
+
 Methods:
 - HandlerList getHandlers()
 - **static** HandlerList getHandlerList()
@@ -493,6 +529,10 @@ Methods:
 ### Class: dev.lone.itemsadder.api.Events.ItemsAdderLoadDataEvent$Cause
 Type: Enum
 Extends: java.lang.Enum
+
+Enum Constants:
+- FIRST_LOAD
+- RELOAD
 
 Methods:
 - **static** ItemsAdderLoadDataEvent$Cause valueOf(String)
@@ -504,19 +544,28 @@ Extends: org.bukkit.event.Event
 
 Methods:
 - HandlerList getHandlers()
+- **static** HandlerList getHandlerList()
 
 ### Class: dev.lone.itemsadder.api.Events.PlayerEmoteEndEvent
 Type: Class
 Extends: org.bukkit.event.player.PlayerEvent
 
+Constructors:
+- PlayerEmoteEndEvent(Player, String emoteName, PlayerEmoteEndEvent$Cause cause)
+
 Methods:
 - HandlerList getHandlers()
+- **static** HandlerList getHandlerList()
 - String getEmoteName()
 - PlayerEmoteEndEvent$Cause getCause()
 
 ### Class: dev.lone.itemsadder.api.Events.PlayerEmoteEndEvent$Cause
 Type: Enum
 Extends: java.lang.Enum
+
+Enum Constants:
+- STOP
+- FINISHED
 
 Methods:
 - **static** PlayerEmoteEndEvent$Cause valueOf(String)
@@ -527,15 +576,22 @@ Type: Class
 Extends: org.bukkit.event.player.PlayerEvent
 Implements: org.bukkit.event.Cancellable
 
+Constructors:
+- PlayerEmotePlayEvent(Player, String emoteName)
+
 Methods:
 - boolean isCancelled()
 - HandlerList getHandlers()
 - void setCancelled(boolean)
+- **static** HandlerList getHandlerList()
 - String getEmoteName()
 
 ### Class: dev.lone.itemsadder.api.Events.ResourcePackSendEvent
 Type: Class
 Extends: org.bukkit.event.player.PlayerEvent
+
+Constructors:
+- ResourcePackSendEvent(Player, String url, String hash, boolean isItemsAdderPack)
 
 Methods:
 - boolean isItemsAdderPack()
@@ -544,65 +600,13 @@ Methods:
 - HandlerList getHandlers()
 - **static** HandlerList getHandlerList()
 
-## Package: dev.lone.itemsadder.api.Events.campfire
-
-### Class: dev.lone.itemsadder.api.Events.campfire.CampfireLitEvent
-Type: Class
-Extends: org.bukkit.event.Event
-Implements: org.bukkit.event.Cancellable
-
-Methods:
-- Player getPlayer()
-- boolean isCancelled()
-- void setCancelled(boolean)
-- HandlerList getHandlers()
-- Campfire getCampfire()
-
-### Class: dev.lone.itemsadder.api.Events.campfire.CampfirePutItemEvent
-Type: Class
-Extends: org.bukkit.event.Event
-Implements: org.bukkit.event.Cancellable
-
-Methods:
-- Player getPlayer()
-- boolean isCancelled()
-- void setCancelled(boolean)
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- Campfire getCampfire()
-- ItemStack getItem()
-- void setItem(ItemStack)
-
-### Class: dev.lone.itemsadder.api.Events.campfire.CampfireRemoveItemEvent
-Type: Class
-Extends: org.bukkit.event.Event
-Implements: org.bukkit.event.Cancellable
-
-Methods:
-- Player getPlayer()
-- boolean isCancelled()
-- void setCancelled(boolean)
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- Campfire getCampfire()
-- ItemStack getItem()
-
-### Class: dev.lone.itemsadder.api.Events.campfire.CampfireUnlitEvent
-Type: Class
-Extends: org.bukkit.event.Event
-Implements: org.bukkit.event.Cancellable
-
-Methods:
-- Player getPlayer()
-- boolean isCancelled()
-- void setCancelled(boolean)
-- HandlerList getHandlers()
-- Campfire getCampfire()
-
 ## Package: dev.lone.itemsadder.api.FontImages
 
 ### Class: dev.lone.itemsadder.api.FontImages.FontImageWrapper
 Type: Class
+
+Constructors:
+- FontImageWrapper(String internal)
 
 Methods:
 - **static** Set getNamespacedIdsInRegistry()
@@ -611,7 +615,7 @@ Methods:
 - String getNamespacedID()
 - **static** String applyPixelsOffsetToString(String, int)
 - TextColor getColor()
-- Object getInternal()
+- eo getInternal()
 - int getWidth()
 - String getString()
 - int getHeight()
@@ -624,11 +628,15 @@ Methods:
 - FontImageWrapper setOffset(int)
 - boolean exists()
 - **static** Map getNamespacedIdsAndValueInRegistry()
+- String internalGetUnicode()
 - String applyPixelsOffset(int)
 
 ### Class: dev.lone.itemsadder.api.FontImages.PlayerCustomHudWrapper
 Type: Class
 Extends: dev.lone.itemsadder.api.FontImages.PlayerQuantityHudWrapper
+
+Constructors:
+- PlayerCustomHudWrapper(PlayerHudsHolderWrapper, String internalCustomHud)
 
 Methods:
 - void clearFontImagesAndRefresh()
@@ -641,37 +649,51 @@ Methods:
 ### Class: dev.lone.itemsadder.api.FontImages.PlayerHudWrapper
 Type: Class
 
+Constructors:
+- PlayerHudWrapper(PlayerHudsHolderWrapper playerHUDsHolderWrapper, String internal)
+
 Methods:
 - void setVisible(boolean)
 - void setOffsetX(int)
 - int getInitialOffsetX()
 - String getNamespacedID()
 - boolean exists()
-- Object getInternal()
+- ha getInternal()
 - boolean isVisible()
 - int getOffsetX()
 
 ### Class: dev.lone.itemsadder.api.FontImages.PlayerHudsHolderWrapper
 Type: Class
 
+Constructors:
+- PlayerHudsHolderWrapper(Player player)
+
 Methods:
 - void sendUpdate()
 - Player getPlayer()
 - void recalculateOffsets()
 - boolean exists()
-- Object getInternal()
+- hx getInternal()
 
 ### Class: dev.lone.itemsadder.api.FontImages.PlayerQuantityHudWrapper
 Type: Class
 Extends: dev.lone.itemsadder.api.FontImages.PlayerHudWrapper
 
+Constructors:
+- PlayerQuantityHudWrapper(PlayerHudsHolderWrapper, String warnedAboutApiPermission)
+
 Methods:
 - float getFloatValue()
 - void setFloatValue(float)
-- Object getInternal()
+- hb getInternal()
+- ha getInternal()
 
 ### Class: dev.lone.itemsadder.api.FontImages.TexturedInventoryWrapper
 Type: Class
+
+Constructors:
+- TexturedInventoryWrapper(InventoryHolder, InventoryType internal, String, FontImageWrapper, int component, int component)
+- TexturedInventoryWrapper(InventoryHolder, int internal, String, FontImageWrapper, int component, int component)
 
 Methods:
 - **static** void setPlayerInventoryTexture(Player, FontImageWrapper, String)
@@ -680,4 +702,212 @@ Methods:
 - **static** void setPlayerInventoryTexture(Player, FontImageWrapper, String, int, int)
 - void showInventory(Player)
 - Inventory getInternal()
+
+## Package: dev.lone.itemsadder.api.Skript
+
+### Class: dev.lone.itemsadder.api.Skript.SkriptManager
+Type: Class
+
+Methods:
+- void init(JavaPlugin)
+- SkriptAddon getAddonInstance()
+
+## Package: dev.lone.itemsadder.api.Skript.implementation.expressions
+
+### Class: dev.lone.itemsadder.api.Skript.implementation.expressions.ExprGetCustomItem
+Type: Class
+Extends: ch.njol.skript.expressions.base.PropertyExpression
+
+Methods:
+- boolean init(Expression[], int, Kleenean, SkriptParser$ParseResult)
+- Class getReturnType()
+- String toString(Event, boolean)
+
+### Class: dev.lone.itemsadder.api.Skript.implementation.expressions.ExprGetFontImage
+Type: Class
+Extends: ch.njol.skript.lang.util.SimpleExpression
+
+Methods:
+- boolean init(Expression[], int, Kleenean, SkriptParser$ParseResult)
+- Class getReturnType()
+- boolean isSingle()
+- String toString(Event, boolean)
+
+### Class: dev.lone.itemsadder.api.Skript.implementation.expressions.ExprIsCustomItem
+Type: Class
+Extends: ch.njol.skript.lang.Condition
+
+Methods:
+- boolean init(Expression[], int, Kleenean, SkriptParser$ParseResult)
+- String toString(Event, boolean)
+- boolean check(Event)
+
+## Package: dev.lone.itemsadder.api.scriptinginternal
+
+### Class: dev.lone.itemsadder.api.scriptinginternal.EntityScript
+Type: Class
+
+Methods:
+- void handleEvent(Plugin, Event, Player, CustomEntity)
+
+### Class: dev.lone.itemsadder.api.scriptinginternal.EntityUtils
+Type: Class
+
+Methods:
+- **static** void setDataInt(Entity, String, String, int)
+- **static** void setDataFloat(Entity, String, String, float)
+- **static** long getDataLong(Entity, String, String, long)
+- **static** boolean hasData(Entity, String, String)
+- **static** short getDataShort(Entity, String, String, short)
+- **static** String getDataString(Entity, String, String, String)
+- **static** double getDataDouble(Entity, String, String, double)
+- **static** void setDataDouble(Entity, String, String, double)
+- **static** void setDataLong(Entity, String, String, long)
+- **static** void setDataByte(Entity, String, String, byte)
+- **static** void setDataShort(Entity, String, String, short)
+- **static** void setDataBool(Entity, String, String, boolean)
+- **static** float getDataFloat(Entity, String, String, float)
+- **static** int getDataInt(Entity, String, String, int)
+- **static** byte getDataByte(Entity, String, String, byte)
+- **static** void removeData(Entity, String, String)
+- **static** boolean getDataBool(Entity, String, String, boolean)
+- **static** void setDataString(Entity, String, String, String)
+
+### Class: dev.lone.itemsadder.api.scriptinginternal.ItemScript
+Type: Class
+
+Methods:
+- void handleEvent(Plugin, Event, Player, CustomStack, ItemStack)
+
+### Class: dev.lone.itemsadder.api.scriptinginternal.ItemsUtils
+Type: Class
+
+Methods:
+- **static** void setDataInt(ItemStack, String, String, int)
+- **static** void setDataInt(CustomStack, String, String, int)
+- **static** void setDataFloat(ItemStack, String, String, float)
+- **static** void setDataFloat(CustomStack, String, String, float)
+- **static** long getDataLong(ItemStack, String, String, long)
+- **static** long getDataLong(CustomStack, String, String, long)
+- **static** boolean hasData(ItemStack, String, String)
+- **static** boolean hasData(CustomStack, String, String)
+- **static** ItemStack newStack(Material)
+- **static** ItemStack newStack(Material, int)
+- **static** short getDataShort(ItemStack, String, String, short)
+- **static** short getDataShort(CustomStack, String, String, short)
+- **static** String getDataString(ItemStack, String, String, String)
+- **static** String getDataString(CustomStack, String, String, String)
+- **static** double getDataDouble(ItemStack, String, String, double)
+- **static** double getDataDouble(CustomStack, String, String, double)
+- **static** CustomStack customStack(String)
+- **static** CustomStack customStack(String, int)
+- **static** boolean isCustom(ItemStack)
+- **static** void setDataDouble(ItemStack, String, String, double)
+- **static** void setDataDouble(CustomStack, String, String, double)
+- **static** void setDataLong(ItemStack, String, String, long)
+- **static** void setDataLong(CustomStack, String, String, long)
+- **static** void setDataByte(ItemStack, String, String, byte)
+- **static** void setDataByte(CustomStack, String, String, byte)
+- **static** void setDataShort(ItemStack, String, String, short)
+- **static** void setDataShort(CustomStack, String, String, short)
+- **static** void setDataBool(ItemStack, String, String, boolean)
+- **static** void setDataBool(CustomStack, String, String, boolean)
+- **static** float getDataFloat(ItemStack, String, String, float)
+- **static** float getDataFloat(CustomStack, String, String, float)
+- **static** int getDataInt(ItemStack, String, String, int)
+- **static** int getDataInt(CustomStack, String, String, int)
+- **static** byte getDataByte(ItemStack, String, String, byte)
+- **static** byte getDataByte(CustomStack, String, String, byte)
+- **static** void removeData(ItemStack, String, String)
+- **static** boolean getDataBool(ItemStack, String, String, boolean)
+- **static** boolean getDataBool(CustomStack, String, String, boolean)
+- **static** void setDataString(ItemStack, String, String, String)
+- **static** void setDataString(CustomStack, String, String, String)
+
+### Class: dev.lone.itemsadder.api.scriptinginternal.PlayerUtils
+Type: Class
+
+Methods:
+- **static** boolean removeItem(Player, String)
+- **static** boolean giveItem(Player, String)
+- **static** Entity entityInFront(Player)
+- **static** Entity entityInFront(Player, int)
+- **static** Block blockInFront(Player)
+- **static** Block blockInFront(Player, int)
+- **static** boolean isHeld(Player, String)
+- **static** boolean isHeld(Player, CustomStack)
+- **static** boolean isHeld(Player, Material)
+- **static** boolean setHeld(Player, String)
+
+### Class: dev.lone.itemsadder.api.scriptinginternal.ScriptingUtils
+Type: Class
+
+Methods:
+- **static** void setDataInt(PersistentDataContainer, String, String, int)
+- **static** void msg(Player, String, boolean)
+- **static** void msg(Player, String)
+- **static** void msg(Player, Component)
+- **static** void setDataFloat(PersistentDataContainer, String, String, float)
+- **static** long getDataLong(PersistentDataContainer, String, String, long)
+- **static** void log(String)
+- **static** boolean hasData(PersistentDataContainer, String, String)
+- **static** short getDataShort(PersistentDataContainer, String, String, short)
+- **static** void _runDelayed(long, Runnable)
+- **static** String getDataString(PersistentDataContainer, String, String, String)
+- **static** double getDataDouble(PersistentDataContainer, String, String, double)
+- **static** Object cast(Class, Object)
+- **static** void setDataDouble(PersistentDataContainer, String, String, double)
+- **static** void setDataLong(PersistentDataContainer, String, String, long)
+- **static** void setDataByte(PersistentDataContainer, String, String, byte)
+- **static** void setDataShort(PersistentDataContainer, String, String, short)
+- **static** void setDataBool(PersistentDataContainer, String, String, boolean)
+- **static** float getDataFloat(PersistentDataContainer, String, String, float)
+- **static** int getDataInt(PersistentDataContainer, String, String, int)
+- **static** byte getDataByte(PersistentDataContainer, String, String, byte)
+- **static** void removeData(PersistentDataContainer, String, String)
+- **static** boolean getDataBool(PersistentDataContainer, String, String, boolean)
+- **static** void setDataString(PersistentDataContainer, String, String, String)
+
+### Class: dev.lone.itemsadder.api.scriptinginternal.WorldUtils
+Type: Class
+
+Methods:
+- **static** long getDataLong(Block, String, String, long)
+- **static** void playParticle(Location, String)
+- **static** void playParticle(Location, String, int)
+- **static** void playParticle(World, double, double, double, String, int, double, double, double, double)
+- **static** void playParticle(Location, String, int, double, double, double, double)
+- **static** void removeBlock(Block)
+- **static** String getDataString(Block, String, String, String)
+- **static** void placeBlock(Block, Material)
+- **static** boolean placeBlock(Block, String)
+- **static** void placeBlock(Block, CustomBlock)
+- **static** double getDataDouble(Block, String, String, double)
+- **static** void playSound(Location, String)
+- **static** void playSound(Location, String, float, float)
+- **static** void setDataShort(Block, String, String, short)
+- **static** Block block(String, int, int, int)
+- **static** Block block(World, int, int, int)
+- **static** Block block(Location)
+- **static** void setDataBool(Block, String, String, boolean)
+- **static** boolean getDataBool(Block, String, String, boolean)
+- **static** void setDataString(Block, String, String, String)
+- **static** void setDataInt(Block, String, String, int)
+- **static** void setDataFloat(Block, String, String, float)
+- **static** boolean hasData(Block, String, String)
+- **static** short getDataShort(Block, String, String, short)
+- **static** CustomBlock customBlock(Block)
+- **static** CustomBlock customBlock(Location)
+- **static** void breakBlockNaturally(Player, int, int, int)
+- **static** void breakBlockNaturally(Player, Block)
+- **static** void breakBlockNaturally(Block)
+- **static** boolean isCustom(Block)
+- **static** void setDataDouble(Block, String, String, double)
+- **static** void setDataLong(Block, String, String, long)
+- **static** void setDataByte(Block, String, String, byte)
+- **static** Location location(String, int, int, int)
+- **static** float getDataFloat(Block, String, String, float)
+- **static** int getDataInt(Block, String, String, int)
+- **static** byte getDataByte(Block, String, String, byte)
+- **static** void removeData(Block, String, String)
 
