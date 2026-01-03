@@ -1,4 +1,4 @@
-# Lands-7.16.10-me-angeschossen-lands-api API Reference
+# Lands-7.22.6-me-angeschossen-lands-api API Reference
 
 **Package Filter:** `me.angeschossen.lands.api`
 
@@ -45,6 +45,10 @@ Methods:
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- SENDER
+- RECEIVER
+
 Methods:
 - **static** NodeType valueOf(String)
 - **static** NodeType[] values()
@@ -60,6 +64,9 @@ Methods:
 
 ### Class: me.angeschossen.lands.api.applicationframework.handler.APIHandler
 Type: Class
+
+Constructors:
+- APIHandler(ULIDFactory ULIDFactory)
 
 Methods:
 - **static** APIHandler getInstance()
@@ -104,6 +111,9 @@ Methods:
 Type: Class
 Implements: me.angeschossen.lands.api.land.ChunkCoordinate
 
+Constructors:
+- ChunkCoordinate(int x, int z)
+
 Methods:
 - int getX()
 - int getZ()
@@ -112,6 +122,7 @@ Methods:
 - int getBlockX()
 - boolean equals(Object)
 - String toString()
+- long getClaimedAtMillis()
 
 ## Package: me.angeschossen.lands.api.configuration
 
@@ -158,6 +169,9 @@ Methods:
 Type: Class
 Extends: me.angeschossen.lands.api.events.plugin.LandsEvent
 
+Constructors:
+- BroadcastEvent(Collection recipients, BroadcastEvent$Category category, String messageKey, Function parseMessage)
+
 Methods:
 - void setAffectedPlayers(ImmutableMap$Builder)
 - String getMessageKey()
@@ -173,12 +187,23 @@ Methods:
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- LAND_CREATED
+- LAND_DELETED
+- RELATION_CHANGED
+- WAR_STATE_CHANGED
+- UPKEEP_REMINDER
+- UPKEEP_COLLECTED
+
 Methods:
 - **static** BroadcastEvent$Category valueOf(String)
 - **static** BroadcastEvent$Category[] values()
 
 ### Class: me.angeschossen.lands.api.events.BroadcastEvent$MessageParseRequest
 Type: Class
+
+Constructors:
+- BroadcastEvent$MessageParseRequest(Environment environment, PlayerData recipient)
 
 Methods:
 - Environment getEnvironment()
@@ -188,6 +213,9 @@ Methods:
 Type: Class
 Extends: me.angeschossen.lands.api.events.land.LandEvent
 Implements: org.bukkit.event.Cancellable
+
+Constructors:
+- ChunkDeleteEvent(LandPlayer, DeleteReason reason, ChunkDeleteEvent$UnclaimType unclaimType, World world, Land, int x, int z)
 
 Methods:
 - boolean isCancelled()
@@ -205,6 +233,12 @@ Methods:
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- DEFAULT
+- LAND_DELETION
+- ALL
+- SELECTION
+
 Methods:
 - **static** ChunkDeleteEvent$UnclaimType valueOf(String)
 - **static** ChunkDeleteEvent$UnclaimType[] values()
@@ -213,17 +247,24 @@ Methods:
 Type: Class
 Extends: me.angeschossen.lands.api.events.land.LandEvent
 
+Constructors:
+- ChunkPostClaimEvent(LandPlayer, Land, LandWorld world, int x, int z)
+
 Methods:
 - int getX()
 - LandWorld getWorld()
 - int getZ()
 - HandlerList getHandlers()
 - **static** HandlerList getHandlerList()
+- String toString()
 
 ### Class: me.angeschossen.lands.api.events.ChunkPreClaimEvent
 Type: Class
 Extends: me.angeschossen.lands.api.events.land.LandEvent
 Implements: org.bukkit.event.Cancellable
+
+Constructors:
+- ChunkPreClaimEvent(Land, LandPlayer, LandWorld world, int x, int z)
 
 Methods:
 - String getWorldName()
@@ -234,6 +275,7 @@ Methods:
 - HandlerList getHandlers()
 - void setCancelled(boolean)
 - **static** HandlerList getHandlerList()
+- String toString()
 
 ### Class: me.angeschossen.lands.api.events.LandBanPlayerEvent
 Type: Class
@@ -247,6 +289,9 @@ Methods:
 Type: Class
 Extends: me.angeschossen.lands.api.events.player.PlayerEvent
 Implements: org.bukkit.event.Cancellable
+
+Constructors:
+- LandChatEvent(MemberHolder memberHolder, UUID, Collection recipients, String message, LandChatEvent$MessageSource messageSource)
 
 Methods:
 - Collection getReceivers()
@@ -263,6 +308,10 @@ Methods:
 ### Class: me.angeschossen.lands.api.events.LandChatEvent$MessageSource
 Type: Enum
 Extends: java.lang.Enum
+
+Enum Constants:
+- MINECRAFT
+- DISCORD
 
 Methods:
 - **static** LandChatEvent$MessageSource valueOf(String)
@@ -284,6 +333,9 @@ Methods:
 Type: Class
 Extends: me.angeschossen.lands.api.events.land.LandEvent
 Implements: org.bukkit.event.Cancellable
+
+Constructors:
+- LandDeleteEvent(Land, DeleteReason reason, LandPlayer)
 
 Methods:
 - boolean isCancelled()
@@ -307,6 +359,9 @@ Methods:
 Type: Class
 Extends: me.angeschossen.lands.api.events.land.member.LandEditMemberCancellableEvent
 
+Constructors:
+- LandOwnerChangeEvent(Land, Area, UUID, UUID, LandOwnerChangeEvent$Reason reason)
+
 Methods:
 - void setAffectedPlayers(ImmutableMap$Builder)
 - void setCancelled(boolean)
@@ -319,6 +374,16 @@ Methods:
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- RENT
+- RENT_EXPIRED
+- BOUGHT
+- BOUGHT_EXPIRED
+- DEFAULT
+- LAND_EXPIRATION
+- ADMIN
+- UPKEEP
+
 Methods:
 - **static** LandOwnerChangeEvent$Reason valueOf(String)
 - **static** LandOwnerChangeEvent$Reason[] values()
@@ -327,6 +392,9 @@ Methods:
 Type: Class
 Extends: me.angeschossen.lands.api.events.land.LandEvent
 Implements: org.bukkit.event.Cancellable
+
+Constructors:
+- LandRenameEvent(LandPlayer cancelled, Land, String oldName, String newName)
 
 Methods:
 - boolean isCancelled()
@@ -358,6 +426,9 @@ Methods:
 Type: Class
 Extends: me.angeschossen.lands.api.events.land.member.LandEditMemberCancellableEvent
 
+Constructors:
+- LandUntrustPlayerEvent(Land, Area, UUID, UUID, LandUntrustPlayerEvent$UntrustReason reason)
+
 Methods:
 - HandlerList getHandlers()
 - void setCancelled(boolean)
@@ -368,6 +439,12 @@ Methods:
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- DEFAULT
+- BAN
+- TAXES
+- RENTAL_EXPIRED
+
 Methods:
 - **static** LandUntrustPlayerEvent$UntrustReason valueOf(String)
 - **static** LandUntrustPlayerEvent$UntrustReason[] values()
@@ -376,6 +453,9 @@ Methods:
 Type: Class
 Extends: org.bukkit.event.Event
 Implements: org.bukkit.event.Cancellable
+
+Constructors:
+- PlayerLanguageChangeEvent(Player player, String language)
 
 Methods:
 - String getLanguage()
@@ -398,6 +478,16 @@ Methods:
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- DEFAULT
+- PLUGIN
+- UPKEEP
+- ADMIN
+- INACTIVITY
+- WAR_CAPTURED
+- CAMP_EXPIRED
+- NO_CLAIMS
+
 Methods:
 - **static** DeleteReason valueOf(String)
 - **static** DeleteReason[] values()
@@ -416,6 +506,9 @@ Type: Class
 Extends: me.angeschossen.lands.api.events.land.LandEvent
 Implements: org.bukkit.event.Cancellable
 
+Constructors:
+- LandConvertEvent(Land, LandPlayer, LandType landType)
+
 Methods:
 - boolean isCancelled()
 - void setCancelled(boolean)
@@ -428,20 +521,14 @@ Methods:
 Type: Abstract Class
 Extends: me.angeschossen.lands.api.events.player.PlayerNullableEvent
 
+Constructors:
+- LandEvent(Land land, LandPlayer)
+- LandEvent(Land land, UUID)
+
 Methods:
 - Land getLand()
 - void setAffectedPlayers(ImmutableMap$Builder)
 - void setExpressionVariables(ImmutableMap$Builder)
-
-### Class: me.angeschossen.lands.api.events.land.LandPostCreateEvent
-Type: Class
-Extends: me.angeschossen.lands.api.events.land.LandEvent
-
-Methods:
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- String getLogInfo()
-- String toString()
 
 ## Package: me.angeschossen.lands.api.events.land.bank
 
@@ -449,6 +536,9 @@ Methods:
 Type: Abstract Class
 Extends: me.angeschossen.lands.api.events.land.LandEvent
 Implements: org.bukkit.event.Cancellable
+
+Constructors:
+- BankEvent(Land, LandPlayer cancelled, double value)
 
 Methods:
 - double getValue()
@@ -459,6 +549,9 @@ Methods:
 ### Class: me.angeschossen.lands.api.events.land.bank.LandBankBalanceChangedEvent
 Type: Class
 Extends: me.angeschossen.lands.api.events.land.LandEvent
+
+Constructors:
+- LandBankBalanceChangedEvent(Land, double prev, double now)
 
 Methods:
 - double getPrevious()
@@ -496,6 +589,9 @@ Type: Abstract Class
 Extends: me.angeschossen.lands.api.events.land.LandEvent
 Implements: org.bukkit.event.Cancellable
 
+Constructors:
+- LandBlockEvent(Land, LandPlayer, LandBlock landBlock)
+
 Methods:
 - boolean isCancelled()
 - void setCancelled(boolean)
@@ -524,6 +620,9 @@ Methods:
 Type: Class
 Extends: me.angeschossen.lands.api.events.land.block.LandBlockEvent
 
+Constructors:
+- LandBlockRemoveEvent(LandPlayer, LandBlock, LandBlockRemovalReason reason)
+
 Methods:
 - void setCancelled(boolean)
 - HandlerList getHandlers()
@@ -538,10 +637,14 @@ Methods:
 Type: Class
 Extends: me.angeschossen.lands.api.events.land.LandCancellableEvent
 
+Constructors:
+- LandMergeEvent(Land, Land toMerge, LandPlayer)
+
 Methods:
 - Land getToMerge()
 - HandlerList getHandlers()
 - **static** HandlerList getHandlerList()
+- String toString()
 
 ### Class: me.angeschossen.lands.api.events.land.claiming.LandUnclaimAllEvent
 Type: Class
@@ -553,6 +656,7 @@ Methods:
 - void setCancelled(boolean)
 - HandlerList getHandlers()
 - **static** HandlerList getHandlerList()
+- String toString()
 
 ### Class: me.angeschossen.lands.api.events.land.claiming.LandUnclaimSelectionEvent
 Type: Class
@@ -571,6 +675,7 @@ Extends: me.angeschossen.lands.api.events.land.claiming.selection.SelectionEvent
 Methods:
 - HandlerList getHandlers()
 - **static** HandlerList getHandlerList()
+- String toString()
 
 ### Class: me.angeschossen.lands.api.events.land.claiming.selection.LandUnclaimSelectionEvent
 Type: Class
@@ -579,11 +684,15 @@ Extends: me.angeschossen.lands.api.events.land.claiming.selection.SelectionEvent
 Methods:
 - HandlerList getHandlers()
 - **static** HandlerList getHandlerList()
+- String toString()
 
 ### Class: me.angeschossen.lands.api.events.land.claiming.selection.SelectionEvent
 Type: Abstract Class
 Extends: me.angeschossen.lands.api.events.land.LandEvent
 Implements: org.bukkit.event.Cancellable
+
+Constructors:
+- SelectionEvent(Land, LandPlayer, Selection selection, Set affectedChunks)
 
 Methods:
 - boolean isCancelled()
@@ -608,6 +717,9 @@ Type: Abstract Class
 Extends: me.angeschossen.lands.api.events.player.PlayerNullableEvent
 Implements: me.angeschossen.lands.api.events.plugin.TargetableEvent
 
+Constructors:
+- LandEditMemberEvent(Land land, Area area, UUID, UUID target)
+
 Methods:
 - Land getLand()
 - void setAffectedPlayers(ImmutableMap$Builder)
@@ -622,6 +734,9 @@ Methods:
 Type: Class
 Extends: me.angeschossen.lands.api.events.land.LandEvent
 
+Constructors:
+- LandSpawnRemoveEvent(Land, LandPlayer, UnloadedPosition current)
+
 Methods:
 - HandlerList getHandlers()
 - **static** HandlerList getHandlerList()
@@ -630,6 +745,9 @@ Methods:
 ### Class: me.angeschossen.lands.api.events.land.spawn.LandSpawnSetEvent
 Type: Class
 Extends: me.angeschossen.lands.api.events.land.LandCancellableEvent
+
+Constructors:
+- LandSpawnSetEvent(Land, LandPlayer, UnloadedPosition location)
 
 Methods:
 - UnloadedPosition getNew()
@@ -656,6 +774,9 @@ Methods:
 Type: Class
 Extends: me.angeschossen.lands.api.events.memberholder.MemberHolderEvent
 
+Constructors:
+- InboxMessageReceivedEvent(MemberHolder, InboxMessage inboxMessage)
+
 Methods:
 - HandlerList getHandlers()
 - **static** HandlerList getHandlerList()
@@ -665,6 +786,9 @@ Methods:
 Type: Abstract Class
 Extends: me.angeschossen.lands.api.events.plugin.LandsEvent
 
+Constructors:
+- MemberHolderEvent(MemberHolder memberHolder)
+
 Methods:
 - void setAffectedPlayers(ImmutableMap$Builder)
 - MemberHolder getMemberHolder()
@@ -673,6 +797,9 @@ Methods:
 ### Class: me.angeschossen.lands.api.events.memberholder.MemberHolderLevelChangedEvent
 Type: Class
 Extends: me.angeschossen.lands.api.events.memberholder.MemberHolderEvent
+
+Constructors:
+- MemberHolderLevelChangedEvent(MemberHolder, Level previous)
 
 Methods:
 - Level getPrevious()
@@ -685,6 +812,9 @@ Methods:
 Type: Class
 Extends: me.angeschossen.lands.api.events.memberholder.MemberHolderEvent
 Implements: org.bukkit.event.Cancellable
+
+Constructors:
+- MemberHolderRelationChangeEvent(MemberHolder, MemberHolder target, Relation relation)
 
 Methods:
 - MemberHolder getTarget()
@@ -702,6 +832,9 @@ Type: Class
 Extends: me.angeschossen.lands.api.events.memberholder.MemberHolderEvent
 Implements: org.bukkit.event.Cancellable
 
+Constructors:
+- MemberHolderUpkeepEvent(MemberHolder cancelled, double upkeep, double balance)
+
 Methods:
 - boolean isCancelled()
 - double getBalance()
@@ -711,6 +844,27 @@ Methods:
 - double getUpkeep()
 - void setExpressionVariables(ImmutableMap$Builder)
 - boolean IsInsufficient()
+
+## Package: me.angeschossen.lands.api.events.memberholder.name
+
+### Class: me.angeschossen.lands.api.events.memberholder.name.MemberHolderTagChangeEvent
+Type: Class
+Extends: me.angeschossen.lands.api.events.memberholder.MemberHolderEvent
+Implements: org.bukkit.event.Cancellable
+
+Constructors:
+- MemberHolderTagChangeEvent(LandPlayer landPlayer, MemberHolder cancelled, String newTag)
+
+Methods:
+- boolean isCancelled()
+- String getNewTag()
+- void setCancelled(boolean)
+- HandlerList getHandlers()
+- **static** HandlerList getHandlerList()
+- String toString()
+- LandPlayer getLandPlayer()
+- void setExpressionVariables(ImmutableMap$Builder)
+- String getCurrentTag()
 
 ## Package: me.angeschossen.lands.api.events.nation.edit
 
@@ -732,6 +886,9 @@ Type: Class
 Extends: me.angeschossen.lands.api.events.nation.edit.NationEditEvent
 Implements: org.bukkit.event.Cancellable
 
+Constructors:
+- NationDeleteEvent(Nation, DeleteReason reason, LandPlayer)
+
 Methods:
 - boolean isCancelled()
 - Nation getNation()
@@ -747,6 +904,10 @@ Methods:
 Type: Abstract Class
 Extends: me.angeschossen.lands.api.events.player.PlayerNullableEvent
 
+Constructors:
+- NationEditEvent(Nation nation, LandPlayer)
+- NationEditEvent(Nation nation, UUID)
+
 Methods:
 - void setAffectedPlayers(ImmutableMap$Builder)
 - Nation getNation()
@@ -756,6 +917,9 @@ Methods:
 Type: Class
 Extends: me.angeschossen.lands.api.events.nation.edit.NationEditEvent
 Implements: org.bukkit.event.Cancellable
+
+Constructors:
+- NationRenameEvent(Nation, String oldName, String newName, LandPlayer cancelled)
 
 Methods:
 - boolean isCancelled()
@@ -781,6 +945,9 @@ Methods:
 Type: Abstract Class
 Extends: me.angeschossen.lands.api.events.land.LandEvent
 
+Constructors:
+- NationEditMemberEvent(Nation nation, Land land, UUID initiator)
+
 Methods:
 - void setAffectedPlayers(ImmutableMap$Builder)
 - Nation getNation()
@@ -798,6 +965,9 @@ Methods:
 Type: Class
 Extends: me.angeschossen.lands.api.events.nation.member.NationEditMemberCancellableEvent
 
+Constructors:
+- NationUntrustLandEvent(Nation, Land, UUID, NationUntrustLandEvent$UntrustReason reason)
+
 Methods:
 - HandlerList getHandlers()
 - NationUntrustLandEvent$UntrustReason getReason()
@@ -806,6 +976,10 @@ Methods:
 ### Class: me.angeschossen.lands.api.events.nation.member.NationUntrustLandEvent$UntrustReason
 Type: Enum
 Extends: java.lang.Enum
+
+Enum Constants:
+- COMMAND
+- TAXES
 
 Methods:
 - **static** NationUntrustLandEvent$UntrustReason valueOf(String)
@@ -827,6 +1001,9 @@ Type: Abstract Class
 Extends: me.angeschossen.lands.api.events.player.PlayerEvent
 Implements: org.bukkit.event.Cancellable
 
+Constructors:
+- PlayerLandEvent(Land land, Area area, LandPlayer)
+
 Methods:
 - Land getLand()
 - boolean isCancelled()
@@ -839,6 +1016,10 @@ Methods:
 Type: Abstract Class
 Extends: me.angeschossen.lands.api.events.plugin.LandsEvent
 Implements: me.angeschossen.lands.api.framework.events.PlayerEvent
+
+Constructors:
+- PlayerNullableEvent(LandPlayer landPlayer)
+- PlayerNullableEvent(UUID landPlayer)
 
 Methods:
 - UUID getPlayerUID()
@@ -854,6 +1035,9 @@ Type: Class
 Extends: me.angeschossen.lands.api.events.player.area.PlayerAreaEvent
 Implements: org.bukkit.event.Cancellable
 
+Constructors:
+- PlayerAreaEnterEvent(Area from, Area, LandPlayer)
+
 Methods:
 - boolean isCancelled()
 - void setCancelled(boolean)
@@ -863,6 +1047,10 @@ Methods:
 ### Class: me.angeschossen.lands.api.events.player.area.PlayerAreaEvent
 Type: Abstract Class
 Extends: me.angeschossen.lands.api.events.player.PlayerEvent
+
+Constructors:
+- PlayerAreaEvent(Area area, LandPlayer)
+- PlayerAreaEvent(Area area, UUID)
 
 Methods:
 - void setAffectedPlayers(ImmutableMap$Builder)
@@ -899,6 +1087,9 @@ Type: Class
 Extends: me.angeschossen.lands.api.events.player.PlayerEvent
 Implements: org.bukkit.event.Cancellable
 
+Constructors:
+- PlayerTaxEvent(Area area, UUID cancelled, double balance)
+
 Methods:
 - boolean isCancelled()
 - void setAffectedPlayers(ImmutableMap$Builder)
@@ -918,6 +1109,9 @@ Type: Class
 Extends: me.angeschossen.lands.api.events.role.RoleEvent
 Implements: org.bukkit.event.Cancellable
 
+Constructors:
+- PlayerToggleRoleFlagEvent(Role, RoleFlag roleFlag, LandPlayer landPlayer)
+
 Methods:
 - boolean isCancelled()
 - void setAffectedPlayers(ImmutableMap$Builder)
@@ -934,6 +1128,9 @@ Type: Class
 Extends: me.angeschossen.lands.api.events.player.PlayerEvent
 Implements: org.bukkit.event.Cancellable
 
+Constructors:
+- PlayerRandomTeleportEvent(LandPlayer cancelled, Location destination)
+
 Methods:
 - boolean isCancelled()
 - Location getDestination()
@@ -946,6 +1143,9 @@ Methods:
 Type: Class
 Extends: me.angeschossen.lands.api.events.player.PlayerEvent
 Implements: org.bukkit.event.Cancellable
+
+Constructors:
+- PlayerSpawnLandEvent(Land land, LandPlayer cancelled)
 
 Methods:
 - Land getLand()
@@ -1000,6 +1200,9 @@ No public methods found
 Type: Class
 Extends: me.angeschossen.lands.api.events.rent.RentalEvent
 
+Constructors:
+- RentalOfferCreateEvent(Area, LandPlayer, RentalOfferBase rentalOffer)
+
 Methods:
 - RentalOfferBase getOffer()
 
@@ -1020,6 +1223,9 @@ Type: Class
 Extends: me.angeschossen.lands.api.events.player.PlayerEvent
 Implements: org.bukkit.event.Cancellable
 
+Constructors:
+- WarDeclareEvent(MemberHolder attacker, LandPlayer, MemberHolder defender)
+
 Methods:
 - boolean isCancelled()
 - void setAffectedPlayers(ImmutableMap$Builder)
@@ -1036,6 +1242,9 @@ Methods:
 Type: Class
 Extends: me.angeschossen.lands.api.events.war.WarEvent
 
+Constructors:
+- WarEndEvent(War, WarResult warResult, MemberHolder winner)
+
 Methods:
 - MemberHolder getLoser()
 - MemberHolder getWinner()
@@ -1046,6 +1255,9 @@ Methods:
 ### Class: me.angeschossen.lands.api.events.war.WarEvent
 Type: Abstract Class
 Extends: me.angeschossen.lands.api.events.plugin.LandsEvent
+
+Constructors:
+- WarEvent(War war)
 
 Methods:
 - void setAffectedPlayers(ImmutableMap$Builder)
@@ -1066,6 +1278,9 @@ Methods:
 Type: Class
 Extends: me.angeschossen.lands.api.events.war.captureflag.base.CaptureFlagEvent
 
+Constructors:
+- CaptureFlagBreakEvent(CaptureFlag, LandPlayer, CaptureFlagBreakEvent$BreakReason breakReason)
+
 Methods:
 - HandlerList getHandlers()
 - CaptureFlagBreakEvent$BreakReason getReason()
@@ -1075,6 +1290,14 @@ Methods:
 Type: Enum
 Extends: java.lang.Enum
 Implements: me.angeschossen.lands.api.land.block.removalreason.LandBlockRemovalReason
+
+Enum Constants:
+- CAPTURED
+- BLOCK_BREAK
+- EXPLOSION
+- DEFENDER_LOGOUT
+- WAR_END
+- BLOCK_INVALID
 
 Methods:
 - **static** CaptureFlagBreakEvent$BreakReason valueOf(String)
@@ -1091,6 +1314,9 @@ Methods:
 ### Class: me.angeschossen.lands.api.events.war.captureflag.CaptureFlagProgressEvent
 Type: Class
 Extends: me.angeschossen.lands.api.events.war.captureflag.base.CaptureFlagCancellableEvent
+
+Constructors:
+- CaptureFlagProgressEvent(CaptureFlag, WarTeam progressor)
 
 Methods:
 - HandlerList getHandlers()
@@ -1110,7 +1336,10 @@ Methods:
 
 ### Class: me.angeschossen.lands.api.events.war.captureflag.base.CaptureFlagEvent
 Type: Abstract Class
-Extends: me.angeschossen.lands.api.events.war.WarEvent
+Extends: me.angeschossen.lands.api.events.plugin.LandsEvent
+
+Constructors:
+- CaptureFlagEvent(CaptureFlag captureFlag, LandPlayer player)
 
 Methods:
 - void setAffectedPlayers(ImmutableMap$Builder)
@@ -1123,6 +1352,9 @@ Methods:
 ### Class: me.angeschossen.lands.api.exceptions.FlagConflictException
 Type: Class
 Extends: java.lang.RuntimeException
+
+Constructors:
+- FlagConflictException(Flag existing, String)
 
 Methods:
 - Flag getExisting()
@@ -1172,6 +1404,9 @@ Methods:
 Type: Abstract Class
 Implements: me.angeschossen.lands.api.flags.type.parent.Flag
 
+Constructors:
+- Flag(Plugin plugin, Flag$Target target, String name, boolean applyInSubAreas, boolean alwaysAllowInWilderness)
+
 Methods:
 - FlagModule getModule()
 - Object setWarState(boolean)
@@ -1206,6 +1441,11 @@ Methods:
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- LAND
+- WAR
+- NATION
+
 Methods:
 - **static** Flag$Module valueOf(String)
 - **static** Flag$Module[] values()
@@ -1213,6 +1453,11 @@ Methods:
 ### Class: me.angeschossen.lands.api.flags.Flag$Target
 Type: Enum
 Extends: java.lang.Enum
+
+Enum Constants:
+- PLAYER
+- ADMIN
+- SYSTEM
 
 Methods:
 - **static** Flag$Target valueOf(String)
@@ -1233,6 +1478,11 @@ Methods:
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- LAND
+- NATION
+- PLAYER
+
 Methods:
 - **static** FlagModule valueOf(String)
 - **static** FlagModule[] values()
@@ -1241,6 +1491,11 @@ Methods:
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- PLAYER
+- ADMIN
+- SYSTEM
+
 Methods:
 - **static** FlagTarget valueOf(String)
 - **static** FlagTarget[] values()
@@ -1248,6 +1503,10 @@ Methods:
 ### Class: me.angeschossen.lands.api.flags.enums.RoleFlagCategory
 Type: Enum
 Extends: java.lang.Enum
+
+Enum Constants:
+- ACTION
+- MANAGEMENT
 
 Methods:
 - **static** RoleFlagCategory valueOf(String)
@@ -1370,6 +1629,10 @@ Type: Class
 Extends: me.angeschossen.lands.api.flags.DefaultStateFlag
 Implements: me.angeschossen.lands.api.flags.type.RoleFlag
 
+Constructors:
+- RoleFlag(Plugin, Flag$Target, RoleFlag$Category category, String, boolean, boolean toggleableByNation, Predicate predicate)
+- RoleFlag(Plugin, RoleFlag$Category category, String, boolean, boolean toggleableByNation, Predicate predicate)
+
 Methods:
 - FlagModule getModule()
 - String getBypassPerm()
@@ -1393,6 +1656,10 @@ Methods:
 ### Class: me.angeschossen.lands.api.flags.types.RoleFlag$Category
 Type: Enum
 Extends: java.lang.Enum
+
+Enum Constants:
+- ACTION
+- MANAGEMENT
 
 Methods:
 - **static** RoleFlag$Category valueOf(String)
@@ -1445,6 +1712,21 @@ Methods:
 - int getZ()
 - int getChunkX()
 
+### Class: me.angeschossen.lands.api.framework.blockutil.Position
+Type: Interface
+
+Methods:
+- boolean isChunkLoaded()
+- double getX()
+- World getWorld()
+- double getY()
+- double getZ()
+- int getChunkZ()
+- int getChunkX()
+- **static** Position of(World, double, double, double, float, float)
+- **static** Position of(Location)
+- Location toLocation()
+
 ### Class: me.angeschossen.lands.api.framework.blockutil.UnloadedPosition
 Type: Interface
 
@@ -1473,15 +1755,27 @@ Methods:
 ### Class: me.angeschossen.lands.api.framework.blockutil.impl.BlockCoordinate
 Type: Class
 
+Constructors:
+- BlockCoordinate(int x, int y, int z)
+
 Methods:
+- void setY(int)
+- int getX()
+- void setX(int)
+- int getY()
+- int getZ()
 - int hashCode()
 - boolean equals(int, int, int)
 - boolean equals(Object)
 - String toString()
+- void setZ(int)
 
 ### Class: me.angeschossen.lands.api.framework.blockutil.impl.BlockKey
 Type: Class
 Implements: me.angeschossen.lands.api.framework.blockutil.BlockKey
+
+Constructors:
+- BlockKey(World world, int x, int y, int z)
 
 Methods:
 - int getX()
@@ -1497,6 +1791,9 @@ Methods:
 ### Class: me.angeschossen.lands.api.framework.blockutil.impl.BlockPosition
 Type: Class
 Implements: me.angeschossen.lands.api.framework.blockutil.BlockPosition
+
+Constructors:
+- BlockPosition(World world, int x, int y, int z)
 
 Methods:
 - World getWorld()
@@ -1520,6 +1817,9 @@ Methods:
 Type: Class
 Implements: me.angeschossen.lands.api.framework.blockutil.ChunkCoordinate
 
+Constructors:
+- ChunkCoordinate(int x, int z)
+
 Methods:
 - int getX()
 - int getZ()
@@ -1529,6 +1829,9 @@ Methods:
 ### Class: me.angeschossen.lands.api.framework.blockutil.impl.OfflineBlockCoordinate
 Type: Class
 Implements: me.angeschossen.lands.api.framework.blockutil.UnloadedPosition
+
+Constructors:
+- OfflineBlockCoordinate(String serverName, String worldName, double x, double y, double z, float yaw, float pitch)
 
 Methods:
 - World getWorld()
@@ -1553,18 +1856,31 @@ Methods:
 - int getBlockX()
 - boolean equals(String, World, int, int, int)
 - **static** OfflineBlockCoordinate fromJson(JsonObject)
+- String toString()
 
 ### Class: me.angeschossen.lands.api.framework.blockutil.impl.Position
 Type: Class
-Extends: me.angeschossen.lands.api.framework.blockutil.impl.BlockPosition
+Implements: me.angeschossen.lands.api.framework.blockutil.Position
+
+Constructors:
+- Position(World world, double x, double y, double z, float yaw, float pitch)
 
 Methods:
+- World getWorld()
+- Location toLocation()
+- boolean isChunkLoaded()
+- float getYaw()
 - JsonObject toJson()
+- double getX()
+- double getY()
+- float getPitch()
+- double getZ()
+- int getChunkZ()
 - int hashCode()
+- int getChunkX()
 - boolean equals(Object)
 - **static** Position fromJson(JsonObject)
 - String toString()
-- Location toLocation()
 
 ## Package: me.angeschossen.lands.api.framework.configuration
 
@@ -1737,6 +2053,10 @@ Methods:
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- ACTION
+- MANAGEMENT
+
 Methods:
 - **static** FlagType valueOf(String)
 - **static** FlagType[] values()
@@ -1769,6 +2089,9 @@ Methods:
 
 ### Class: me.angeschossen.lands.api.framework.handler.APIHandler
 Type: Class
+
+Constructors:
+- APIHandler(String serverName, MultiPaperHandler multiPaperHandler)
 
 Methods:
 - MultiPaperHandler getMultiPaperHandler()
@@ -1850,6 +2173,10 @@ Methods:
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- MINECRAFT
+- DISCORD
+
 Methods:
 - **static** Environment valueOf(String)
 - **static** Environment[] values()
@@ -1883,18 +2210,18 @@ Methods:
 Type: Interface
 
 Methods:
-- CompletableFuture runTaskAtLocation(Location, Runnable)
-- Task runTask(Runnable)
-- Task runTaskAtEntityLater(Entity, Runnable, Runnable, long, TimeUnit)
-- Task runTaskLaterAsynchronously(Runnable, long, TimeUnit)
-- Task runTaskTimerAtLocation(Location, Runnable, long, long, TimeUnit)
-- Task runTaskTimerAsynchronously(Runnable, long, long, TimeUnit)
-- FutureTask runTaskAtLocationLater(Location, Runnable, long, TimeUnit)
-- Task runTaskLater(Runnable, long, TimeUnit)
-- Task runTaskAsynchronously(Runnable)
-- CompletableFuture runTaskAtEntity(Entity, Runnable, Runnable)
-- Task runTaskTimerAtEntity(Entity, Runnable, Runnable, long, long, TimeUnit)
-- Task runTaskTimer(Runnable, long, long, TimeUnit)
+- CompletableFuture runTaskAtLocation(Location, Runnable, String)
+- Task runTask(Runnable, String)
+- Task runTaskAtEntityLater(Entity, Runnable, Runnable, long, TimeUnit, String)
+- Task runTaskLaterAsynchronously(Runnable, long, TimeUnit, String)
+- Task runTaskTimerAtLocation(Location, Runnable, long, long, TimeUnit, String)
+- Task runTaskTimerAsynchronously(Runnable, long, long, TimeUnit, String)
+- FutureTask runTaskAtLocationLater(Location, Runnable, long, TimeUnit, String)
+- Task runTaskLater(Runnable, long, TimeUnit, String)
+- Task runTaskAsynchronously(Runnable, String)
+- CompletableFuture runTaskAtEntity(Entity, Runnable, Runnable, String)
+- Task runTaskTimerAtEntity(Entity, Runnable, Runnable, long, long, TimeUnit, String)
+- Task runTaskTimer(Runnable, long, long, TimeUnit, String)
 
 ## Package: me.angeschossen.lands.api.framework.scheduling.task
 
@@ -1911,11 +2238,18 @@ Type: Interface
 Methods:
 - void cancel()
 - boolean isCancelled()
+- String getName()
+- boolean isPending()
 - boolean isSync()
 
 ### Class: me.angeschossen.lands.api.framework.scheduling.task.EntityTaskResult
 Type: Enum
 Extends: java.lang.Enum
+
+Enum Constants:
+- SUCCESS
+- ENTITY_RETIRED
+- SCHEDULER_RETIRED
 
 Methods:
 - **static** EntityTaskResult valueOf(String)
@@ -1955,6 +2289,12 @@ Methods:
 ### Class: me.angeschossen.lands.api.framework.trusted.SimpleRole
 Type: Enum
 Extends: java.lang.Enum
+
+Enum Constants:
+- OWNER
+- ADMIN
+- MEMBER
+- VISITOR
 
 Methods:
 - void setName(String)
@@ -2029,7 +2369,7 @@ Methods:
 - InboxMessage inboxMessageOf(LandsIntegration, MemberHolder, InboxCategory, String, String[], String[], boolean, boolean, LandPlayer)
 - ItemStack buildCampItem(LandPlayer, int)
 - CombatTag combatTagOf(LandsIntegration, LandPlayer, LandPlayer, long, boolean)
-- CompletableFuture landOf(String, LandType, Location, LandPlayer, boolean, boolean)
+- CompletableFuture landOf(String, String, LandType, Location, LandPlayer, boolean, boolean)
 - LandsIntegration of(Plugin)
 - Role roleOf(RoleHolder, String)
 - ItemStack buildItemStack(ItemType, LandPlayer)
@@ -2102,6 +2442,15 @@ Methods:
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- ALL
+- ECONOMY
+- MEMBERS
+- WAR
+- RELATIONS
+- POSTS
+- STORAGE
+
 Methods:
 - void setEnabled(boolean)
 - String getName()
@@ -2119,6 +2468,9 @@ Methods:
 ### Class: me.angeschossen.lands.api.integration.LandsIntegration
 Type: Class
 Implements: me.angeschossen.lands.api.LandsIntegration, me.angeschossen.lands.api.legacy.LandsIntegrator
+
+Constructors:
+- LandsIntegration(Plugin plugin)
 
 Methods:
 - void registerFlag(Flag)
@@ -2186,6 +2538,14 @@ Methods:
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- CLAIM_BLOCK
+- CAPTURE_FLAG
+- CAPTURE_FLAG_KOTH
+- CAMP
+- SELECTION
+- INFO
+
 Methods:
 - ItemStack build(LandPlayer)
 - **static** ItemType valueOf(String)
@@ -2243,6 +2603,7 @@ Methods:
 - int getZ()
 - int getBlockZ()
 - int getBlockX()
+- long getClaimedAtMillis()
 
 ### Class: me.angeschossen.lands.api.land.Container
 Type: Interface
@@ -2257,6 +2618,7 @@ Methods:
 - LandBlock getLandBlock(Material, int, int, int)
 - int getMaxY()
 - Collection getChunks()
+- Collection getAreasInChunk(int, int, boolean)
 - int getMinY()
 
 ### Class: me.angeschossen.lands.api.land.Land
@@ -2280,6 +2642,7 @@ Methods:
 - boolean untrustPlayer(UUID)
 - double getUpkeepCosts()
 - **static** CompletableFuture of(String, LandType, Location, LandPlayer, boolean, boolean)
+- **static** CompletableFuture of(String, String, LandType, Location, LandPlayer, boolean, boolean)
 - UnloadedPosition getSpawnPosition()
 - String getTitleMessage(LandPlayer)
 - boolean setBalance(double)
@@ -2304,6 +2667,7 @@ Methods:
 - boolean exists()
 - void setTitleMessage(String)
 - War getWar()
+- Collection getAllAreas()
 - Area getDefaultArea()
 - boolean modifyBalance(double)
 - void unbanPlayer(UUID)
@@ -2319,6 +2683,7 @@ Methods:
 - boolean contains(int, int, int)
 - World getWorld()
 - Container getContainer()
+- boolean containsChunk(int, int, boolean)
 - BoundingBox getBoundingBox()
 - boolean isSetup()
 
@@ -2338,6 +2703,7 @@ Methods:
 - World getWorld()
 - boolean hasFlag(Player, Location, Material, RoleFlag, boolean)
 - String getName()
+- Container getContainer(int, int)
 - boolean hasRoleFlag(LandPlayer, Location, RoleFlag, Material, boolean)
 - boolean hasRoleFlag(Player, Location, RoleFlag, Material, boolean)
 - boolean hasRoleFlag(UUID, Location, RoleFlag)
@@ -2376,11 +2742,11 @@ Type: Interface
 
 Methods:
 - BlockPosition getCenter()
-- LandBlockType getType()
 - Container getContainer()
 - boolean containsBlock(int, int, int)
 - String getId()
-- boolean remove(Runnable, int)
+- LandBlockType getLandBlockType()
+- boolean remove(Runnable, boolean)
 
 ### Class: me.angeschossen.lands.api.land.block.LandMainBlock
 Type: Interface
@@ -2392,6 +2758,13 @@ Methods:
 ### Class: me.angeschossen.lands.api.land.block.LandBlockType
 Type: Enum
 Extends: java.lang.Enum
+
+Enum Constants:
+- MAIN
+- MAIN_CAMP
+- CAPTURE_FLAG
+- CAPTURE_FLAG_KOTH
+- RENTAL
 
 Methods:
 - **static** LandBlockType valueOf(String)
@@ -2409,6 +2782,11 @@ Type: Enum
 Extends: java.lang.Enum
 Implements: me.angeschossen.lands.api.land.block.removalreason.LandBlockRemovalReason
 
+Enum Constants:
+- BLOCK_INVALID
+- LAND_UNCLAIM
+- BLOCK_BREAK
+
 Methods:
 - **static** BlockRemovalReason valueOf(String)
 - **static** BlockRemovalReason[] values()
@@ -2419,6 +2797,11 @@ Methods:
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- POSITION
+- EDIT
+- CONFIG
+
 Methods:
 - **static** LandGetMode valueOf(String)
 - **static** LandGetMode[] values()
@@ -2426,6 +2809,19 @@ Methods:
 ### Class: me.angeschossen.lands.api.land.enums.LandSetting
 Type: Enum
 Extends: java.lang.Enum
+
+Enum Constants:
+- ENTITY_GRIEFING
+- TNT_GRIEFING
+- PISTON_GRIEFING
+- MONSTER_SPAWN
+- ANIMAL_SPAWN
+- WATERFLOW_ALLOW
+- TITLE_HIDE
+- FIRE_SPREAD
+- LEAF_DECAY
+- PLANT_GROWTH
+- SNOW_KEEP
 
 Methods:
 - **static** void init()
@@ -2446,6 +2842,11 @@ Methods:
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- LAND
+- ADMIN
+- CAMP
+
 Methods:
 - **static** LandType getById(int)
 - **static** LandType valueOf(String)
@@ -2455,6 +2856,10 @@ Methods:
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- GLOBAL
+- LAND
+
 Methods:
 - **static** SettingMode valueOf(String)
 - **static** SettingMode[] values()
@@ -2462,6 +2867,12 @@ Methods:
 ### Class: me.angeschossen.lands.api.land.enums.SortMode
 Type: Enum
 Extends: java.lang.Enum
+
+Enum Constants:
+- CHUNKS
+- BALANCE
+- MEMBERS
+- LEVEL
 
 Methods:
 - **static** SortMode valueOf(String)
@@ -2472,6 +2883,11 @@ Methods:
 ### Class: me.angeschossen.lands.api.land.rental.InfoType
 Type: Enum
 Extends: java.lang.Enum
+
+Enum Constants:
+- HOLOGRAM
+- SIGN
+- CHAT
 
 Methods:
 - int getMaxTimeLength()
@@ -2542,6 +2958,12 @@ No public methods found
 ### Class: me.angeschossen.lands.api.land.rental.offer.types.RentalType
 Type: Enum
 Extends: java.lang.Enum
+
+Enum Constants:
+- RENT
+- RENTED
+- SELL
+- SOLD
 
 Methods:
 - **static** RentalType valueOf(String)
@@ -2642,6 +3064,9 @@ Methods:
 ### Class: me.angeschossen.lands.api.levels.attribute.LevelAttribute
 Type: Abstract Class
 
+Constructors:
+- LevelAttribute(String name, String description)
+
 Methods:
 - String getAttributeDescription()
 - String getName()
@@ -2653,6 +3078,9 @@ Methods:
 Type: Class
 Extends: me.angeschossen.lands.api.levels.attribute.LevelAttribute
 
+Constructors:
+- ChunksAttribute(String, String, int value)
+
 Methods:
 - int getValue()
 - boolean shouldApply(MemberHolder)
@@ -2660,6 +3088,9 @@ Methods:
 ### Class: me.angeschossen.lands.api.levels.attribute.impl.EffectsAmountAttribute
 Type: Class
 Extends: me.angeschossen.lands.api.levels.attribute.LevelAttribute
+
+Constructors:
+- EffectsAmountAttribute(String, String, int amount)
 
 Methods:
 - int getValue()
@@ -2669,6 +3100,9 @@ Methods:
 Type: Class
 Extends: me.angeschossen.lands.api.levels.attribute.LevelAttribute
 
+Constructors:
+- EffectsAttribute(String, String, List effects)
+
 Methods:
 - List getEffects()
 - boolean shouldApply(MemberHolder)
@@ -2676,6 +3110,9 @@ Methods:
 ### Class: me.angeschossen.lands.api.levels.attribute.impl.UpkeepAttribute
 Type: Class
 Extends: me.angeschossen.lands.api.levels.attribute.LevelAttribute
+
+Constructors:
+- UpkeepAttribute(String, String, double value)
 
 Methods:
 - double getValue()
@@ -2695,6 +3132,9 @@ Methods:
 ### Class: me.angeschossen.lands.api.levels.requirement.Requirement
 Type: Abstract Class
 Implements: me.angeschossen.lands.api.levels.Requirement
+
+Constructors:
+- Requirement(Plugin plugin, String name, String, List description, float required, String title)
 
 Methods:
 - String getTitle()
@@ -2720,30 +3160,15 @@ Type: Interface
 Implements: me.angeschossen.lands.api.framework.events.ExpressionEntity, me.angeschossen.lands.api.framework.holder.Changeable, me.angeschossen.lands.api.holders.BalanceHolder, me.angeschossen.lands.api.memberholder.CMDTarget
 
 Methods:
-- boolean setName(LandPlayer, String)
-- Integer getWebMapFillColor()
-- WarStats getStats()
 - Collection getOnlinePlayers()
 - String getName()
-- boolean hasWarshield()
-- void removeInboxMessage(InboxMessage)
 - boolean isWarField()
-- List getInbox()
-- List getInbox(InboxCategory)
-- int getId()
-- String getExpressionPrefix()
-- float getCachedRequirement(String)
 - String getServerName()
-- Collection getAllies()
-- ULID getULID()
 - void updateRequirementCache(String, float)
 - void updateRequirementCache(String, float, boolean)
 - Integer getWebMapBorderColor()
 - Timestamp getCreatedAt()
-- boolean isEnemy(MemberHolder)
 - int getMembersAmount()
-- Collection getTrustedPlayers()
-- void setWarShield(long)
 - String getWarName()
 - String getWarName(PlayerDataBase)
 - boolean isInWar()
@@ -2751,31 +3176,52 @@ Methods:
 - boolean isTrusted(LandPlayer)
 - boolean isTrusted(UUID)
 - long getLastCaptureFlagPlacement()
-- boolean isAlly(MemberHolder)
 - int getChunksAmount()
-- boolean isRequirementCached(String)
 - String getColorName()
 - long getWarshield()
-- Collection getOnlineLandPlayers()
-- CompletableFuture modifyRequirementCache(String, float, boolean)
 - CompletableFuture calculateLevel(boolean)
 - void addWarshield(long)
+- HolderType getType()
+- CompletableFuture leaveWar()
+- long getCreationTime()
+- War getWar()
+- Relation getRelation(UUID)
+- Relation getRelation(MemberHolder)
+- boolean setName(LandPlayer, String)
+- Integer getWebMapFillColor()
+- WarStats getStats()
+- boolean hasWarshield()
+- void removeInboxMessage(InboxMessage)
+- List getInbox()
+- List getInbox(InboxCategory)
+- int getId()
+- String getExpressionPrefix()
+- float getCachedRequirement(String)
+- Collection getAllies()
+- ULID getULID()
+- boolean isEnemy(MemberHolder)
+- Collection getTrustedPlayers()
+- void setWarShield(long)
+- boolean isAlly(MemberHolder)
+- boolean isRequirementCached(String)
+- Collection getOnlineLandPlayers()
+- CompletableFuture modifyRequirementCache(String, float, boolean, boolean)
 - WarTeam getWarTeam()
 - UUID getOwnerUID()
 - void sendMessage(UUID, String, LandChatEvent$MessageSource)
 - Collection getEnemies()
+- String getTag()
 - Level getLevel()
-- HolderType getType()
-- CompletableFuture leaveWar()
-- long getCreationTime()
+- String getColorTag()
 - boolean exists()
-- War getWar()
-- Relation getRelation(UUID)
-- Relation getRelation(MemberHolder)
 
 ### Class: me.angeschossen.lands.api.memberholder.HolderType
 Type: Enum
 Extends: java.lang.Enum
+
+Enum Constants:
+- LAND
+- NATION
 
 Methods:
 - **static** HolderType valueOf(String)
@@ -2847,6 +3293,7 @@ Methods:
 - Set getWars()
 - Object sendMessage(String, String[], String[])
 - boolean toggleFlag(PlayerFlag)
+- CompletableFuture getLimitation(PlayerLimit)
 - boolean ownsLand()
 - Selection getSelection()
 - Collection getInvites()
@@ -2854,6 +3301,7 @@ Methods:
 - Invite getInvite(String)
 - Invite getInvite(Land)
 - Land getEditLand(boolean)
+- boolean modifyLimitation(PlayerLimit, int)
 - boolean isInWar()
 - boolean isInWar(War)
 - void setEditLand(Land)
@@ -2874,7 +3322,7 @@ Type: Interface
 Methods:
 - BlockCoordinate getPos2()
 - void setPos1(Location)
-- int getSize()
+- int getChunksAmount()
 - void disable()
 - boolean hasChunk(int, int)
 - boolean isValid(boolean)
@@ -2906,6 +3354,18 @@ Methods:
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- RENAME_LAND
+- RENAME_NATION
+- SPAWN
+- WILD
+- UNSTUCK
+- CHUNK
+- TAXES_REMINDER
+- RENTLIST
+- UPKEEP_REMINDER
+- TELEPORT_AREA
+
 Methods:
 - String getBypass()
 - PlayerCooldown$ConfigType getConfigType()
@@ -2918,15 +3378,47 @@ Methods:
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- LANDS
+- WARS
+- NATIONS
+
 Methods:
 - **static** PlayerCooldown$ConfigType valueOf(String)
 - **static** PlayerCooldown$ConfigType[] values()
+
+### Class: me.angeschossen.lands.api.player.PlayerLimit
+Type: Enum
+Extends: java.lang.Enum
+
+Enum Constants:
+- OWN_LANDS
+- LAND_CHUNKS
+- LAND_MEMBERS
+- LAND_PARTS
+- LAND_AREAS
+- TRUSTED_LANDS
+- SUPPORT_CHUNKS
+- RENTALS
+
+Methods:
+- String getPermission()
+- **static** PlayerLimit valueOf(String)
+- **static** PlayerLimit[] values()
+- String getOldName()
+- **static** PlayerLimit getByOldName(String)
+- boolean isLandRelated()
+- **static** PlayerLimit getByPermission(String)
 
 ## Package: me.angeschossen.lands.api.player.chat
 
 ### Class: me.angeschossen.lands.api.player.chat.ChatMode
 Type: Enum
 Extends: java.lang.Enum
+
+Enum Constants:
+- LAND
+- NATION
 
 Methods:
 - **static** ChatMode valueOf(String)
@@ -2937,6 +3429,12 @@ Methods:
 ### Class: me.angeschossen.lands.api.player.claiming.ClaimResult
 Type: Enum
 Extends: java.lang.Enum
+
+Enum Constants:
+- SUCCESS
+- FAILED
+- IGNOREABLE
+- INVALID
 
 Methods:
 - **static** ClaimResult valueOf(String)
@@ -2974,6 +3472,11 @@ Methods:
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- TRUST
+- OWNER
+- MERGE
+
 Methods:
 - **static** InviteIntent valueOf(String)
 - **static** InviteIntent[] values()
@@ -2991,6 +3494,20 @@ Type: Enum
 Extends: java.lang.Enum
 Implements: me.angeschossen.lands.api.player.invite.result.InviteResult
 
+Enum Constants:
+- FAILURE_MAX_CLAIMS
+- FAILURE_PLUGIN
+- FAILURE_ACCESS
+- FAILURE_SAME
+- FAILURE_ALREADY
+- FAILURE_WAR
+- FAILURE_NATION
+- FAILURE_FORCE_NEAR
+- FAILURE_COST
+- FAILURE_ANOTHER_ACTION
+- FAILURE_OWNER_CHANGED
+- SUCCESS
+
 Methods:
 - **static** MergeRequestResult valueOf(String)
 - **static** MergeRequestResult[] values()
@@ -3000,6 +3517,23 @@ Methods:
 Type: Enum
 Extends: java.lang.Enum
 Implements: me.angeschossen.lands.api.player.invite.result.InviteResult
+
+Enum Constants:
+- FAILURE_SELF
+- FAILURE_ACCESS
+- FAILURE_ALREADY
+- FAILURE_MAX_MEMBERS
+- FAILURE_BANNED
+- FAILURE_WAR
+- FAILURE_OWN_LAND
+- FAILURE_PLAYER_MAX_OWN_LANDS
+- FAILURE_PLAYER_MAX_LANDS
+- FAILURE_ALREADY_INVITED
+- FAILURE_PLUGIN
+- FAILURE_OFFLINE
+- FAILURE_PLAYER_FLAG_RECEIVE_INVITES
+- SUCCESS_INVITED
+- SUCCESS_TRUSTED
 
 Methods:
 - **static** TrustResult valueOf(String)
@@ -3039,6 +3573,11 @@ Methods:
 ### Class: me.angeschossen.lands.api.relations.Relation
 Type: Enum
 Extends: java.lang.Enum
+
+Enum Constants:
+- ALLY
+- ENEMY
+- NEUTRAL
 
 Methods:
 - **static** Relation valueOf(String)
@@ -3083,6 +3622,11 @@ No public methods found
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- FAILURE_TENANT
+- FAILURE_ROLE_PRIORITY
+- SUCCESS
+
 Methods:
 - **static** EditPlayerResponse valueOf(String)
 - **static** EditPlayerResponse[] values()
@@ -3090,6 +3634,15 @@ Methods:
 ### Class: me.angeschossen.lands.api.role.enums.RoleType
 Type: Enum
 Extends: java.lang.Enum
+
+Enum Constants:
+- OWNER
+- ALLY
+- NATION
+- NORMAL
+- TENANT
+- ENTRY
+- VISITOR
 
 Methods:
 - **static** RoleType valueOf(String)
@@ -3112,6 +3665,9 @@ Methods:
 ### Class: me.angeschossen.lands.api.role.system.SystemFlagStates
 Type: Class
 
+Constructors:
+- SystemFlagStates(LandsIntegration integration, Set flags)
+
 Methods:
 - boolean hasFlag(RoleFlag)
 - LandsIntegration getIntegration()
@@ -3132,6 +3688,9 @@ Methods:
 ### Class: me.angeschossen.lands.api.sorting.Sorting
 Type: Abstract Class
 Implements: java.util.Comparator
+
+Constructors:
+- Sorting(SortingContext sortingContext, String id)
 
 Methods:
 - String getEmoji()
@@ -3168,9 +3727,22 @@ Methods:
 - int getPoints()
 - float getProgress(WarState)
 
+### Class: me.angeschossen.lands.api.war.KothArena
+Type: Interface
+
+No public methods found
+
+### Class: me.angeschossen.lands.api.war.TeamGiver
+Type: Interface
+
+Methods:
+- WarTeam getTeam(LandPlayer)
+- Collection getOnlineDefenders()
+- Collection getOnlineAttackers()
+
 ### Class: me.angeschossen.lands.api.war.War
 Type: Interface
-Implements: me.angeschossen.lands.api.framework.events.ExpressionEntity, me.angeschossen.lands.api.war.WarState
+Implements: me.angeschossen.lands.api.framework.events.ExpressionEntity, me.angeschossen.lands.api.war.TeamGiver, me.angeschossen.lands.api.war.WarState
 
 Methods:
 - Collection getPlacedByTeam(WarTeam)
@@ -3247,6 +3819,12 @@ Methods:
 
 ## Package: me.angeschossen.lands.api.war.captureflag
 
+### Class: me.angeschossen.lands.api.war.captureflag.CaptureArea
+Type: Interface
+
+Methods:
+- boolean contains(LandWorld, int, int, int)
+
 ### Class: me.angeschossen.lands.api.war.captureflag.CaptureFlag
 Type: Interface
 Implements: me.angeschossen.lands.api.framework.events.ExpressionEntity
@@ -3256,17 +3834,30 @@ Methods:
 - void atUnload()
 - void setSecondsToHold(long)
 - void setFireworkSpawnInterval(long)
-- BoundingBox getBoundingBox()
 - long getSecondsHeld()
 - long getLastFireworkSpawned()
+- TeamGiver getTeamGiver()
 - BlockPosition getPosition()
 - void setEvaluateCapturingTeam(Callable)
+- CaptureFlagType getType()
 - long getSecondsToHold()
 - WarTeam getCapturingTeam()
-- War getWar()
+- CaptureArea getCaptureArea()
 - boolean modifyProgress(long)
 - CompletableFuture breakCaptureFlag(LandPlayer, boolean, boolean, boolean, CaptureFlagBreakEvent$BreakReason)
 - CompletableFuture breakCaptureFlag(LandPlayer, boolean, boolean, boolean, boolean, CaptureFlagBreakEvent$BreakReason)
+
+### Class: me.angeschossen.lands.api.war.captureflag.CaptureFlagType
+Type: Enum
+Extends: java.lang.Enum
+
+Enum Constants:
+- NORMAL
+- KOTH
+
+Methods:
+- **static** CaptureFlagType valueOf(String)
+- **static** CaptureFlagType[] values()
 
 ## Package: me.angeschossen.lands.api.war.declaration
 
@@ -3293,6 +3884,12 @@ Methods:
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- SURRENDERED
+- DRAW
+- NORMAL
+- ADMIN
+
 Methods:
 - **static** WarResult valueOf(String)
 - **static** WarResult[] values()
@@ -3300,6 +3897,9 @@ Methods:
 ### Class: me.angeschossen.lands.api.war.enums.WarSetting
 Type: Enum
 Extends: java.lang.Enum
+
+Enum Constants:
+- FRIENDLY_FIRE
 
 Methods:
 - void setEnabled()
@@ -3313,6 +3913,10 @@ Methods:
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- PREPARATION
+- FIGHT
+
 Methods:
 - **static** WarStatus valueOf(String)
 - **static** WarStatus[] values()
@@ -3320,6 +3924,11 @@ Methods:
 ### Class: me.angeschossen.lands.api.war.enums.WarTeam
 Type: Enum
 Extends: java.lang.Enum
+
+Enum Constants:
+- ATTACKER
+- DEFENDER
+- NEUTRAL
 
 Methods:
 - void ensureIsAttackerOrDefender()
