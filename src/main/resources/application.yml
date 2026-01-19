@@ -1,14 +1,14 @@
-server:
-  port: 8083
-
 spring:
+  main:
+    web-application-type: none
+
   threads:
     virtual:
       enabled: true
 
   grpc:
     server:
-      port: 9093 # default
+      port: 9093
       max-inbound-message-size: 52428800
 
 anthropic:

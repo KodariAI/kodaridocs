@@ -1,9 +1,11 @@
 syntax = "proto3";
 
+package kodari.docs.community;
+
 import "google/protobuf/empty.proto";
 
 option java_multiple_files = true;
-option java_package = "me.serbob.kodaridocs.proto";
+option java_package = "me.serbob.kodari.ai.context.docs.community.config";
 option java_outer_classname = "DocProto";
 
 service Doc {

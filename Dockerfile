@@ -1,4 +1,4 @@
-FROM gradle:9.2.1-jdk25 AS builder
+FROM gradle:9.3.0-jdk25 AS builder
 WORKDIR /app
 
 COPY build.gradle settings.gradle gradlew gradlew.bat ./
@@ -22,6 +22,6 @@ COPY --from=builder --chown=appuser:appuser /app/build/libs/*.jar app.jar
 
 USER appuser
 
-EXPOSE 8083
+EXPOSE 9093
 
 ENTRYPOINT ["java", "-jar", "app.jar"]

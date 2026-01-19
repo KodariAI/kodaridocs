@@ -1,0 +1,41 @@
+[versions]
+# spring
+spring-boot = "4.0.1"
+dependency-management = "1.1.7"
+spring-grpc = "1.0.0"
+
+# grpc
+protobuf = "0.9.5"
+
+# useful
+lombok = "1.18.42"
+
+# third party
+slf4j = "2.0.17"
+dotenv = "3.2.0"
+anthropic = "2.11.1"
+
+[libraries]
+# useful
+lombok = { module = "org.projectlombok:lombok", version.ref = "lombok" }
+
+# spring
+spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web" }
+spring-grpc-starter = { module = "org.springframework.grpc:spring-grpc-spring-boot-starter" }
+spring-grpc-bom = { module = "org.springframework.grpc:spring-grpc-dependencies", version.ref = "spring-grpc" }
+
+# grpc
+grpc-services = { module = "io.grpc:grpc-services" }
+
+# third party
+slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+dotenv = { module = "io.github.cdimascio:dotenv-java", version.ref = "dotenv" }
+anthropic = { module = "com.anthropic:anthropic-java", version.ref = "anthropic" }
+
+[plugins]
+# spring
+spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
+dependency-management = { id = "io.spring.dependency-management", version.ref = "dependency-management" }
+
+# grpc
+protobuf = { id = "com.google.protobuf", version.ref = "protobuf" }
