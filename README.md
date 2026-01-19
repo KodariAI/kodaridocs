@@ -104,10 +104,6 @@ cat autogen/src/main/resources/output/EcoPets-com-willfp-ecopets-api.md
 - ❌ **DON'T** commit JAR files
 - ❌ **DON'T** include sensitive information
 
-## License
-
-MIT License
-
 ---
 
 Built with ❤️ for the Minecraft development community by [Kodari.ai](https://kodari.ai)
