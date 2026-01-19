@@ -1,7 +1,7 @@
 FROM gradle:9.3.0-jdk25 AS builder
 WORKDIR /app
 
-COPY build.gradle settings.gradle gradlew gradlew.bat ./
+COPY build.gradle.kts settings.gradle.kts gradlew gradlew.bat ./
 COPY gradle ./gradle
 COPY autogen ./autogen
 
