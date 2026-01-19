@@ -95,56 +95,6 @@ cp ~/EcoPets.jar autogen/src/main/resources/input/
 cat autogen/src/main/resources/output/EcoPets-com-willfp-ecopets-api.md
 ```
 
-## Running Locally
-
-### Prerequisites
-
-1. Create a `.env` file in the project root:
-   ```bash
-   cp .env.example .env
-   ```
-
-2. Add your Anthropic API key to `.env`:
-   ```env
-   ANTHROPIC_API_KEY=your-api-key-here
-   ```
-
-3. Start the service:
-   ```gradle
-   ./gradlew bootRun
-   ```
-
-### Test Endpoints
-
-```bash
-# List available docs
-curl http://localhost:8083/api/v1/available-docs
-
-# Get specific doc
-curl http://localhost:8083/api/v1/docs/minecraft-commands
-```
-
-## API Endpoints
-
-- `GET /api/v1/available-docs` - List all available documentation
-- `GET /api/v1/docs/{docId}` - Get specific documentation
-
-### Example Responses
-
-**GET /api/v1/available-docs**
-```json
-[
-  "luckperms"
-]
-```
-**GET /api/v1/docs/bukkit-api**
-```json
-{
-  "content": "# Luckperms API Reference\n\n## Package: net.luckperms...",
-  "tokens": 4523
-}
-```
-
 ## Guidelines
 
 - ✅ **DO** contribute API references and method signatures
@@ -153,10 +103,6 @@ curl http://localhost:8083/api/v1/docs/minecraft-commands
 - ❌ **DON'T** include tutorials or opinions
 - ❌ **DON'T** commit JAR files
 - ❌ **DON'T** include sensitive information
-
-## License
-
-MIT License
 
 ---
 

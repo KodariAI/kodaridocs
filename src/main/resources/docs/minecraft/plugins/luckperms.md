@@ -1,4 +1,6 @@
-# api-5.5-20231022.200451-2 API Reference
+# apiluckperms-net-luckperms-api API Reference
+
+**Package Filter:** `net.luckperms.api`
 
 ## Package: net.luckperms.api
 
@@ -7,19 +9,20 @@ Type: Interface
 
 Methods:
 - GroupManager getGroupManager()
+- ActionFilterFactory getActionFilterFactory()
 - ActionLogger getActionLogger()
-- CompletableFuture runUpdateTask()
-- TrackManager getTrackManager()
+- CompletableFuture<Void> runUpdateTask()
 - NodeBuilderRegistry getNodeBuilderRegistry()
-- String getServerName()
+- TrackManager getTrackManager()
 - QueryOptionsRegistry getQueryOptionsRegistry()
+- String getServerName()
 - UserManager getUserManager()
 - ContextManager getContextManager()
 - EventBus getEventBus()
-- PluginMetadata getPluginMetadata()
 - MetaStackFactory getMetaStackFactory()
-- PlayerAdapter getPlayerAdapter(Class)
-- Optional getMessagingService()
+- PluginMetadata getPluginMetadata()
+- Optional<MessagingService> getMessagingService()
+- PlayerAdapter<TT> getPlayerAdapter(Class<TT>)
 - NodeMatcherFactory getNodeMatcherFactory()
 - void registerMessengerProvider(MessengerProvider)
 - Health runHealthCheck()
@@ -29,7 +32,7 @@ Methods:
 Type: Class
 
 Methods:
-- LuckPerms get()
+- **static** LuckPerms get()
 
 ## Package: net.luckperms.api.actionlog
 
@@ -38,31 +41,101 @@ Type: Interface
 Implements: java.lang.Comparable
 
 Methods:
-- Target getTarget()
+- Action$Target getTarget()
+- Action$Source getSource()
 - Instant getTimestamp()
-- Source getSource()
-- Builder builder()
+- **static** Action$Builder builder()
 - String getDescription()
+
+### Class: net.luckperms.api.actionlog.Action$Builder
+Type: Interface
+
+Methods:
+- Action$Builder targetName(String)
+- Action build()
+- Action$Builder description(String)
+- Action$Builder targetType(Action$Target$Type)
+- Action$Builder sourceName(String)
+- Action$Builder source(UUID)
+- Action$Builder target(UUID)
+- Action$Builder timestamp(Instant)
+
+### Class: net.luckperms.api.actionlog.Action$Source
+Type: Interface
+
+Methods:
+- String getName()
+- UUID getUniqueId()
+
+### Class: net.luckperms.api.actionlog.Action$Target
+Type: Interface
+
+Methods:
+- String getName()
+- Action$Target$Type getType()
+- Optional<UUID> getUniqueId()
 
 ### Class: net.luckperms.api.actionlog.ActionLog
 Type: Interface
 
 Methods:
-- SortedSet getTrackHistory(String)
-- SortedSet getGroupHistory(String)
-- SortedSet getContent()
-- SortedSet getContent(UUID)
-- SortedSet getUserHistory(UUID)
+- SortedSet<Action> getTrackHistory(String)
+- SortedSet<Action> getGroupHistory(String)
+- SortedSet<Action> getContent()
+- SortedSet<Action> getContent(UUID)
+- SortedSet<Action> getUserHistory(UUID)
 
 ### Class: net.luckperms.api.actionlog.ActionLogger
 Type: Interface
 
 Methods:
-- CompletableFuture submit(Action)
-- CompletableFuture submitToStorage(Action)
-- CompletableFuture getLog()
-- Builder actionBuilder()
-- CompletableFuture broadcastAction(Action)
+- CompletableFuture<Void> submit(Action)
+- CompletableFuture<Void> submitToStorage(Action)
+- CompletableFuture<ActionLog> getLog()
+- Action$Builder actionBuilder()
+- CompletableFuture<List<Action>> queryActions(ActionFilter)
+- CompletableFuture<Page<Action>> queryActions(ActionFilter, int, int)
+- CompletableFuture<Void> broadcastAction(Action)
+
+### Class: net.luckperms.api.actionlog.Action$Target$Type
+Type: Enum
+Extends: java.lang.Enum
+
+Enum Constants:
+- USER
+- GROUP
+- TRACK
+
+Methods:
+- **static** Action$Target$Type valueOf(String name)
+- **static** Action$Target$Type[] values()
+
+## Package: net.luckperms.api.actionlog.filter
+
+### Class: net.luckperms.api.actionlog.filter.ActionFilter
+Type: Interface
+Implements: java.util.function.Predicate
+
+Methods:
+- **static** ActionFilter search(String query)
+- boolean test(Action)
+- boolean test(Object)
+- **static** ActionFilter source(UUID uniqueId)
+- **static** ActionFilter track(String name)
+- **static** ActionFilter user(UUID uniqueId)
+- **static** ActionFilter any()
+- **static** ActionFilter group(String name)
+
+### Class: net.luckperms.api.actionlog.filter.ActionFilterFactory
+Type: Interface
+
+Methods:
+- ActionFilter search(String)
+- ActionFilter source(UUID)
+- ActionFilter track(String)
+- ActionFilter user(UUID)
+- ActionFilter any()
+- ActionFilter group(String)
 
 ## Package: net.luckperms.api.cacheddata
 
@@ -76,14 +149,27 @@ Methods:
 Type: Interface
 
 Methods:
-- Container metaData()
+- CachedDataManager$Container<CachedMetaData> metaData()
 - void invalidatePermissionCalculators()
-- CachedPermissionData getPermissionData()
 - CachedPermissionData getPermissionData(QueryOptions)
-- Container permissionData()
+- CachedPermissionData getPermissionData()
+- CachedDataManager$Container<CachedPermissionData> permissionData()
 - void invalidate()
 - CachedMetaData getMetaData(QueryOptions)
 - CachedMetaData getMetaData()
+
+### Class: net.luckperms.api.cacheddata.CachedDataManager$Container
+Type: Interface
+
+Methods:
+- CompletableFuture<+TT> reload(QueryOptions)
+- CompletableFuture<Void> reload()
+- TT get(QueryOptions)
+- void invalidate(QueryOptions)
+- void invalidate()
+- TT calculate(QueryOptions)
+- void recalculate(QueryOptions)
+- void recalculate()
 
 ### Class: net.luckperms.api.cacheddata.CachedMetaData
 Type: Interface
@@ -91,37 +177,37 @@ Implements: net.luckperms.api.cacheddata.CachedData
 
 Methods:
 - MetaStackDefinition getSuffixStackDefinition()
-- SortedMap getSuffixes()
+- SortedMap<Integer, String> getSuffixes()
 - String getPrefix()
-- int getWeight()
 - String getPrimaryGroup()
-- Result querySuffix()
+- int getWeight()
+- Result<String, SuffixNode> querySuffix()
 - MetaStackDefinition getPrefixStackDefinition()
-- Result queryPrefix()
-- Result queryWeight()
+- Result<String, PrefixNode> queryPrefix()
+- Result<Integer, WeightNode> queryWeight()
 - String getSuffix()
-- Map getMeta()
-- SortedMap getPrefixes()
-- Result queryMetaValue(String)
-- String getMetaValue(String)
-- Optional getMetaValue(String, Function)
+- Map<String, List<String>> getMeta()
+- SortedMap<Integer, String> getPrefixes()
+- Result<String, MetaNode> queryMetaValue(String)
+- String getMetaValue(String key)
+- Optional<TT> getMetaValue(String key, Function<String, +TT> valueTransformer)
 
 ### Class: net.luckperms.api.cacheddata.CachedPermissionData
 Type: Interface
 Implements: net.luckperms.api.cacheddata.CachedData
 
 Methods:
-- Map getPermissionMap()
-- Tristate checkPermission(String)
-- Result queryPermission(String)
+- Map<String, Boolean> getPermissionMap()
+- Tristate checkPermission(String permission)
+- Result<Tristate, Node> queryPermission(String)
 - void invalidateCache()
 
 ### Class: net.luckperms.api.cacheddata.Result
 Type: Interface
 
 Methods:
-- Object result()
-- Node node()
+- TT result()
+- TN node()
 
 ## Package: net.luckperms.api.context
 
@@ -129,75 +215,75 @@ Methods:
 Type: Interface
 
 Methods:
-- boolean isValidValue(String)
 - String getValue()
 - String getKey()
-- boolean isValidKey(String)
+- **static** boolean isValidValue(String value)
+- **static** boolean isValidKey(String key)
 
 ### Class: net.luckperms.api.context.ContextCalculator
 Type: Interface
 
 Methods:
 - ContextSet estimatePotentialContexts()
-- void calculate(Object, ContextConsumer)
-- ContextCalculator forSingleContext(String, Function)
+- V calculate(T, T)
+- **static** ContextCalculator<TT> forSingleContext(String key, Function<TT, String> valueFunction)
 
 ### Class: net.luckperms.api.context.ContextConsumer
 Type: Interface
 
 Methods:
 - void accept(String, String)
-- void accept(Context)
-- void accept(ContextSet)
+- void accept(Context context)
+- void accept(ContextSet contextSet)
 
 ### Class: net.luckperms.api.context.ContextManager
 Type: Interface
 
 Methods:
-- void unregisterCalculator(ContextCalculator)
+- V unregisterCalculator(ContextCalculator<*>)
 - ImmutableContextSet getStaticContext()
-- void invalidateCache(Object)
-- Builder queryOptionsBuilder(QueryMode)
+- void invalidateCache(Object subject)
+- QueryOptions$Builder queryOptionsBuilder(QueryMode)
 - QueryOptions getStaticQueryOptions()
-- void registerCalculator(ContextCalculator)
+- V registerCalculator(ContextCalculator<*>)
 - void signalContextUpdate(Object)
 - ImmutableContextSet getContext(Object)
-- Optional getContext(User)
-- QueryOptions getQueryOptions(Object)
-- Optional getQueryOptions(User)
+- Optional<ImmutableContextSet> getContext(User)
 - ContextSetFactory getContextSetFactory()
+- QueryOptions getQueryOptions(Object)
+- Optional<QueryOptions> getQueryOptions(User)
 
 ### Class: net.luckperms.api.context.ContextSet
 Type: Interface
 Implements: java.lang.Iterable
 
 Methods:
-- Set getValues(String)
-- Optional getAnyValue(String)
+- Set<String> getValues(String)
+- Optional<String> getAnyValue(String key)
 - boolean containsKey(String)
 - boolean isEmpty()
-- boolean containsAny(String, Iterable)
-- boolean isSatisfiedBy(ContextSet)
+- Z containsAny(String key, Iterable<String> values)
+- boolean isSatisfiedBy(ContextSet other)
 - boolean isSatisfiedBy(ContextSet, ContextSatisfyMode)
-- Map toFlattenedMap()
-- Set toSet()
-- Iterator iterator()
+- Map<String, String> toFlattenedMap()
+- Set<Context> toSet()
 - boolean contains(String, String)
-- boolean contains(Context)
+- boolean contains(Context entry)
+- Iterator<Context> iterator()
 - int size()
 - ImmutableContextSet immutableCopy()
 - boolean isImmutable()
-- Map toMap()
+- Map<String, Set<String>> toMap()
 - MutableContextSet mutableCopy()
 
 ### Class: net.luckperms.api.context.ContextSetFactory
 Type: Interface
 
 Methods:
-- ImmutableContextSet immutableOf(String, String)
 - ImmutableContextSet immutableEmpty()
+- ImmutableContextSet immutableOf(String, String)
 - MutableContextSet mutable()
-- Builder immutableBuilder()
+- ImmutableContextSet$Builder immutableBuilder()
 
 ### Class: net.luckperms.api.context.ImmutableContextSet
 Type: Interface
@@ -205,23 +291,33 @@ Implements: net.luckperms.api.context.ContextSet
 
 Methods:
 - ImmutableContextSet immutableCopy()
-- ImmutableContextSet of(String, String)
-- Builder builder()
-- ImmutableContextSet empty()
+- **static** ImmutableContextSet of(String key, String value)
+- **static** ImmutableContextSet$Builder builder()
+- **static** ImmutableContextSet empty()
+
+### Class: net.luckperms.api.context.ImmutableContextSet$Builder
+Type: Interface
+
+Methods:
+- ImmutableContextSet$Builder add(String, String)
+- ImmutableContextSet$Builder add(Context entry)
+- ImmutableContextSet build()
+- ImmutableContextSet$Builder addAll(Iterable<Context> iterable)
+- ImmutableContextSet$Builder addAll(ContextSet)
 
 ### Class: net.luckperms.api.context.MutableContextSet
 Type: Interface
 Implements: net.luckperms.api.context.ContextSet
 
 Methods:
-- void add(Context)
 - void add(String, String)
+- void add(Context entry)
 - void removeAll(String)
+- V addAll(Iterable<Context> iterable)
 - void addAll(ContextSet)
-- void addAll(Iterable)
-- MutableContextSet of(String, String)
+- **static** MutableContextSet of(String key, String value)
 - void clear()
-- MutableContextSet create()
+- **static** MutableContextSet create()
 - void remove(String, String)
 
 ### Class: net.luckperms.api.context.StaticContextCalculator
@@ -230,21 +326,25 @@ Implements: net.luckperms.api.context.ContextCalculator
 
 Methods:
 - void calculate(ContextConsumer)
-- void calculate(Object, ContextConsumer)
-- StaticContextCalculator forSingleContext(String, Supplier)
+- void calculate(Object target, ContextConsumer consumer)
+- **static** StaticContextCalculator forSingleContext(String key, Supplier<String> valueFunction)
 
 ### Class: net.luckperms.api.context.ContextSatisfyMode
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- AT_LEAST_ONE_VALUE_PER_KEY
+- ALL_VALUES_PER_KEY
+
 Methods:
-- ContextSatisfyMode valueOf(String)
-- ContextSatisfyMode[] values()
+- **static** ContextSatisfyMode valueOf(String name)
+- **static** ContextSatisfyMode[] values()
 
 ### Class: net.luckperms.api.context.DefaultContextKeys
 Type: Class
 
-No public methods
+No public methods found
 
 ## Package: net.luckperms.api.event
 
@@ -252,18 +352,18 @@ No public methods
 Type: Interface
 
 Methods:
-- Set getSubscriptions(Class)
-- EventSubscription subscribe(Object, Class, Consumer)
-- EventSubscription subscribe(Class, Consumer)
+- Set<EventSubscription<TT>> getSubscriptions(Class<TT>)
+- EventSubscription<TT> subscribe(Class<TT>, Consumer<-TT>)
+- EventSubscription<TT> subscribe(Object, Class<TT>, Consumer<-TT>)
 
 ### Class: net.luckperms.api.event.EventSubscription
 Type: Interface
 Implements: java.lang.AutoCloseable
 
 Methods:
-- Class getEventClass()
+- Class<TT> getEventClass()
+- Consumer<-TT> getHandler()
 - boolean isActive()
-- Consumer getHandler()
 - void close()
 
 ### Class: net.luckperms.api.event.LuckPermsEvent
@@ -271,7 +371,7 @@ Type: Interface
 
 Methods:
 - LuckPerms getLuckPerms()
-- Class getEventType()
+- Class<LuckPermsEvent> getEventType()
 
 ## Package: net.luckperms.api.event.cause
 
@@ -279,17 +379,29 @@ Methods:
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- COMMAND
+- WEB_EDITOR
+- API
+- INTERNAL
+
 Methods:
-- CreationCause valueOf(String)
-- CreationCause[] values()
+- **static** CreationCause valueOf(String name)
+- **static** CreationCause[] values()
 
 ### Class: net.luckperms.api.event.cause.DeletionCause
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- COMMAND
+- WEB_EDITOR
+- API
+- INTERNAL
+
 Methods:
-- DeletionCause valueOf(String)
-- DeletionCause[] values()
+- **static** DeletionCause valueOf(String name)
+- **static** DeletionCause[] values()
 
 ## Package: net.luckperms.api.event.context
 
@@ -299,7 +411,7 @@ Implements: net.luckperms.api.event.LuckPermsEvent
 
 Methods:
 - Object getSubject()
-- Optional getSubject(Class)
+- Optional<TT> getSubject(Class<TT> subjectClass)
 
 ## Package: net.luckperms.api.event.extension
 
@@ -342,14 +454,14 @@ Implements: net.luckperms.api.event.LuckPermsEvent
 
 Methods:
 - String getGroupName()
-- Set getExistingData()
+- Set<Node> getExistingData()
 - DeletionCause getCause()
 
 ### Class: net.luckperms.api.event.group.GroupLoadAllEvent
 Type: Interface
 Implements: net.luckperms.api.event.LuckPermsEvent
 
-No public methods
+No public methods found
 
 ### Class: net.luckperms.api.event.group.GroupLoadEvent
 Type: Interface
@@ -365,7 +477,7 @@ Type: Interface
 Implements: net.luckperms.api.event.LuckPermsEvent, net.luckperms.api.event.type.Cancellable
 
 Methods:
-- Origin getOrigin()
+- LogBroadcastEvent$Origin getOrigin()
 - Action getEntry()
 
 ### Class: net.luckperms.api.event.log.LogNetworkPublishEvent
@@ -381,7 +493,7 @@ Type: Interface
 Implements: net.luckperms.api.event.LuckPermsEvent, net.luckperms.api.event.type.Cancellable
 
 Methods:
-- Origin getOrigin()
+- LogNotifyEvent$Origin getOrigin()
 - PlatformEntity getNotifiable()
 - Action getEntry()
 
@@ -400,6 +512,42 @@ Methods:
 - UUID getLogId()
 - Action getEntry()
 
+### Class: net.luckperms.api.event.log.LogBroadcastEvent$Origin
+Type: Enum
+Extends: java.lang.Enum
+
+Enum Constants:
+- LOCAL
+- LOCAL_API
+- REMOTE
+
+Methods:
+- **static** LogBroadcastEvent$Origin valueOf(String name)
+- **static** LogBroadcastEvent$Origin[] values()
+
+### Class: net.luckperms.api.event.log.LogNotifyEvent$Origin
+Type: Enum
+Extends: java.lang.Enum
+
+Enum Constants:
+- LOCAL
+- LOCAL_API
+- REMOTE
+
+Methods:
+- **static** LogNotifyEvent$Origin valueOf(String name)
+- **static** LogNotifyEvent$Origin[] values()
+
+## Package: net.luckperms.api.event.messaging
+
+### Class: net.luckperms.api.event.messaging.CustomMessageReceiveEvent
+Type: Interface
+Implements: net.luckperms.api.event.LuckPermsEvent
+
+Methods:
+- String getPayload()
+- String getChannelId()
+
 ## Package: net.luckperms.api.event.node
 
 ### Class: net.luckperms.api.event.node.NodeAddEvent
@@ -408,15 +556,15 @@ Implements: net.luckperms.api.event.node.NodeMutateEvent
 
 Methods:
 - Node getNode()
-- Set getDataBefore()
+- Set<Node> getDataBefore()
 
 ### Class: net.luckperms.api.event.node.NodeClearEvent
 Type: Interface
 Implements: net.luckperms.api.event.node.NodeMutateEvent
 
 Methods:
-- Set getNodes()
-- Set getDataBefore()
+- Set<Node> getNodes()
+- Set<Node> getDataBefore()
 
 ### Class: net.luckperms.api.event.node.NodeMutateEvent
 Type: Interface
@@ -425,10 +573,10 @@ Implements: net.luckperms.api.event.LuckPermsEvent
 Methods:
 - PermissionHolder getTarget()
 - DataType getDataType()
-- Set getDataAfter()
-- boolean isUser()
+- Set<Node> getDataAfter()
 - boolean isGroup()
-- Set getDataBefore()
+- boolean isUser()
+- Set<Node> getDataBefore()
 
 ### Class: net.luckperms.api.event.node.NodeRemoveEvent
 Type: Interface
@@ -436,7 +584,7 @@ Implements: net.luckperms.api.event.node.NodeMutateEvent
 
 Methods:
 - Node getNode()
-- Set getDataBefore()
+- Set<Node> getDataBefore()
 
 ## Package: net.luckperms.api.event.player
 
@@ -467,7 +615,7 @@ Implements: net.luckperms.api.event.LuckPermsEvent, net.luckperms.api.event.type
 
 Methods:
 - String getType()
-- void setType(String)
+- void setType(String type)
 - UUID getUniqueId()
 
 ### Class: net.luckperms.api.event.player.lookup.UniqueIdLookupEvent
@@ -475,7 +623,7 @@ Type: Interface
 Implements: net.luckperms.api.event.LuckPermsEvent, net.luckperms.api.event.type.ResultEvent
 
 Methods:
-- void setUniqueId(UUID)
+- void setUniqueId(UUID uniqueId)
 - String getUsername()
 
 ### Class: net.luckperms.api.event.player.lookup.UsernameLookupEvent
@@ -483,7 +631,7 @@ Type: Interface
 Implements: net.luckperms.api.event.LuckPermsEvent, net.luckperms.api.event.type.ResultEvent
 
 Methods:
-- void setUsername(String)
+- void setUsername(String username)
 - UUID getUniqueId()
 
 ### Class: net.luckperms.api.event.player.lookup.UsernameValidityCheckEvent
@@ -491,7 +639,7 @@ Type: Interface
 Implements: net.luckperms.api.event.LuckPermsEvent
 
 Methods:
-- void setValid(boolean)
+- void setValid(boolean valid)
 - AtomicBoolean validityState()
 - boolean isValid()
 - String getUsername()
@@ -509,7 +657,19 @@ Methods:
 Type: Interface
 
 Methods:
-- Type getType()
+- Source$Type getType()
+
+### Class: net.luckperms.api.event.source.Source$Type
+Type: Enum
+Extends: java.lang.Enum
+
+Enum Constants:
+- ENTITY
+- UNKNOWN
+
+Methods:
+- **static** Source$Type valueOf(String name)
+- **static** Source$Type[] values()
 
 ## Package: net.luckperms.api.event.sync
 
@@ -517,26 +677,50 @@ Methods:
 Type: Interface
 Implements: net.luckperms.api.event.LuckPermsEvent
 
-No public methods
+No public methods found
+
+### Class: net.luckperms.api.event.sync.PostNetworkSyncEvent
+Type: Interface
+Implements: net.luckperms.api.event.LuckPermsEvent
+
+Methods:
+- SyncType getType()
+- boolean didSyncOccur()
+- UUID getSpecificUserUniqueId()
+- UUID getSyncId()
 
 ### Class: net.luckperms.api.event.sync.PostSyncEvent
 Type: Interface
 Implements: net.luckperms.api.event.LuckPermsEvent
 
-No public methods
+No public methods found
 
 ### Class: net.luckperms.api.event.sync.PreNetworkSyncEvent
 Type: Interface
 Implements: net.luckperms.api.event.LuckPermsEvent, net.luckperms.api.event.type.Cancellable
 
 Methods:
+- SyncType getType()
+- UUID getSpecificUserUniqueId()
 - UUID getSyncId()
 
 ### Class: net.luckperms.api.event.sync.PreSyncEvent
 Type: Interface
 Implements: net.luckperms.api.event.LuckPermsEvent, net.luckperms.api.event.type.Cancellable
 
-No public methods
+No public methods found
+
+### Class: net.luckperms.api.event.sync.SyncType
+Type: Enum
+Extends: java.lang.Enum
+
+Enum Constants:
+- FULL
+- SPECIFIC_USER
+
+Methods:
+- **static** SyncType valueOf(String name)
+- **static** SyncType[] values()
 
 ## Package: net.luckperms.api.event.track
 
@@ -553,15 +737,15 @@ Type: Interface
 Implements: net.luckperms.api.event.LuckPermsEvent
 
 Methods:
+- List<String> getExistingData()
 - String getTrackName()
-- List getExistingData()
 - DeletionCause getCause()
 
 ### Class: net.luckperms.api.event.track.TrackLoadAllEvent
 Type: Interface
 Implements: net.luckperms.api.event.LuckPermsEvent
 
-No public methods
+No public methods found
 
 ### Class: net.luckperms.api.event.track.TrackLoadEvent
 Type: Interface
@@ -583,7 +767,7 @@ Methods:
 Type: Interface
 Implements: net.luckperms.api.event.track.mutate.TrackMutateEvent
 
-No public methods
+No public methods found
 
 ### Class: net.luckperms.api.event.track.mutate.TrackMutateEvent
 Type: Interface
@@ -591,8 +775,8 @@ Implements: net.luckperms.api.event.LuckPermsEvent
 
 Methods:
 - Track getTrack()
-- List getStateAfter()
-- List getStateBefore()
+- List<String> getStateAfter()
+- List<String> getStateBefore()
 
 ### Class: net.luckperms.api.event.track.mutate.TrackRemoveGroupEvent
 Type: Interface
@@ -608,7 +792,7 @@ Type: Interface
 
 Methods:
 - boolean isCancelled()
-- boolean setCancelled(boolean)
+- boolean setCancelled(boolean cancelled)
 - boolean isNotCancelled()
 - AtomicBoolean cancellationState()
 
@@ -616,7 +800,7 @@ Methods:
 Type: Interface
 
 Methods:
-- AtomicReference result()
+- AtomicReference<TT> result()
 - boolean hasResult()
 
 ### Class: net.luckperms.api.event.type.Sourced
@@ -687,18 +871,22 @@ Implements: net.luckperms.api.event.LuckPermsEvent, net.luckperms.api.event.type
 
 Methods:
 - Track getTrack()
-- Optional getGroupFrom()
+- Optional<String> getGroupFrom()
 - User getUser()
 - TrackAction getAction()
-- Optional getGroupTo()
+- Optional<String> getGroupTo()
 
 ### Class: net.luckperms.api.event.user.track.TrackAction
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- PROMOTION
+- DEMOTION
+
 Methods:
-- TrackAction valueOf(String)
-- TrackAction[] values()
+- **static** TrackAction valueOf(String name)
+- **static** TrackAction[] values()
 
 ## Package: net.luckperms.api.event.util
 
@@ -722,9 +910,9 @@ Methods:
 Type: Interface
 
 Methods:
-- Extension loadExtension(Path) throws IOException
 - void loadExtension(Extension)
-- Collection getLoadedExtensions()
+- Extension loadExtension(Path) throws IOException
+- Collection<Extension> getLoadedExtensions()
 
 ## Package: net.luckperms.api.messaging
 
@@ -733,6 +921,7 @@ Type: Interface
 
 Methods:
 - String getName()
+- void sendCustomMessage(String, String)
 - void pushUserUpdate(User)
 - void pushUpdate()
 
@@ -784,11 +973,19 @@ Implements: net.luckperms.api.messenger.message.Message
 Methods:
 - Action getAction()
 
+### Class: net.luckperms.api.messenger.message.type.CustomMessage
+Type: Interface
+Implements: net.luckperms.api.messenger.message.Message
+
+Methods:
+- String getPayload()
+- String getChannelId()
+
 ### Class: net.luckperms.api.messenger.message.type.UpdateMessage
 Type: Interface
 Implements: net.luckperms.api.messenger.message.Message
 
-No public methods
+No public methods found
 
 ### Class: net.luckperms.api.messenger.message.type.UserUpdateMessage
 Type: Interface
@@ -803,7 +1000,7 @@ Methods:
 Type: Interface
 
 Methods:
-- void processDuplicates(List)
+- V processDuplicates(List<TT>)
 
 ### Class: net.luckperms.api.metastacking.MetaStackDefinition
 Type: Interface
@@ -812,22 +1009,22 @@ Methods:
 - String getStartSpacer()
 - DuplicateRemovalFunction getDuplicateRemovalFunction()
 - String getEndSpacer()
-- List getElements()
+- List<MetaStackElement> getElements()
 - String getMiddleSpacer()
 
 ### Class: net.luckperms.api.metastacking.MetaStackElement
 Type: Interface
 
 Methods:
-- boolean shouldAccumulate(ChatMetaType, ChatMetaNode, ChatMetaNode)
+- Z shouldAccumulate(ChatMetaType, ChatMetaNode<**>, ChatMetaNode<**>)
 
 ### Class: net.luckperms.api.metastacking.MetaStackFactory
 Type: Interface
 
 Methods:
-- List fromStrings(List)
-- MetaStackDefinition createDefinition(List, DuplicateRemovalFunction, String, String, String)
-- Optional fromString(String)
+- MetaStackDefinition createDefinition(List<MetaStackElement>, DuplicateRemovalFunction, String, String, String)
+- List<MetaStackElement> fromStrings(List<String>)
+- Optional<MetaStackElement> fromString(String)
 
 ## Package: net.luckperms.api.model
 
@@ -835,46 +1032,74 @@ Methods:
 Type: Interface
 
 Methods:
-- Collection resolveInheritedNodes(QueryOptions)
-- Collection resolveInheritedNodes(NodeType, QueryOptions)
+- Collection<Node> resolveInheritedNodes(QueryOptions)
+- Collection<TT> resolveInheritedNodes(NodeType<TT> type, QueryOptions queryOptions)
 - NodeMap transientData()
-- Collection getNodes(NodeType)
-- Collection getNodes()
-- SortedSet getDistinctNodes()
+- SortedSet<Node> getDistinctNodes()
+- Collection<Node> getNodes()
+- Collection<TT> getNodes(NodeType<TT> type)
 - NodeMap data()
-- Identifier getIdentifier()
-- Collection getInheritedGroups(QueryOptions)
+- PermissionHolder$Identifier getIdentifier()
+- Collection<Group> getInheritedGroups(QueryOptions)
 - String getFriendlyName()
 - void auditTemporaryNodes()
-- SortedSet resolveDistinctInheritedNodes(QueryOptions)
-- QueryOptions getQueryOptions()
+- SortedSet<Node> resolveDistinctInheritedNodes(QueryOptions)
 - NodeMap getData(DataType)
 - CachedDataManager getCachedData()
+- QueryOptions getQueryOptions()
+
+### Class: net.luckperms.api.model.PermissionHolder$Identifier
+Type: Interface
+
+Methods:
+- String getName()
+- String getType()
 
 ### Class: net.luckperms.api.model.PlayerSaveResult
 Type: Interface
 
 Methods:
-- Set getOutcomes()
-- boolean includes(Outcome)
-- Set getOtherUniqueIds()
+- Set<PlayerSaveResult$Outcome> getOutcomes()
+- Set<UUID> getOtherUniqueIds()
+- boolean includes(PlayerSaveResult$Outcome outcome)
 - String getPreviousUsername()
 
+### Class: net.luckperms.api.model.PlayerSaveResult$Outcome
+Type: Enum
+Extends: java.lang.Enum
+
+Enum Constants:
+- CLEAN_INSERT
+- NO_CHANGE
+- USERNAME_UPDATED
+- OTHER_UNIQUE_IDS_PRESENT_FOR_USERNAME
+
+Methods:
+- **static** PlayerSaveResult$Outcome valueOf(String name)
+- **static** PlayerSaveResult$Outcome[] values()
+
 ## Package: net.luckperms.api.model.data
+
+### Class: net.luckperms.api.model.data.DataMutateResult$WithMergedNode
+Type: Interface
+
+Methods:
+- DataMutateResult getResult()
+- Node getMergedNode()
 
 ### Class: net.luckperms.api.model.data.NodeMap
 Type: Interface
 
 Methods:
-- WithMergedNode add(Node, TemporaryNodeMergeStrategy)
 - DataMutateResult add(Node)
+- DataMutateResult$WithMergedNode add(Node, TemporaryNodeMergeStrategy)
 - Tristate contains(Node, NodeEqualityPredicate)
-- Collection toCollection()
-- Map toMap()
-- void clear(ContextSet, Predicate)
+- Collection<Node> toCollection()
+- Map<ImmutableContextSet, Collection<Node>> toMap()
 - void clear()
-- void clear(Predicate)
+- V clear(Predicate<Node>)
 - void clear(ContextSet)
+- V clear(ContextSet, Predicate<Node>)
 - DataMutateResult remove(Node)
 
 ### Class: net.luckperms.api.model.data.DataMutateResult
@@ -882,26 +1107,41 @@ Type: Enum
 Extends: java.lang.Enum
 Implements: net.luckperms.api.util.Result
 
+Enum Constants:
+- SUCCESS
+- FAIL
+- FAIL_ALREADY_HAS
+- FAIL_LACKS
+
 Methods:
-- DataMutateResult valueOf(String)
-- DataMutateResult[] values()
+- **static** DataMutateResult valueOf(String name)
+- **static** DataMutateResult[] values()
 - boolean wasSuccessful()
 
 ### Class: net.luckperms.api.model.data.DataType
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- NORMAL
+- TRANSIENT
+
 Methods:
-- DataType valueOf(String)
-- DataType[] values()
+- **static** DataType valueOf(String name)
+- **static** DataType[] values()
 
 ### Class: net.luckperms.api.model.data.TemporaryNodeMergeStrategy
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- ADD_NEW_DURATION_TO_EXISTING
+- REPLACE_EXISTING_IF_DURATION_LONGER
+- NONE
+
 Methods:
-- TemporaryNodeMergeStrategy valueOf(String)
-- TemporaryNodeMergeStrategy[] values()
+- **static** TemporaryNodeMergeStrategy valueOf(String name)
+- **static** TemporaryNodeMergeStrategy[] values()
 
 ## Package: net.luckperms.api.model.group
 
@@ -911,24 +1151,24 @@ Implements: net.luckperms.api.model.PermissionHolder
 
 Methods:
 - String getName()
-- String getDisplayName(QueryOptions)
 - String getDisplayName()
+- String getDisplayName(QueryOptions)
 - OptionalInt getWeight()
 
 ### Class: net.luckperms.api.model.group.GroupManager
 Type: Interface
 
 Methods:
-- CompletableFuture saveGroup(Group)
-- CompletableFuture searchAll(NodeMatcher)
-- CompletableFuture getWithPermission(String)
-- CompletableFuture modifyGroup(String, Consumer)
-- CompletableFuture loadAllGroups()
+- CompletableFuture<Void> saveGroup(Group)
+- CompletableFuture<Map<String, Collection<TT>>> searchAll(NodeMatcher<+TT>)
+- CompletableFuture<List<HeldNode<String>>> getWithPermission(String)
 - Group getGroup(String)
-- CompletableFuture loadGroup(String)
-- Set getLoadedGroups()
-- CompletableFuture deleteGroup(Group)
-- CompletableFuture createAndLoadGroup(String)
+- CompletableFuture<Void> loadAllGroups()
+- CompletableFuture<Void> modifyGroup(String name, Consumer<Group> action)
+- CompletableFuture<Optional<Group>> loadGroup(String)
+- Set<Group> getLoadedGroups()
+- CompletableFuture<Void> deleteGroup(Group)
+- CompletableFuture<Group> createAndLoadGroup(String)
 - boolean isLoaded(String)
 
 ## Package: net.luckperms.api.model.user
@@ -947,22 +1187,22 @@ Methods:
 Type: Interface
 
 Methods:
-- CompletableFuture searchAll(NodeMatcher)
-- CompletableFuture getWithPermission(String)
-- User getUser(String)
+- CompletableFuture<Map<UUID, Collection<TT>>> searchAll(NodeMatcher<+TT>)
+- CompletableFuture<List<HeldNode<UUID>>> getWithPermission(String)
+- Set<User> getLoadedUsers()
 - User getUser(UUID)
-- Set getLoadedUsers()
-- CompletableFuture deletePlayerData(UUID)
-- CompletableFuture lookupUniqueId(String)
+- User getUser(String)
+- CompletableFuture<Void> deletePlayerData(UUID)
 - void cleanupUser(User)
+- CompletableFuture<UUID> lookupUniqueId(String)
 - boolean isLoaded(UUID)
-- CompletableFuture modifyUser(UUID, Consumer)
-- CompletableFuture savePlayerData(UUID, String)
-- CompletableFuture lookupUsername(UUID)
-- CompletableFuture loadUser(UUID)
-- CompletableFuture loadUser(UUID, String)
-- CompletableFuture getUniqueUsers()
-- CompletableFuture saveUser(User)
+- CompletableFuture<Void> modifyUser(UUID uniqueId, Consumer<User> action)
+- CompletableFuture<PlayerSaveResult> savePlayerData(UUID, String)
+- CompletableFuture<String> lookupUsername(UUID)
+- CompletableFuture<User> loadUser(UUID, String)
+- CompletableFuture<User> loadUser(UUID uniqueId)
+- CompletableFuture<Set<UUID>> getUniqueUsers()
+- CompletableFuture<Void> saveUser(User)
 
 ## Package: net.luckperms.api.node
 
@@ -971,97 +1211,101 @@ Type: Interface
 
 Methods:
 - Node getNode()
-- Object getHolder()
+- TT getHolder()
 
 ### Class: net.luckperms.api.node.Node
 Type: Interface
 
 Methods:
-- NodeBuilder toBuilder()
+- NodeBuilder<**> toBuilder()
 - String getKey()
-- Object metadata(NodeMetadataKey) throws IllegalStateException
-- Optional getMetadata(NodeMetadataKey)
-- boolean isNegated()
+- TT metadata(NodeMetadataKey<TT> key) throws IllegalStateException
+- Optional<TT> getMetadata(NodeMetadataKey<TT>)
 - Duration getExpiryDuration()
 - Instant getExpiry()
+- boolean isNegated()
 - boolean hasExpired()
 - boolean getValue()
 - ImmutableContextSet getContexts()
 - boolean hasExpiry()
-- NodeType getType()
-- boolean equals(Node, NodeEqualityPredicate)
+- NodeType<*> getType()
 - boolean equals(Object)
-- NodeBuilder builder(String)
-- Collection resolveShorthand()
+- boolean equals(Node, NodeEqualityPredicate)
+- **static** NodeBuilder<**> builder(String key)
+- Collection<String> resolveShorthand()
 
 ### Class: net.luckperms.api.node.NodeBuilder
 Type: Interface
 
 Methods:
-- NodeBuilder negated(boolean)
-- NodeBuilder clearExpiry()
-- NodeBuilder withContext(String, String)
-- NodeBuilder withContext(ContextSet)
-- ScopedNode build()
-- NodeBuilder withMetadata(NodeMetadataKey, Object)
-- NodeBuilder context(ContextSet)
-- NodeBuilder expiry(TemporalAccessor)
-- NodeBuilder expiry(TemporalAmount)
-- NodeBuilder expiry(long, TimeUnit)
-- NodeBuilder expiry(long)
-- NodeBuilder value(boolean)
+- TB clearExpiry()
+- TB negated(boolean)
+- TB withContext(String, String)
+- TB withContext(ContextSet)
+- TN build()
+- TB withMetadata(NodeMetadataKey<TT>, T)
+- TB context(ContextSet)
+- TB expiry(long)
+- TB expiry(TemporalAccessor)
+- TB expiry(TemporalAmount)
+- TB expiry(long duration, TimeUnit)
+- TB value(boolean)
 
 ### Class: net.luckperms.api.node.NodeBuilderRegistry
 Type: Interface
 
 Methods:
-- Builder forWeight()
-- Builder forPermission()
-- Builder forRegexPermission()
-- Builder forSuffix()
-- Builder forInheritance()
-- NodeBuilder forKey(String)
-- Builder forDisplayName()
-- Builder forPrefix()
-- Builder forMeta()
+- WeightNode$Builder forWeight()
+- PermissionNode$Builder forPermission()
+- RegexPermissionNode$Builder forRegexPermission()
+- SuffixNode$Builder forSuffix()
+- InheritanceNode$Builder forInheritance()
+- NodeBuilder<**> forKey(String)
+- DisplayNameNode$Builder forDisplayName()
+- PrefixNode$Builder forPrefix()
+- MetaNode$Builder forMeta()
 
 ### Class: net.luckperms.api.node.NodeEqualityPredicate
 Type: Interface
 
 Methods:
 - boolean areEqual(Node, Node)
-- Predicate equalTo(Node)
+- Predicate<Node> equalTo(Node node)
 
 ### Class: net.luckperms.api.node.NodeType
 Type: Interface
 
 Methods:
-- Predicate predicate()
-- Predicate predicate(Predicate)
-- Node cast(Node)
+- Predicate<Node> predicate()
+- Predicate<Node> predicate(Predicate<-TT> and)
+- TT cast(Node)
 - String name()
 - boolean matches(Node)
-- Optional tryCast(Node)
+- Optional<TT> tryCast(Node node)
 
 ### Class: net.luckperms.api.node.ScopedNode
 Type: Interface
 Implements: net.luckperms.api.node.Node
 
 Methods:
-- NodeBuilder toBuilder()
-- NodeType getType()
+- TB toBuilder()
+- NodeType<TN> getType()
 
 ### Class: net.luckperms.api.node.ChatMetaType
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- PREFIX
+- SUFFIX
+
 Methods:
-- ChatMetaType valueOf(String)
-- ChatMetaType[] values()
-- Builder builder(String, int)
-- Builder builder()
+- **static** ChatMetaType valueOf(String name)
+- **static** ChatMetaType[] values()
+- ChatMetaNode$Builder<**> builder()
+- ChatMetaNode$Builder<**> builder(String, int)
 - String toString()
-- NodeType nodeType()
+- NodeType<ChatMetaNode<**>> nodeType()
 
 ## Package: net.luckperms.api.node.matcher
 
@@ -1070,26 +1314,26 @@ Type: Interface
 Implements: java.util.function.Predicate
 
 Methods:
-- boolean test(Object)
 - boolean test(Node)
-- NodeMatcher equals(Node, NodeEqualityPredicate)
-- NodeMatcher metaKey(String)
-- NodeMatcher metaKey(MetaNode)
-- NodeMatcher keyStartsWith(String)
-- NodeMatcher type(NodeType)
-- NodeMatcher key(String)
-- NodeMatcher key(Node)
+- boolean test(Object)
+- **static** NodeMatcher<TT> equals(T other, T equalityPredicate)
+- **static** NodeMatcher<MetaNode> metaKey(String metaKey)
+- **static** NodeMatcher<MetaNode> metaKey(MetaNode metaNode)
+- **static** NodeMatcher<Node> keyStartsWith(String startingWith)
+- **static** NodeMatcher<TT> type(NodeType<+TT> type)
+- **static** NodeMatcher<Node> key(String key)
+- **static** NodeMatcher<TT> key(T node)
 
 ### Class: net.luckperms.api.node.matcher.NodeMatcherFactory
 Type: Interface
 
 Methods:
-- NodeMatcher equals(Node, NodeEqualityPredicate)
-- NodeMatcher metaKey(String)
-- NodeMatcher keyStartsWith(String)
-- NodeMatcher type(NodeType)
-- NodeMatcher key(String)
-- NodeMatcher key(Node)
+- NodeMatcher<TT> equals(T, T)
+- NodeMatcher<MetaNode> metaKey(String)
+- NodeMatcher<Node> keyStartsWith(String)
+- NodeMatcher<TT> type(NodeType<+TT>)
+- NodeMatcher<Node> key(String)
+- NodeMatcher<TT> key(T)
 
 ## Package: net.luckperms.api.node.metadata
 
@@ -1097,9 +1341,9 @@ Methods:
 Type: Interface
 
 Methods:
-- NodeMetadataKey of(String, Class)
+- **static** NodeMetadataKey<TT> of(String name, Class<TT> type)
 - String name()
-- Class type()
+- Class<TT> type()
 
 ## Package: net.luckperms.api.node.metadata.types
 
@@ -1107,8 +1351,8 @@ Methods:
 Type: Interface
 
 Methods:
-- Identifier getOrigin()
-- boolean wasInherited(Identifier)
+- PermissionHolder$Identifier getOrigin()
+- boolean wasInherited(PermissionHolder$Identifier holder)
 - DataType getDataType()
 
 ## Package: net.luckperms.api.node.types
@@ -1122,15 +1366,29 @@ Methods:
 - int getPriority()
 - String getMetaValue()
 
+### Class: net.luckperms.api.node.types.ChatMetaNode$Builder
+Type: Interface
+Implements: net.luckperms.api.node.NodeBuilder
+
+Methods:
+- TB priority(int)
+
 ### Class: net.luckperms.api.node.types.DisplayNameNode
 Type: Interface
 Implements: net.luckperms.api.node.ScopedNode
 
 Methods:
-- NodeType getType()
 - String getDisplayName()
-- Builder builder(String)
-- Builder builder()
+- NodeType<DisplayNameNode> getType()
+- **static** DisplayNameNode$Builder builder()
+- **static** DisplayNameNode$Builder builder(String displayName)
+
+### Class: net.luckperms.api.node.types.DisplayNameNode$Builder
+Type: Interface
+Implements: net.luckperms.api.node.NodeBuilder
+
+Methods:
+- DisplayNameNode$Builder displayName(String)
 
 ### Class: net.luckperms.api.node.types.InheritanceNode
 Type: Interface
@@ -1138,21 +1396,37 @@ Implements: net.luckperms.api.node.ScopedNode
 
 Methods:
 - String getGroupName()
-- NodeType getType()
-- Builder builder(String)
-- Builder builder(Group)
-- Builder builder()
+- NodeType<InheritanceNode> getType()
+- **static** InheritanceNode$Builder builder()
+- **static** InheritanceNode$Builder builder(String group)
+- **static** InheritanceNode$Builder builder(Group group)
+
+### Class: net.luckperms.api.node.types.InheritanceNode$Builder
+Type: Interface
+Implements: net.luckperms.api.node.NodeBuilder
+
+Methods:
+- InheritanceNode$Builder group(String)
+- InheritanceNode$Builder group(Group)
 
 ### Class: net.luckperms.api.node.types.MetaNode
 Type: Interface
 Implements: net.luckperms.api.node.ScopedNode
 
 Methods:
-- NodeType getType()
-- Builder builder(String, String)
-- Builder builder()
+- NodeType<MetaNode> getType()
+- **static** MetaNode$Builder builder()
+- **static** MetaNode$Builder builder(String key, String value)
 - String getMetaKey()
 - String getMetaValue()
+
+### Class: net.luckperms.api.node.types.MetaNode$Builder
+Type: Interface
+Implements: net.luckperms.api.node.NodeBuilder
+
+Methods:
+- MetaNode$Builder value(String)
+- MetaNode$Builder key(String)
 
 ### Class: net.luckperms.api.node.types.PermissionNode
 Type: Interface
@@ -1160,20 +1434,34 @@ Implements: net.luckperms.api.node.ScopedNode
 
 Methods:
 - String getPermission()
-- NodeType getType()
+- NodeType<PermissionNode> getType()
 - OptionalInt getWildcardLevel()
+- **static** PermissionNode$Builder builder()
+- **static** PermissionNode$Builder builder(String permission)
 - boolean isWildcard()
-- Builder builder(String)
-- Builder builder()
+
+### Class: net.luckperms.api.node.types.PermissionNode$Builder
+Type: Interface
+Implements: net.luckperms.api.node.NodeBuilder
+
+Methods:
+- PermissionNode$Builder permission(String)
 
 ### Class: net.luckperms.api.node.types.PrefixNode
 Type: Interface
 Implements: net.luckperms.api.node.types.ChatMetaNode
 
 Methods:
-- NodeType getType()
-- Builder builder()
-- Builder builder(String, int)
+- NodeType<PrefixNode> getType()
+- **static** PrefixNode$Builder builder()
+- **static** PrefixNode$Builder builder(String prefix, int priority)
+
+### Class: net.luckperms.api.node.types.PrefixNode$Builder
+Type: Interface
+Implements: net.luckperms.api.node.types.ChatMetaNode$Builder
+
+Methods:
+- PrefixNode$Builder prefix(String)
 
 ### Class: net.luckperms.api.node.types.RegexPermissionNode
 Type: Interface
@@ -1181,30 +1469,52 @@ Implements: net.luckperms.api.node.ScopedNode
 
 Methods:
 - String getPatternString()
-- NodeType getType()
-- Builder builder(String)
-- Builder builder(Pattern)
-- Builder builder()
-- Optional getPattern()
+- NodeType<RegexPermissionNode> getType()
+- **static** RegexPermissionNode$Builder builder()
+- **static** RegexPermissionNode$Builder builder(String pattern)
+- **static** RegexPermissionNode$Builder builder(Pattern pattern)
+- Optional<Pattern> getPattern()
+
+### Class: net.luckperms.api.node.types.RegexPermissionNode$Builder
+Type: Interface
+Implements: net.luckperms.api.node.NodeBuilder
+
+Methods:
+- RegexPermissionNode$Builder pattern(String)
+- RegexPermissionNode$Builder pattern(Pattern)
 
 ### Class: net.luckperms.api.node.types.SuffixNode
 Type: Interface
 Implements: net.luckperms.api.node.types.ChatMetaNode
 
 Methods:
-- NodeType getType()
-- Builder builder()
-- Builder builder(String, int)
+- NodeType<SuffixNode> getType()
+- **static** SuffixNode$Builder builder()
+- **static** SuffixNode$Builder builder(String suffix, int priority)
+
+### Class: net.luckperms.api.node.types.SuffixNode$Builder
+Type: Interface
+Implements: net.luckperms.api.node.types.ChatMetaNode$Builder
+
+Methods:
+- SuffixNode$Builder suffix(String)
 
 ### Class: net.luckperms.api.node.types.WeightNode
 Type: Interface
 Implements: net.luckperms.api.node.ScopedNode
 
 Methods:
-- NodeType getType()
+- NodeType<WeightNode> getType()
 - int getWeight()
-- Builder builder(int)
-- Builder builder()
+- **static** WeightNode$Builder builder()
+- **static** WeightNode$Builder builder(int weight)
+
+### Class: net.luckperms.api.node.types.WeightNode$Builder
+Type: Interface
+Implements: net.luckperms.api.node.NodeBuilder
+
+Methods:
+- WeightNode$Builder weight(int)
 
 ## Package: net.luckperms.api.platform
 
@@ -1212,35 +1522,35 @@ Methods:
 Type: Interface
 
 Methods:
-- Map getDetails()
+- Map<String, Object> getDetails()
 - boolean isHealthy()
 
 ### Class: net.luckperms.api.platform.Platform
 Type: Interface
 
 Methods:
-- Type getType()
-- Set getUniqueConnections()
+- Platform$Type getType()
+- Set<UUID> getUniqueConnections()
 - Instant getStartTime()
-- Collection getKnownPermissions()
+- Collection<String> getKnownPermissions()
 
 ### Class: net.luckperms.api.platform.PlatformEntity
 Type: Interface
 
 Methods:
 - String getName()
-- Type getType()
+- PlatformEntity$Type getType()
 - UUID getUniqueId()
 
 ### Class: net.luckperms.api.platform.PlayerAdapter
 Type: Interface
 
 Methods:
-- User getUser(Object)
-- CachedPermissionData getPermissionData(Object)
-- CachedMetaData getMetaData(Object)
-- ImmutableContextSet getContext(Object)
-- QueryOptions getQueryOptions(Object)
+- CachedPermissionData getPermissionData(T player)
+- User getUser(T)
+- CachedMetaData getMetaData(T player)
+- ImmutableContextSet getContext(T)
+- QueryOptions getQueryOptions(T)
 
 ### Class: net.luckperms.api.platform.PluginMetadata
 Type: Interface
@@ -1249,35 +1559,78 @@ Methods:
 - String getVersion()
 - String getApiVersion()
 
+### Class: net.luckperms.api.platform.Platform$Type
+Type: Enum
+Extends: java.lang.Enum
+
+Enum Constants:
+- BUKKIT
+- BUNGEECORD
+- SPONGE
+- NUKKIT
+- VELOCITY
+- FABRIC
+- NEOFORGE
+- FORGE
+- STANDALONE
+
+Methods:
+- **static** Platform$Type valueOf(String name)
+- String getFriendlyName()
+- **static** Platform$Type[] values()
+
+### Class: net.luckperms.api.platform.PlatformEntity$Type
+Type: Enum
+Extends: java.lang.Enum
+
+Enum Constants:
+- PLAYER
+- CONSOLE
+
+Methods:
+- **static** PlatformEntity$Type valueOf(String name)
+- **static** PlatformEntity$Type[] values()
+
 ## Package: net.luckperms.api.query
 
 ### Class: net.luckperms.api.query.OptionKey
 Type: Interface
 
 Methods:
-- OptionKey of(String, Class)
+- **static** OptionKey<TT> of(String name, Class<TT> type)
 - String name()
-- Class type()
+- Class<TT> type()
 
 ### Class: net.luckperms.api.query.QueryOptions
 Type: Interface
 
 Methods:
 - QueryMode mode()
-- QueryOptions contextual(ContextSet, Set)
-- QueryOptions contextual(ContextSet)
-- Builder toBuilder()
-- QueryOptions defaultContextualOptions()
-- QueryOptions nonContextual()
-- QueryOptions nonContextual(Set)
+- **static** QueryOptions contextual(ContextSet context, Set<Flag> flags)
+- **static** QueryOptions contextual(ContextSet context)
+- QueryOptions$Builder toBuilder()
+- **static** QueryOptions defaultContextualOptions()
+- **static** QueryOptions nonContextual(Set<Flag> flags)
+- **static** QueryOptions nonContextual()
 - boolean flag(Flag)
+- boolean satisfies(ContextSet contextSet)
 - boolean satisfies(ContextSet, ContextSatisfyMode)
-- boolean satisfies(ContextSet)
-- Map options()
-- Set flags()
+- Map<OptionKey<*>, Object> options()
+- Set<Flag> flags()
 - ImmutableContextSet context()
-- Builder builder(QueryMode)
-- Optional option(OptionKey)
+- **static** QueryOptions$Builder builder(QueryMode mode)
+- Optional<TO> option(OptionKey<TO>)
+
+### Class: net.luckperms.api.query.QueryOptions$Builder
+Type: Interface
+
+Methods:
+- QueryOptions$Builder mode(QueryMode)
+- QueryOptions$Builder flag(Flag, boolean)
+- QueryOptions build()
+- QueryOptions$Builder flags(Set<Flag>)
+- QueryOptions$Builder context(ContextSet)
+- QueryOptions$Builder option(OptionKey<TO>, T)
 
 ### Class: net.luckperms.api.query.QueryOptionsRegistry
 Type: Interface
@@ -1290,17 +1643,28 @@ Methods:
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- RESOLVE_INHERITANCE
+- INCLUDE_NODES_WITHOUT_SERVER_CONTEXT
+- INCLUDE_NODES_WITHOUT_WORLD_CONTEXT
+- APPLY_INHERITANCE_NODES_WITHOUT_SERVER_CONTEXT
+- APPLY_INHERITANCE_NODES_WITHOUT_WORLD_CONTEXT
+
 Methods:
-- Flag valueOf(String)
-- Flag[] values()
+- **static** Flag valueOf(String name)
+- **static** Flag[] values()
 
 ### Class: net.luckperms.api.query.QueryMode
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- CONTEXTUAL
+- NON_CONTEXTUAL
+
 Methods:
-- QueryMode valueOf(String)
-- QueryMode[] values()
+- **static** QueryMode valueOf(String name)
+- **static** QueryMode[] values()
 
 ## Package: net.luckperms.api.query.dataorder
 
@@ -1308,36 +1672,46 @@ Methods:
 Type: Interface
 
 Methods:
-- Comparator getOrderComparator(Identifier)
-- DataQueryOrderFunction always(Comparator)
+- Comparator<DataType> getOrderComparator(PermissionHolder$Identifier)
+- **static** DataQueryOrderFunction always(Comparator<DataType> comparator)
 
 ### Class: net.luckperms.api.query.dataorder.DataTypeFilterFunction
 Type: Interface
 
 Methods:
-- DataTypeFilterFunction always(Predicate)
-- Predicate getTypeFilter(Identifier)
+- **static** DataTypeFilterFunction always(Predicate<DataType> predicate)
+- Predicate<DataType> getTypeFilter(PermissionHolder$Identifier)
 
 ### Class: net.luckperms.api.query.dataorder.DataQueryOrder
 Type: Enum
 Extends: java.lang.Enum
 Implements: java.util.Comparator
 
+Enum Constants:
+- TRANSIENT_FIRST
+- TRANSIENT_LAST
+
 Methods:
-- DataQueryOrder valueOf(String)
-- DataQueryOrder[] values()
-- void queryInOrder(Comparator, Consumer)
-- List order(Comparator)
+- **static** DataQueryOrder valueOf(String name)
+- **static** DataQueryOrder[] values()
+- **static** V queryInOrder(Comparator<DataType> comparator, Consumer<DataType> action)
+- **static** List<DataType> order(Comparator<DataType> comparator)
 
 ### Class: net.luckperms.api.query.dataorder.DataTypeFilter
 Type: Enum
 Extends: java.lang.Enum
 Implements: java.util.function.Predicate
 
+Enum Constants:
+- ALL
+- NONE
+- NORMAL_ONLY
+- TRANSIENT_ONLY
+
 Methods:
-- DataTypeFilter valueOf(String)
-- DataTypeFilter[] values()
-- List values(Predicate)
+- **static** DataTypeFilter valueOf(String name)
+- **static** DataTypeFilter[] values()
+- **static** List<DataType> values(Predicate<DataType> predicate)
 
 ## Package: net.luckperms.api.query.meta
 
@@ -1345,7 +1719,7 @@ Methods:
 Type: Interface
 
 Methods:
-- Result selectValue(String, List)
+- Result<String, MetaNode> selectValue(String, List<Result<String, MetaNode>>)
 
 ## Package: net.luckperms.api.track
 
@@ -1354,53 +1728,97 @@ Type: Interface
 Implements: net.luckperms.api.util.Result
 
 Methods:
-- Optional getGroupFrom()
+- Optional<String> getGroupFrom()
 - boolean wasSuccessful()
-- Status getStatus()
-- Optional getGroupTo()
+- DemotionResult$Status getStatus()
+- Optional<String> getGroupTo()
 
 ### Class: net.luckperms.api.track.PromotionResult
 Type: Interface
 Implements: net.luckperms.api.util.Result
 
 Methods:
-- Optional getGroupFrom()
+- Optional<String> getGroupFrom()
 - boolean wasSuccessful()
-- Status getStatus()
-- Optional getGroupTo()
+- PromotionResult$Status getStatus()
+- Optional<String> getGroupTo()
 
 ### Class: net.luckperms.api.track.Track
 Type: Interface
 
 Methods:
-- String getPrevious(Group)
 - boolean containsGroup(Group)
 - boolean containsGroup(String)
-- PromotionResult promote(User, ContextSet)
+- String getPrevious(Group)
 - DataMutateResult insertGroup(Group, int) throws IndexOutOfBoundsException
-- String getName()
+- PromotionResult promote(User, ContextSet)
 - DemotionResult demote(User, ContextSet)
+- String getName()
 - DataMutateResult appendGroup(Group)
-- DataMutateResult removeGroup(String)
-- DataMutateResult removeGroup(Group)
 - void clearGroups()
+- DataMutateResult removeGroup(Group)
+- DataMutateResult removeGroup(String)
 - String getNext(Group)
-- List getGroups()
+- List<String> getGroups()
 
 ### Class: net.luckperms.api.track.TrackManager
 Type: Interface
 
 Methods:
 - Track getTrack(String)
-- CompletableFuture loadTrack(String)
-- CompletableFuture saveTrack(Track)
-- CompletableFuture loadAllTracks()
-- CompletableFuture createAndLoadTrack(String)
-- CompletableFuture deleteTrack(Track)
+- CompletableFuture<Optional<Track>> loadTrack(String)
+- CompletableFuture<Void> loadAllTracks()
+- CompletableFuture<Void> saveTrack(Track)
+- CompletableFuture<Track> createAndLoadTrack(String)
+- CompletableFuture<Void> deleteTrack(Track)
+- CompletableFuture<Void> modifyTrack(String name, Consumer<Track> action)
 - boolean isLoaded(String)
-- Set getLoadedTracks()
+- Set<Track> getLoadedTracks()
+
+### Class: net.luckperms.api.track.DemotionResult$Status
+Type: Enum
+Extends: java.lang.Enum
+Implements: net.luckperms.api.util.Result
+
+Enum Constants:
+- SUCCESS
+- REMOVED_FROM_FIRST_GROUP
+- MALFORMED_TRACK
+- NOT_ON_TRACK
+- AMBIGUOUS_CALL
+- UNDEFINED_FAILURE
+
+Methods:
+- **static** DemotionResult$Status valueOf(String name)
+- **static** DemotionResult$Status[] values()
+- boolean wasSuccessful()
+
+### Class: net.luckperms.api.track.PromotionResult$Status
+Type: Enum
+Extends: java.lang.Enum
+Implements: net.luckperms.api.util.Result
+
+Enum Constants:
+- SUCCESS
+- ADDED_TO_FIRST_GROUP
+- MALFORMED_TRACK
+- END_OF_TRACK
+- AMBIGUOUS_CALL
+- UNDEFINED_FAILURE
+
+Methods:
+- **static** PromotionResult$Status valueOf(String name)
+- **static** PromotionResult$Status[] values()
+- boolean wasSuccessful()
 
 ## Package: net.luckperms.api.util
+
+### Class: net.luckperms.api.util.Page
+Type: Interface
+
+Methods:
+- List<TT> entries()
+- int overallSize()
 
 ### Class: net.luckperms.api.util.Result
 Type: Interface
@@ -1412,9 +1830,15 @@ Methods:
 Type: Enum
 Extends: java.lang.Enum
 
+Enum Constants:
+- TRUE
+- FALSE
+- UNDEFINED
+
 Methods:
-- Tristate valueOf(String)
-- Tristate[] values()
-- Tristate of(boolean)
-- Tristate of(Boolean)
+- **static** Tristate valueOf(String name)
+- **static** Tristate of(boolean val)
+- **static** Tristate of(Boolean val)
+- **static** Tristate[] values()
 - boolean asBoolean()
+
