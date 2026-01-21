@@ -8,7 +8,7 @@ In your manifest.kod file, add signgui to the include section:
 
 manifest.kod:
 include:
-  - signgui
+- signgui
 
 This will automatically include SignGUI in your project compilation.
 
@@ -16,13 +16,13 @@ This will automatically include SignGUI in your project compilation.
 ```java
 import de.rapha149.signgui.SignGUI;
 import de.rapha149.signgui.SignGUIAction;
-import de.rapha149.signgui.SignGUIVersionException;
+import de.rapha149.signgui.exception.SignGUIVersionException;
 ```
 
 ## Basic Usage
 ```java
 try {
-SignGUI gui = SignGUI.builder()
+    SignGUI gui = SignGUI.builder()
         .setLines("§6Enter name:", "", "", "")
         .setHandler((player, result) -> {
             String input = result.getLineWithoutColor(1);
@@ -32,9 +32,9 @@ SignGUI gui = SignGUI.builder()
         .build();
     
     gui.open(player);
-        } catch (SignGUIVersionException e) {
-        // Server version not supported
-        }
+} catch (SignGUIVersionException e) {
+    // Server version not supported
+}
 ```
 
 ## Complete Builder Reference
@@ -54,7 +54,7 @@ SignGUI gui = SignGUI.builder()
 ### Handler Configuration
 ```java
 .setHandler(BiFunction<Player, SignGUIResult, List<SignGUIAction>> handler)  // Required
-.callHandlerSynchronously()         // Run handler on main thread (default: async)
+.callHandlerSynchronously(JavaPlugin plugin)  // Run handler on main thread (default: async)
 ```
 
 ## SignGUIResult Methods
@@ -79,31 +79,31 @@ SignGUIAction.run(Runnable runnable)                     // Execute custom code
 public void openNameInput(Player player) {
     try {
         SignGUI.builder()
-                .setLines("§e§lEnter Name", "§7-----------", "", "")
-                .setType(Material.OAK_SIGN)
-                .setColor(DyeColor.BLACK)
-                .setHandler((p, result) -> {
-                    String name = result.getLineWithoutColor(2).trim();
-
-                    if (name.isEmpty()) {
-                        p.sendMessage("§cName cannot be empty!");
-                        return List.of(SignGUIAction.displayNewLines(
-                                "§c§lTry Again", "§7-----------", "", ""
-                        ));
-                    }
-
-                    if (name.length() < 3) {
-                        p.sendMessage("§cName must be at least 3 characters!");
-                        return List.of(SignGUIAction.displayNewLines(
-                                "§c§lToo Short", "§7-----------", "", ""
-                        ));
-                    }
-
-                    p.sendMessage("§aName set to: " + name);
-                    return Collections.emptyList();
-                })
-                .build()
-                .open(player);
+            .setLines("§e§lEnter Name", "§7-----------", "", "")
+            .setType(Material.OAK_SIGN)
+            .setColor(DyeColor.BLACK)
+            .setHandler((p, result) -> {
+                String name = result.getLineWithoutColor(2).trim();
+                
+                if (name.isEmpty()) {
+                    p.sendMessage("§cName cannot be empty!");
+                    return List.of(SignGUIAction.displayNewLines(
+                        "§c§lTry Again", "§7-----------", "", ""
+                    ));
+                }
+                
+                if (name.length() < 3) {
+                    p.sendMessage("§cName must be at least 3 characters!");
+                    return List.of(SignGUIAction.displayNewLines(
+                        "§c§lToo Short", "§7-----------", "", ""
+                    ));
+                }
+                
+                p.sendMessage("§aName set to: " + name);
+                return Collections.emptyList();
+            })
+            .build()
+            .open(player);
     } catch (SignGUIVersionException e) {
         player.sendMessage("§cSign GUI not supported on this server version.");
     }
@@ -115,34 +115,34 @@ public void openNameInput(Player player) {
 public void openAmountSelector(Player player, ItemStack item) {
     try {
         SignGUI.builder()
-                .setLines("§6Enter Amount", "§7(1-64)", "", "")
-                .setHandler((p, result) -> {
-                    String input = result.getLineWithoutColor(2).trim();
-
-                    try {
-                        int amount = Integer.parseInt(input);
-                        if (amount < 1 || amount > 64) {
-                            return List.of(SignGUIAction.displayNewLines(
-                                    "§cInvalid Range", "§7(1-64)", "", ""
-                            ));
-                        }
-
-                        item.setAmount(amount);
-                        Inventory confirmInv = createConfirmInventory(item);
-
-                        return List.of(
-                                SignGUIAction.openInventory(plugin, confirmInv),
-                                SignGUIAction.run(() -> p.sendMessage("§aSelect confirm or cancel"))
-                        );
-
-                    } catch (NumberFormatException e) {
+            .setLines("§6Enter Amount", "§7(1-64)", "", "")
+            .setHandler((p, result) -> {
+                String input = result.getLineWithoutColor(2).trim();
+                
+                try {
+                    int amount = Integer.parseInt(input);
+                    if (amount < 1 || amount > 64) {
                         return List.of(SignGUIAction.displayNewLines(
-                                "§cNumbers Only!", "§7(1-64)", "", ""
+                            "§cInvalid Range", "§7(1-64)", "", ""
                         ));
                     }
-                })
-                .build()
-                .open(player);
+                    
+                    item.setAmount(amount);
+                    Inventory confirmInv = createConfirmInventory(item);
+                    
+                    return List.of(
+                        SignGUIAction.openInventory(plugin, confirmInv),
+                        SignGUIAction.run(() -> p.sendMessage("§aSelect confirm or cancel"))
+                    );
+                    
+                } catch (NumberFormatException e) {
+                    return List.of(SignGUIAction.displayNewLines(
+                        "§cNumbers Only!", "§7(1-64)", "", ""
+                    ));
+                }
+            })
+            .build()
+            .open(player);
     } catch (SignGUIVersionException e) {
         player.sendMessage("§cFeature not available.");
     }
@@ -154,28 +154,28 @@ public void openAmountSelector(Player player, ItemStack item) {
 public void openWarpCreator(Player player) {
     try {
         SignGUI.builder()
-                .setLines("§5§lNew Warp", "§7Enter name:", "", "")
-                .setType(Material.WARPED_SIGN)
-                .setColor(DyeColor.PURPLE)
-                .callHandlerSynchronously()  // Required for Bukkit API calls
-                .setHandler((p, result) -> {
-                    String warpName = result.getLineWithoutColor(2).trim();
-
-                    if (warpName.isEmpty()) {
-                        return List.of(SignGUIAction.displayNewLines(
-                                "§c§lInvalid", "§7Enter name:", "", ""
-                        ));
-                    }
-
-                    // Safe to call Bukkit API - handler runs on main thread
-                    Location loc = p.getLocation();
-                    saveWarp(warpName, loc);
-                    p.sendMessage("§aWarp '" + warpName + "' created!");
-
-                    return Collections.emptyList();
-                })
-                .build()
-                .open(player);
+            .setLines("§5§lNew Warp", "§7Enter name:", "", "")
+            .setType(Material.WARPED_SIGN)
+            .setColor(DyeColor.PURPLE)
+            .callHandlerSynchronously(plugin)  // Required for Bukkit API calls
+            .setHandler((p, result) -> {
+                String warpName = result.getLineWithoutColor(2).trim();
+                
+                if (warpName.isEmpty()) {
+                    return List.of(SignGUIAction.displayNewLines(
+                        "§c§lInvalid", "§7Enter name:", "", ""
+                    ));
+                }
+                
+                // Safe to call Bukkit API - handler runs on main thread
+                Location loc = p.getLocation();
+                saveWarp(warpName, loc);
+                p.sendMessage("§aWarp '" + warpName + "' created!");
+                
+                return Collections.emptyList();
+            })
+            .build()
+            .open(player);
     } catch (SignGUIVersionException e) {
         player.sendMessage("§cNot supported.");
     }
@@ -187,15 +187,15 @@ public void openWarpCreator(Player player) {
 public void openPollForAll(Collection<Player> players, String question) {
     try {
         SignGUI gui = SignGUI.builder()
-                .setLines("§6§l" + question, "§7Type: yes/no", "", "")
-                .setHandler((p, result) -> {
-                    String answer = result.getLineWithoutColor(2).toLowerCase().trim();
-                    recordVote(p, answer);
-                    p.sendMessage("§aVote recorded!");
-                    return Collections.emptyList();
-                })
-                .build();
-
+            .setLines("§6§l" + question, "§7Type: yes/no", "", "")
+            .setHandler((p, result) -> {
+                String answer = result.getLineWithoutColor(2).toLowerCase().trim();
+                recordVote(p, answer);
+                p.sendMessage("§aVote recorded!");
+                return Collections.emptyList();
+            })
+            .build();
+        
         // Open same GUI for multiple players
         for (Player player : players) {
             gui.open(player);
@@ -213,10 +213,10 @@ public void openSignSafely(Player player) {
     foliaLib.getScheduler().runAtEntityLater(player, task -> {
         try {
             SignGUI.builder()
-                    .setLines("§aReady!", "", "", "")
-                    .setHandler((p, result) -> Collections.emptyList())
-                    .build()
-                    .open(player);
+                .setLines("§aReady!", "", "", "")
+                .setHandler((p, result) -> Collections.emptyList())
+                .build()
+                .open(player);
         } catch (SignGUIVersionException e) {
             player.sendMessage("§cNot supported.");
         }
@@ -236,7 +236,7 @@ public void openSignSafely(Player player) {
 - Leave first line(s) blank for player input
 - Use lower lines for instructions (players less likely to edit)
 - Validate input in handler and use `displayNewLines()` for retries
-- Use `callHandlerSynchronously()` when modifying world/entities
+- Use `callHandlerSynchronously(plugin)` when modifying world/entities
 - Catch `SignGUIVersionException` gracefully with fallback behavior
 - Add delay when opening after PlayerJoinEvent (minimum 60 ticks recommended)
 
