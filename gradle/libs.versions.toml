@@ -1,6 +1,6 @@
 [versions]
 # spring
-spring-boot = "4.0.1"
+spring-boot = "4.0.2"
 dependency-management = "1.1.7"
 spring-grpc = "1.0.0"
 
