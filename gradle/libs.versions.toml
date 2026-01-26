@@ -2,7 +2,7 @@
 # spring
 spring-boot = "4.0.1"
 dependency-management = "1.1.7"
-spring-grpc = "1.0.0"
+spring-grpc = "1.0.1"
 
 # grpc
 protobuf = "0.9.5"
