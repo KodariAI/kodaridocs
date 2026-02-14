@@ -1,6 +1,6 @@
 [versions]
 # spring
-spring-boot = "4.0.1"
+spring-boot = "4.0.2"
 dependency-management = "1.1.7"
 spring-grpc = "1.0.0"
 
@@ -13,7 +13,7 @@ lombok = "1.18.42"
 # third party
 slf4j = "2.0.17"
 dotenv = "3.2.0"
-anthropic = "2.11.1"
+anthropic = "2.14.0"
 
 [libraries]
 # useful

@@ -1,6 +1,141 @@
-# FancyHolograms-2.9.0-de-oliver-fancyholograms-api API Reference
+# FancyHolograms API
 
-**Package Filter:** `de.oliver.fancyholograms.api`
+Display entity-based hologram library for Paper servers. Supports text, item, and block holograms.
+
+Hologram data hierarchy:
+- `de.oliver.fancyholograms.api.data.HologramData` — base (name, location, visibility, persistence)
+  - `de.oliver.fancyholograms.api.data.DisplayHologramData` — display entity properties (billboard, scale, translation, shadow, brightness)
+    - `de.oliver.fancyholograms.api.data.TextHologramData` — text lines, background color, alignment, shadow, see-through
+    - `de.oliver.fancyholograms.api.data.ItemHologramData` — ItemStack display
+    - `de.oliver.fancyholograms.api.data.BlockHologramData` — Material (block) display
+
+## Examples
+
+### Creating a Text Hologram
+
+```java
+HologramManager manager = FancyHologramsPlugin.get().getHologramManager();
+
+TextHologramData data = new TextHologramData("my_hologram", location);
+data.setText(List.of("Hello", "World"));
+data.setBillboard(Display.Billboard.CENTER);
+data.setBackground(Color.fromARGB(128, 0, 0, 0)); // semi-transparent black
+data.setPersistent(true); // saved to disk
+
+Hologram hologram = manager.create(data);
+manager.addHologram(hologram); // registers it — handles spawning/despawning automatically
+```
+
+### Creating an Item Hologram
+
+```java
+HologramManager manager = FancyHologramsPlugin.get().getHologramManager();
+
+ItemHologramData data = new ItemHologramData("my_item", location);
+data.setItemStack(new ItemStack(Material.DIAMOND_SWORD));
+data.setBillboard(Display.Billboard.CENTER);
+data.setPersistent(false); // not saved, disappears on restart
+
+Hologram hologram = manager.create(data);
+manager.addHologram(hologram);
+```
+
+### Creating a Block Hologram
+
+```java
+HologramManager manager = FancyHologramsPlugin.get().getHologramManager();
+
+BlockHologramData data = new BlockHologramData("my_block", location);
+data.setBlock(Material.DIAMOND_BLOCK);
+data.setBillboard(Display.Billboard.FIXED);
+
+Hologram hologram = manager.create(data);
+manager.addHologram(hologram);
+```
+
+### Retrieving and Modifying Holograms
+
+```java
+HologramManager manager = FancyHologramsPlugin.get().getHologramManager();
+
+// get by name
+Optional<Hologram> optional = manager.getHologram("my_hologram");
+Hologram hologram = optional.orElse(null);
+if (hologram == null) return;
+
+// modify data
+HologramData data = hologram.getData();
+data.setLocation(newLocation);
+
+// modify type-specific data
+if (data instanceof TextHologramData textData) {
+    textData.setText(List.of("Updated line 1", "Updated line 2"));
+    textData.setTextAlignment(TextDisplay.TextAlignment.LEFT);
+    textData.setSeeThrough(true);
+    textData.setTextShadow(true);
+}
+
+// apply changes — pick one:
+hologram.forceUpdate();  // applies immediately
+hologram.queueUpdate();  // queued, applied on next tick
+```
+
+### Removing a Hologram
+
+```java
+HologramManager manager = FancyHologramsPlugin.get().getHologramManager();
+manager.removeHologram(hologram);
+```
+
+### Showing/Hiding Per Player
+
+```java
+hologram.showHologram(player);           // show to one player
+hologram.hideHologram(player);           // hide from one player
+hologram.showHologram(playerCollection); // show to multiple
+hologram.hideHologram(playerCollection); // hide from multiple
+
+hologram.forceShowHologram(player);      // force show (ignores visibility rules)
+hologram.forceHideHologram(player);      // force hide (ignores visibility rules)
+
+hologram.refreshForViewers();            // re-sends hologram to all current viewers
+hologram.refreshHologram(player);        // re-sends to one player
+```
+
+### Manual Visibility
+
+```java
+data.setVisibility(Visibility.MANUAL);
+
+Visibility.ManualVisibility.addDistantViewer(hologram, player.getUniqueId());
+Visibility.ManualVisibility.removeDistantViewer(hologram, player.getUniqueId());
+
+// also works with hologram name string
+Visibility.ManualVisibility.addDistantViewer("my_hologram", player.getUniqueId());
+
+// clear all manual viewers for a hologram
+Visibility.ManualVisibility.remove(hologram);
+```
+
+### Listening to Events
+
+```java
+@EventHandler
+public void onHologramCreate(HologramCreateEvent event) {
+    Hologram hologram = event.getHologram();
+    Player player = event.getPlayer();
+    event.setCancelled(true); // prevent creation
+}
+```
+
+### Checking if FancyHolograms is Installed
+
+```java
+if (FancyHologramsPlugin.isEnabled()) {
+    FancyHologramsPlugin plugin = FancyHologramsPlugin.get();
+    // safe to use API
+}
+```
 
 ## Package: de.oliver.fancyholograms.api
 
@@ -190,12 +325,6 @@ Methods:
 
 ## Package: de.oliver.fancyholograms.api.data.property
 
-### Class: de.oliver.fancyholograms.api.data.property.Visibility$VisibilityPredicate
-Type: Interface
-
-Methods:
-- boolean canSee(Player, Hologram)
-
 ### Class: de.oliver.fancyholograms.api.data.property.Visibility
 Type: Enum
 Extends: java.lang.Enum
@@ -224,7 +353,23 @@ Methods:
 - **static** void remove(Hologram hologram)
 - **static** void remove(String hologramName)
 
+### Class: de.oliver.fancyholograms.api.data.property.Visibility$VisibilityPredicate
+Type: Interface
+
+Methods:
+- boolean canSee(Player, Hologram)
+
 ## Package: de.oliver.fancyholograms.api.events
+
+### Class: de.oliver.fancyholograms.api.events.HologramEvent
+Type: Abstract Class
+Extends: org.bukkit.event.Event
+Implements: org.bukkit.event.Cancellable
+
+Methods:
+- boolean isCancelled()
+- void setCancelled(boolean cancel)
+- Hologram getHologram()
 
 ### Class: de.oliver.fancyholograms.api.events.HologramCreateEvent
 Type: Class
@@ -247,40 +392,6 @@ Constructors:
 
 Methods:
 - CommandSender getPlayer()
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-
-### Class: de.oliver.fancyholograms.api.events.HologramEvent
-Type: Abstract Class
-Extends: org.bukkit.event.Event
-Implements: org.bukkit.event.Cancellable
-
-Methods:
-- boolean isCancelled()
-- void setCancelled(boolean cancel)
-- Hologram getHologram()
-
-### Class: de.oliver.fancyholograms.api.events.HologramHideEvent
-Type: Class
-Extends: de.oliver.fancyholograms.api.events.HologramEvent
-
-Constructors:
-- HologramHideEvent(Hologram hologram, Player player)
-
-Methods:
-- Player getPlayer()
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-
-### Class: de.oliver.fancyholograms.api.events.HologramShowEvent
-Type: Class
-Extends: de.oliver.fancyholograms.api.events.HologramEvent
-
-Constructors:
-- HologramShowEvent(Hologram hologram, Player player)
-
-Methods:
-- Player getPlayer()
 - HandlerList getHandlers()
 - **static** HandlerList getHandlerList()
 
@@ -321,6 +432,30 @@ Enum Constants:
 Methods:
 - **static** HologramUpdateEvent$HologramModification valueOf(String name)
 - **static** HologramUpdateEvent$HologramModification[] values()
+
+### Class: de.oliver.fancyholograms.api.events.HologramShowEvent
+Type: Class
+Extends: de.oliver.fancyholograms.api.events.HologramEvent
+
+Constructors:
+- HologramShowEvent(Hologram hologram, Player player)
+
+Methods:
+- Player getPlayer()
+- HandlerList getHandlers()
+- **static** HandlerList getHandlerList()
+
+### Class: de.oliver.fancyholograms.api.events.HologramHideEvent
+Type: Class
+Extends: de.oliver.fancyholograms.api.events.HologramEvent
+
+Constructors:
+- HologramHideEvent(Hologram hologram, Player player)
+
+Methods:
+- Player getPlayer()
+- HandlerList getHandlers()
+- **static** HandlerList getHandlerList()
 
 ### Class: de.oliver.fancyholograms.api.events.HologramsLoadedEvent
 Type: Class
@@ -369,8 +504,6 @@ Methods:
 - void hideHologram(Player player)
 - void forceShowHologram(Player player)
 - void forceUpdateShownStateFor(Player player)
-- int hashCode()
-- boolean equals(Object o)
 - Component getShownText(Player player)
 - boolean isWithinVisibilityDistance(Player player)
 - void refreshHologram(Player player)
@@ -396,4 +529,3 @@ Methods:
 - **static** HologramType[] values()
 - **static** HologramType getByName(String name)
 - List<String> getCommands()
-
