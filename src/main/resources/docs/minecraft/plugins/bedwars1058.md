@@ -1,1933 +1,674 @@
-# BedWars1058-API-Complete-Documentation
+# BedWars1058 API Reference
 
-**Plugin:** BedWars1058
-**Package:** com.andrei1058.bedwars.api
+BedWars1058 is an open-source Minecraft BedWars minigame plugin by andrei1058. Players defend their bed and destroy enemy beds. The API is in the `com.andrei1058.bedwars.api` package. Access is via Bukkit's ServicesManager. Add `softdepend: [BedWars1058]` to your plugin.yml.
 
-## Getting Started
+---
 
-### Plugin Setup
+## Code Examples
 
-#### Step 1: Add Dependency
-Add BedWars1058 as soft dependency in plugin.yml:
-softdepend: [BedWars1058]
+### Get the API Instance
 
-#### Step 2: Check Plugin Availability
-@Override
-public void onEnable() {
-    // Disable if plugin not found
-    if (Bukkit.getPluginManager().getPlugin("BedWars1058") == null) {
-        getLogger().severe("BedWars1058 was not found. Disabling...");
-        Bukkit.getPluginManager().disablePlugin(this);
-        return;
+```java
+import com.andrei1058.bedwars.api.BedWars;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.RegisteredServiceProvider;
+
+RegisteredServiceProvider<BedWars> reg = Bukkit.getServicesManager().getRegistration(BedWars.class);
+if (reg == null) {
+    getLogger().severe("BedWars1058 not found!");
+    Bukkit.getPluginManager().disablePlugin(this);
+    return;
+}
+BedWars api = reg.getProvider();
+```
+
+### Check if a Player is in a Game
+
+```java
+import com.andrei1058.bedwars.api.BedWars;
+import com.andrei1058.bedwars.api.arena.IArena;
+import org.bukkit.entity.Player;
+
+// Check playing or spectating
+boolean inGame = api.getArenaUtil().isPlaying(player);
+boolean spectating = api.getArenaUtil().isSpectating(player);
+
+// Get the arena a player is in (returns null if not in any)
+IArena arena = api.getArenaUtil().getArenaByPlayer(player);
+if (arena != null) {
+    String arenaName = arena.getArenaName();
+    int playerCount = arena.getPlayers().size();
+}
+```
+
+### Get Arena by Name and Query State
+
+```java
+import com.andrei1058.bedwars.api.BedWars;
+import com.andrei1058.bedwars.api.arena.IArena;
+import com.andrei1058.bedwars.api.arena.GameState;
+
+IArena arena = api.getArenaUtil().getArenaByName("MyArena");
+if (arena != null) {
+    GameState state = arena.getStatus(); // waiting, starting, playing, restarting
+    if (state == GameState.playing) {
+        // Game is live
     }
 }
+```
 
-#### Step 3: Initialize API
-BedWars bedwarsAPI = Bukkit.getServicesManager().getRegistration(BedWars.class).getProvider();
+### List All Arenas
 
-### Maven Configuration
+```java
+import com.andrei1058.bedwars.api.BedWars;
+import com.andrei1058.bedwars.api.arena.IArena;
+import java.util.LinkedList;
 
-#### Repository
-<repositories>
-    <repository>
-        <id>andrei1058-repo</id>
-        <url>https://repo.andrei1058.dev/releases/</url>
-    </repository>
-</repositories>
-
-#### Dependency
-<dependency>
-    <groupId>com.andrei1058.bedwars</groupId>
-    <artifactId>bedwars-api</artifactId>
-    <version>VERSION-HERE</version>
-</dependency>
-
-### Configuration Standards
-Create addon configs at: plugins/BedWars1058/Addons/AddonName/config.yml
-
-## Events System
-
-### Event Usage Examples
-@EventHandler
-public void onEnemyEnter(EnemyBaseEnterEvent e) {
-    // Handle enemy entering base
+LinkedList<IArena> arenas = api.getArenaUtil().getArenas();
+for (IArena arena : arenas) {
+    getLogger().info(arena.getArenaName() + " - " + arena.getStatus() + " - " + arena.getPlayers().size() + " players");
 }
+```
 
-@EventHandler
-public void onTeamAssign(TeamAssignEvent e) {
-    // Handle team assignment
+### Get a Player's Team
+
+```java
+import com.andrei1058.bedwars.api.arena.IArena;
+import com.andrei1058.bedwars.api.arena.team.ITeam;
+import org.bukkit.entity.Player;
+
+IArena arena = api.getArenaUtil().getArenaByPlayer(player);
+if (arena != null) {
+    ITeam team = arena.getTeam(player);
+    if (team != null) {
+        String teamName = team.getName();
+        boolean bedGone = team.isBedDestroyed();
+        int members = team.getMembers().size();
+    }
 }
+```
 
-@EventHandler
-public void onArenaJoin(PlayerJoinArenaEvent e) {
-    // Handle player joining arena
+### Listen for Player Kill Events
+
+```java
+import com.andrei1058.bedwars.api.events.player.PlayerKillEvent;
+import com.andrei1058.bedwars.api.arena.team.ITeam;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+
+public class KillListener implements Listener {
+
+    @EventHandler
+    public void onKill(PlayerKillEvent e) {
+        Player victim = e.getVictim();
+        Player killer = e.getKiller(); // may be null
+        boolean finalKill = e.getCause().isFinalKill();
+
+        if (killer != null && finalKill) {
+            killer.sendMessage("Final kill on " + victim.getName() + "!");
+        }
+    }
 }
+```
 
-## Creating Custom Commands
+### Listen for Bed Break Events
 
-### Step 1: Extend SubCommand
-public class TutorialCommand extends SubCommand {
-    
-    public TutorialCommand(ParentCommand parent, String name) {
+```java
+import com.andrei1058.bedwars.api.events.player.PlayerBedBreakEvent;
+import com.andrei1058.bedwars.api.arena.team.ITeam;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+
+public class BedBreakListener implements Listener {
+
+    @EventHandler
+    public void onBedBreak(PlayerBedBreakEvent e) {
+        Player breaker = e.getPlayer();
+        ITeam victimTeam = e.getVictimTeam();
+        ITeam breakerTeam = e.getPlayerTeam();
+        // e.setMessage(Function<Player, String>) to change broadcast message
+        // e.setTitle(Function<Player, String>) to change title
+    }
+}
+```
+
+### Listen for Game State Changes
+
+```java
+import com.andrei1058.bedwars.api.events.gameplay.GameStateChangeEvent;
+import com.andrei1058.bedwars.api.arena.GameState;
+import com.andrei1058.bedwars.api.arena.IArena;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+
+public class GameListener implements Listener {
+
+    @EventHandler
+    public void onStateChange(GameStateChangeEvent e) {
+        IArena arena = e.getArena();
+        GameState oldState = e.getOldState();
+        GameState newState = e.getNewState();
+
+        if (newState == GameState.playing) {
+            // Game just started in this arena
+        }
+    }
+}
+```
+
+### Listen for Game End
+
+```java
+import com.andrei1058.bedwars.api.events.gameplay.GameEndEvent;
+import com.andrei1058.bedwars.api.arena.team.ITeam;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+
+public class GameEndListener implements Listener {
+
+    @EventHandler
+    public void onGameEnd(GameEndEvent e) {
+        ITeam winnerTeam = e.getTeamWinner();
+        java.util.List<Player> winners = e.getWinners();       // all winner UUIDs that were in team
+        java.util.List<Player> aliveWinners = e.getAliveWinners(); // still alive at end
+        java.util.List<Player> losers = e.getLosers();
+    }
+}
+```
+
+### Cancel a Shop Purchase
+
+```java
+import com.andrei1058.bedwars.api.events.shop.ShopBuyEvent;
+import com.andrei1058.bedwars.api.arena.shop.ICategoryContent;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+
+public class ShopListener implements Listener {
+
+    @EventHandler
+    public void onShopBuy(ShopBuyEvent e) {
+        Player buyer = e.getBuyer();
+        ICategoryContent content = e.getCategoryContent();
+        String itemId = content.getIdentifier();
+
+        if (itemId.equals("some-restricted-item")) {
+            e.setCancelled(true);
+            buyer.sendMessage("You cannot buy this item!");
+        }
+    }
+}
+```
+
+### Register a Custom /bw Subcommand
+
+```java
+import com.andrei1058.bedwars.api.BedWars;
+import com.andrei1058.bedwars.api.command.ParentCommand;
+import com.andrei1058.bedwars.api.command.SubCommand;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+public class MyCommand extends SubCommand {
+
+    public MyCommand(ParentCommand parent, String name) {
         super(parent, name);
+        setPriority(14);
+        showInList(true);
+        setOpCommand(false);
+        setArenaSetupCommand(false);
     }
-    
+
     @Override
-    public boolean execute(String[] args, CommandSender s) {
-        return false;
+    public boolean execute(String[] args, CommandSender sender) {
+        if (!(sender instanceof Player)) return false;
+        Player p = (Player) sender;
+        p.sendMessage("Hello from custom BedWars command!");
+        return true;
     }
 }
 
-### Step 2: Configure Command Properties
-public TutorialCommand(ParentCommand parent, String name) {
-    super(parent, name);
+// In your onEnable():
+// BedWars api = ...;
+// new MyCommand(api.getBedWarsCommand(), "mycommand");
+// Usage: /bw mycommand
+```
 
-    // Set if command is for ops only
-    setOpCommand(true); // false for public command
+### Get Player Stats
 
-    // Show in /bw command list (only ops see the list)
-    showInList(true);
+```java
+import com.andrei1058.bedwars.api.BedWars;
+import java.util.UUID;
 
-    // Set command description (requires TextComponent)
-    setDisplayInfo(Misc.msgHoverClick("description", "hover description",
-            "run this on click", ClickEvent.Action.RUN_COMMAND));
+UUID uuid = player.getUniqueId();
+BedWars.IStats stats = api.getStatsUtil();
 
-    // Set display priority (1-20, lower = higher position)
-    setPriority(14);
-    
-    // Set if command is for arena setup
-    setArenaSetupCommand(false);
+int wins = stats.getPlayerWins(uuid);
+int kills = stats.getPlayerKills(uuid);
+int finalKills = stats.getPlayerFinalKills(uuid);
+int deaths = stats.getPlayerDeaths(uuid);
+int bedsDestroyed = stats.getPlayerBedsDestroyed(uuid);
+int gamesPlayed = stats.getPlayerGamesPlayed(uuid);
+```
+
+### Register a Custom Level Adapter
+
+```java
+import com.andrei1058.bedwars.api.BedWars;
+import com.andrei1058.bedwars.api.levels.Level;
+import com.andrei1058.bedwars.api.events.player.PlayerXpGainEvent;
+import org.bukkit.entity.Player;
+
+public class MyLevelAdapter implements Level {
+
+    @Override
+    public String getLevel(Player p) { return "[5]"; }
+
+    @Override
+    public int getPlayerLevel(Player p) { return 5; }
+
+    @Override
+    public String getProgressBar(Player p) { return "||||------"; }
+
+    @Override
+    public int getCurrentXp(Player p) { return 100; }
+
+    @Override
+    public String getCurrentXpFormatted(Player p) { return "100"; }
+
+    @Override
+    public int getRequiredXp(Player p) { return 500; }
+
+    @Override
+    public String getRequiredXpFormatted(Player p) { return "500"; }
+
+    @Override
+    public void addXp(Player p, int amount, PlayerXpGainEvent.XpSource source) { }
+
+    @Override
+    public void setXp(Player p, int amount) { }
+
+    @Override
+    public void setLevel(Player p, int level) { }
 }
 
-### Step 3: Implement Execute Method
-@Override
-public boolean execute(String[] args, CommandSender s) {
-    // Return false sends "cmd not found" to console
-    if (!(s instanceof Player)) return false;
-    
-    Player p = (Player) s;
-    
-    if (args[0].equalsIgnoreCase("apple")){
-        p.getInventory().addItem(new ItemStack(Material.APPLE));
-    }
-    
-    // Return true = command executed successfully
-    // Return false = command not found message
-    return true;
-}
+// In your onEnable():
+// api.setLevelAdapter(new MyLevelAdapter());
+```
 
-### Step 4: Register Command
-@Override
-public void onEnable() {
-    if (Bukkit.getPluginManager().isPluginEnabled("BedWars1058")) {
-        getLogger().severe("BedWars1058 was not found. Disabling...");
-        setEnabled(false);
-        return;
-    }
-    
-    // Creates command: /bw tutorial apple
-    BedWars bedwarsAPI = Bukkit.getServicesManager().getRegistration(BedWars.class).getProvider();
-    new TutorialCommand(bedwarsAPI.getBedWarsCommand(), "tutorial");
-}
+### Full Addon Plugin Template
 
-## Custom Ore Generators
+```java
+import com.andrei1058.bedwars.api.BedWars;
+import com.andrei1058.bedwars.api.arena.IArena;
+import com.andrei1058.bedwars.api.events.player.PlayerJoinArenaEvent;
+import com.andrei1058.bedwars.api.events.player.PlayerLeaveArenaEvent;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.plugin.RegisteredServiceProvider;
+import org.bukkit.plugin.java.JavaPlugin;
 
-### IGenerator Interface Implementation
-public class ExampleGenerator implements IGenerator {
+public class MyBedWarsAddon extends JavaPlugin implements Listener {
+
+    private BedWars api;
 
     @Override
-    public void setHologram(@Nullable Hologram hologram) {
-        // Set a hologram above your generator
+    public void onEnable() {
+        RegisteredServiceProvider<BedWars> reg = Bukkit.getServicesManager().getRegistration(BedWars.class);
+        if (reg == null) {
+            getLogger().severe("BedWars1058 not found! Disabling...");
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
+        api = reg.getProvider();
+
+        // Addon configs go in: plugins/BedWars1058/Addons/MyBedWarsAddon/
+        // api.getAddonsPath() returns that base directory
+
+        Bukkit.getPluginManager().registerEvents(this, this);
+        getLogger().info("MyBedWarsAddon enabled!");
     }
 
-    @Override
-    public @Nullable Hologram getHologram() {
-        // Get the hologram above your generator
-        return hologram;
+    @EventHandler
+    public void onJoin(PlayerJoinArenaEvent e) {
+        if (e.isCancelled()) return;
+        Player p = e.getPlayer();
+        IArena arena = e.getArena();
+        p.sendMessage("Welcome to " + arena.getArenaName() + "!");
     }
 
-    @Override
-    public void disable() {
-        // Disable generator
-        // Called when game ends, at restarting phase
-    }
-
-    @Override
-    public void upgrade() {
-        // Called when arena upgrades generator based on Arena#updateNextEvent()
-        // For regular behavior, register as arena generator: arena.getOreGenerators().add(myCustomGenerator)
-        // Fire event when upgraded:
-        // Bukkit.getPluginManager().callEvent(new GeneratorUpgradeEvent(this));
-    }
-
-    @Override
-    public void spawnTry() {
-        // Attempts to spawn items every second
-        // Consider: #getSpawnDelay, #getSpawnAtOnce
-        // Handle logistics and spawn behavior, then spawn items with #dropItem(loc)
-        // Requires registration as team or arena generator
-        // Code example: https://pastebin.com/VAsVH6MM
-    }
-
-    @Override
-    public void dropItem(Location location) {
-        // Track getGeneratorsCfg().getBoolean(ConfigPath.GENERATOR_STACK_ITEMS)
-        // If items mustn't stack, give custom name:
-        // myItem.setCustomName("custom" + id); // unique id prevents stacking
-        // Item name automatically removed on pickup if starts with "custom"
-        // Code example: https://pastebin.com/64vKUiCr
-    }
-
-    @Override
-    public void setSpawnOre(ItemStack spawnOre) {
-        // Set generator drop item
-    }
-
-    @Override
-    public IArena getArena() {
-        // Get arena where generator is placed
-        return arena;
-    }
-
-    @Override
-    public void rotate() {
-        // Rotate generator preview-item if applicable
-        // Requires registration as team or arena generator
-    }
-
-    @Override
-    public void setSpawnDelay(int spawnDelay) {
-        // Change spawn delay between drops
-    }
-
-    @Override
-    public void setSpawnAtOnce(int spawnAtOnce) {
-        // Set amount of items spawned at once
-    }
-
-    @Override
-    public void enableRotation() {
-        // Called by BedWars1058 when game starts
-        // Requires registered generator
-    }
-
-    @Override
-    public void setSpawnLimit(int value) {
-        // Set max items at generator before pausing drops
-    }
-
-    @Override
-    public ITeam getOwnerTeam() {
-        // Get owning team for team generators
-        // Returns null if not team-owned
-        return team;
-    }
-
-    @Override
-    public ArmorStand getHologramHolder() {
-        return null;
-    }
-
-    @Override
-    public void setNextSpawn(int nextSpawn) {
-        // Set seconds till next #dropItems
-    }
-
-    @Override
-    public void setStackDroppedItems(boolean stackDroppedItems) {
-        // Change item-stacking rule
-    }
-
-    @Override
-    public void setType(GeneratorType type) {
-        // Change generator type
-    }
-
-    @Override
-    public void destroyData() {
-        // Destroy generator data when arena restarts
-    }
-
-    @Override
-    public void setTier(int tier) {
-        // Change generator tier
+    @EventHandler
+    public void onLeave(PlayerLeaveArenaEvent e) {
+        Player p = e.getPlayer();
+        p.sendMessage("You left the game!");
     }
 }
-
-### Registering Custom Generators
-- For EMERALD/DIAMOND type with no team (regular emerald/diamond generator): Add to IArena#getOreGenerators()
-- For team generator (refreshed by BedWars1058): Add to ITeam#getGenerators()
-- For custom behavior: Handle manually
-
-## Custom Level System
-
-### Level Interface Implementation
-public class CustomLevelsManager implements Level {
-    @Override
-    public String getLevel(Player p) {
-        return PlayerLevel.getLevelByPlayer(p.getUniqueId()).getLevelName();
-    }
-
-    @Override
-    public int getPlayerLevel(Player p) {
-        return PlayerLevel.getLevelByPlayer(p.getUniqueId()).getPlayerLevel();
-    }
-
-    @Override
-    public String getRequiredXpFormatted(Player p) {
-        return PlayerLevel.getLevelByPlayer(p.getUniqueId()).getFormattedRequiredXp();
-    }
-
-    @Override
-    public String getProgressBar(Player p) {
-        return PlayerLevel.getLevelByPlayer(p.getUniqueId()).getProgress();
-    }
-
-    @Override
-    public int getCurrentXp(Player p) {
-        return PlayerLevel.getLevelByPlayer(p.getUniqueId()).getCurrentXp();
-    }
-
-    @Override
-    public String getCurrentXpFormatted(Player p) {
-        return PlayerLevel.getLevelByPlayer(p.getUniqueId()).getFormattedCurrentXp();
-    }
-
-    @Override
-    public int getRequiredXp(Player p) {
-        return PlayerLevel.getLevelByPlayer(p.getUniqueId()).getNextLevelCost();
-    }
-}
-
-### Registering Custom Level System
-Disables BedWars1058 internal level system and registers custom one:
-BedWars bedwarsAPI = Bukkit.getServicesManager().getRegistration(BedWars.class).getProvider();
-bedwarsAPI.setLevelAdapter(new CustomLevelsManager());
-
-## Platform and Version Support
-
-### Custom Platform Support (Since v25.2.1)
-Create implementation of: dev.andrei1058.bedwars.platform.common.ServerPlatform
-
-Register as service before BedWars1058 loads:
-Bukkit.getServicesManager().register(ServerPlatform.class, myImplementation, myPlugin, ServicePriority.Normal);
-
-## API Components Documentation
-
-### Core Interfaces
-
-#### BedWars (Main API Interface)
-- getBedWarsCommand(): ParentCommand - Access main command system
-- setLevelAdapter(Level): void - Register custom level system
-- getArenaUtil(): IArenaUtil - Arena management utilities
-- getVersionSupport(): VersionSupport - Version compatibility layer
-- getShopManager(): ShopManager - Shop system access
-- getTeamUpgradesUtil(): TeamUpgradesUtil - Team upgrade management
-- getGeneratorsCfg(): GeneratorConfig - Generator configuration
-- getRestoreAdapter(): RestoreAdapter - World restoration system
-- getPlayerStats(): IPlayerStats - Player statistics
-- getArena(String): IArena - Get arena by name
-- getArena(Player): IArena - Get player's current arena
-
-#### IArena (Arena Management)
-- getOreGenerators(): List<IGenerator> - Arena ore generators
-- getTeams(): List<ITeam> - Arena teams
-- getPlayers(): List<Player> - Players in arena
-- getSpectators(): List<Player> - Spectators
-- getStatus(): GameState - Current game state
-- getDisplayStatus(): String - Display status
-- getGroup(): String - Arena group
-- getWorldName(): String - Arena world
-- updateNextEvent(): void - Progress to next event
-- addPlayer(Player, boolean): boolean - Add player to arena
-- removePlayer(Player, boolean): void - Remove player
-- reJoin(Player): boolean - Handle rejoin
-
-#### ITeam (Team Management)
-- getGenerators(): List<IGenerator> - Team generators
-- getMembers(): List<Player> - Team members
-- getName(): String - Team name
-- getColor(): TeamColor - Team color
-- getBed(): ITeamAssigner - Bed location
-- getArena(): IArena - Parent arena
-- isBedDestroyed(): boolean - Bed status
-- destroyBed(): void - Destroy team bed
-- respawnMember(Player): void - Respawn player
-
-#### IGenerator (Generator System)
-- See Custom Ore Generators section for full interface
-
-#### Level (Player Levels)
-- See Custom Level System section for full interface
-
-### Event System
-
-#### Arena Events
-- ArenaDisableEvent - Arena disabled
-- ArenaEnableEvent - Arena enabled  
-- ArenaRestartEvent - Arena restarting
-- GameEndEvent - Game ended
-- GameStateChangeEvent - State changed
-- NextEventChangeEvent - Event progression
-
-#### Player Events
-- PlayerJoinArenaEvent - Player joins
-- PlayerLeaveArenaEvent - Player leaves
-- PlayerReJoinEvent - Player rejoins
-- PlayerKillEvent - Player killed
-- PlayerFirstSpawnEvent - First spawn
-- PlayerRespawnEvent - Respawn
-- PlayerBedBreakEvent - Bed broken
-- PlayerBedBugEvent - Bed bug placed
-
-#### Team Events
-- TeamAssignEvent - Team assignment
-- TeamEliminatedEvent - Team eliminated
-- EnemyBaseEnterEvent - Enemy enters base
-- IslandProtectionStartEvent - Protection starts
-
-#### Generator Events
-- GeneratorUpgradeEvent - Generator upgraded
-- GeneratorDropEvent - Item dropped
-
-#### Shop Events
-- ShopOpenEvent - Shop opened
-- ShopBuyEvent - Item purchased
-
-### Configuration System
-- Uses YamlConfiguration
-- Standard location: plugins/BedWars1058/
-- Addon configs: plugins/BedWars1058/Addons/AddonName/
-
-### Command System
-- ParentCommand - Main command handler
-- SubCommand - Command implementation base
-- Command properties: priority, permission, visibility, setup mode
-
-### Shop System
-- ShopManager - Shop management
-- ShopCategory - Shop categories
-- ShopContent - Shop items
-- QuickBuyElement - Quick buy items
-
-### Arena Setup
-- SetupSession - Arena setup session
-- SetupType - Setup types
-- ConfigPath - Configuration paths
-
-### JavaDoc
-
-# bedwars-plugin-25.2-com-andrei1058-bedwars-api API Reference
-
-**Package Filter:** `com.andrei1058.bedwars.api`
-
-## Package: com.andrei1058.bedwars.api
-
-### Class: com.andrei1058.bedwars.api.BedWars
-Type: Interface
-
-Methods:
-- boolean isAutoScale()
-- BedWars$Configs getConfigs()
-- void setLevelAdapter(Level)
-- BedWars$ShopUtil getShopUtil()
-- BedWars$TeamUpgradesUtil getTeamUpgradesUtil()
-- BedWars$AFKUtil getAFKUtil()
-- BedWars$IStats getStatsUtil()
-- ParentCommand getBedWarsCommand()
-- BedWars$ArenaUtil getArenaUtil()
-- VersionSupport getVersionSupport()
-- ISetupSession getSetupSession(UUID)
-- void setRestoreAdapter(RestoreAdapter) throws IllegalAccessError
-- String getForCurrentVersion(String, String, String)
-- Language getDefaultLang()
-- RestoreAdapter getRestoreAdapter()
-- Language getPlayerLanguage(Player)
-- Level getLevelsUtil()
-- String getLobbyWorld()
-- File getAddonsPath()
-- Party getPartyUtil()
-- BedWars$ScoreboardUtil getScoreboardUtil()
-- void setPartyAdapter(Party)
-- ISidebarService getScoreboardManager()
-- boolean isShuttingDown()
-- String getLangIso(Player)
-- Language getLanguageByIso(String)
-- boolean isInSetupSession(UUID)
-- ServerType getServerType()
-
-### Class: com.andrei1058.bedwars.api.BedWars$AFKUtil
-Type: Interface
-
-Methods:
-- void setPlayerAFK(Player, boolean)
-- boolean isPlayerAFK(Player)
-- int getPlayerTimeAFK(Player)
-
-### Class: com.andrei1058.bedwars.api.BedWars$ArenaUtil
-Type: Interface
-
-Methods:
-- boolean isPlaying(Player)
-- void setArenaByName(IArena)
-- int getGamesBeforeRestart()
-- boolean canAutoScale(String)
-- void removeArenaByPlayer(Player, IArena)
-- void loadArena(String, Player)
-- void setArenaByPlayer(Player, IArena)
-- void removeFromEnableQueue(IArena)
-- boolean joinRandomFromGroup(Player, String)
-- IArena getArenaByName(String)
-- void addToEnableQueue(IArena)
-- void sendLobbyCommandItems(Player)
-- LinkedList getArenas()
-- void removeArenaByName(String)
-- IArena getArenaByPlayer(Player)
-- IArena getArenaByIdentifier(String)
-- boolean isSpectating(Player)
-- boolean joinRandomArena(Player)
-- void setGamesBeforeRestart(int)
-- int getPlayers(String)
-- boolean vipJoin(Player)
-- LinkedList getEnableQueue()
-
-### Class: com.andrei1058.bedwars.api.BedWars$Configs
-Type: Interface
-
-Methods:
-- ConfigManager getUpgradesConfig()
-- ConfigManager getMainConfig()
-- ConfigManager getShopConfig()
-- ConfigManager getGeneratorsConfig()
-- ConfigManager getSignsConfig()
-
-### Class: com.andrei1058.bedwars.api.BedWars$IStats
-Type: Interface
-
-Methods:
-- int getPlayerDeaths(UUID)
-- int getPlayerWins(UUID)
-- int getPlayerGamesPlayed(UUID)
-- int getPlayerKills(UUID)
-- int getPlayerFinalDeaths(UUID)
-- int getPlayerFinalKills(UUID)
-- Timestamp getPlayerFirstPlay(UUID)
-- int getPlayerBedsDestroyed(UUID)
-- int getPlayerLoses(UUID)
-- Timestamp getPlayerLastPlay(UUID)
-- int getPlayerTotalKills(UUID)
-
-### Class: com.andrei1058.bedwars.api.BedWars$ScoreboardUtil
-Type: Interface
-
-Methods:
-- void removePlayerScoreboard(Player)
-- void givePlayerScoreboard(Player, boolean)
-
-### Class: com.andrei1058.bedwars.api.BedWars$ShopUtil
-Type: Interface
-
-Methods:
-- void takeMoney(Player, Material, int)
-- Material getCurrency(String)
-- String getCurrencyMsgPath(IContentTier)
-- String getRomanNumber(int)
-- int calculateMoney(Player, Material)
-- ChatColor getCurrencyColor(Material)
-
-### Class: com.andrei1058.bedwars.api.BedWars$TeamUpgradesUtil
-Type: Interface
-
-Methods:
-- int getTotalUpgradeTiers(IArena)
-- void removeWatchingUpgrades(UUID)
-- void setWatchingGUI(Player)
-- boolean isWatchingGUI(Player)
-
-## Package: com.andrei1058.bedwars.api.arena
-
-### Class: com.andrei1058.bedwars.api.arena.IArena
-Type: Interface
-
-Methods:
-- World getWorld()
-- List getSigns()
-- boolean isAllowMapBreak()
-- void addPlayerDeath(Player)
-- boolean isReSpawning(UUID)
-- boolean isReSpawning(Player)
-- ITeam getBedsTeam(Location)
-- void sendEmeraldsUpgradeMessages()
-- int getYKillHeight()
-- List getRegionsList()
-- void destroyData()
-- GameState getStatus()
-- void addPlacedBlock(Block)
-- void removePlayer(Player, boolean)
-- Location getReSpawnLocation()
-- boolean isAllowSpectate()
-- boolean addSpectator(Player, boolean, Location)
-- boolean addPlayer(Player, boolean)
-- ITeam getExTeam(UUID)
-- ITeam getWinner()
-- int getRenderDistance()
-- Instant getStartTime()
-- GameStatsHolder getStatsHolder()
-- List getPlayers()
-- void init(World)
-- void removePlacedBlock(Block)
-- void refreshSigns()
-- void setAllowSpectate(boolean)
-- PlayingTask getPlayingTask()
-- List getTeams()
-- void setGroup(String)
-- boolean isSpectator(Player)
-- boolean isSpectator(UUID)
-- String getDisplayGroup(Player)
-- String getDisplayGroup(Language)
-- String getDisplayName()
-- String getGroup()
-- void removeSpectator(Player, boolean)
-- int getUpgradeEmeraldsCount()
-- void changeStatus(GameState)
-- boolean isBlockPlaced(Block)
-- NextEvent getNextEvent()
-- ITeamAssigner getTeamAssigner()
-- int getPlayerDeaths(Player, boolean)
-- boolean isPlayer(Player)
-- Map getFireballCooldowns()
-- boolean isRespawning(Player)
-- boolean startReSpawnSession(Player, int)
-- void setNextEvent(NextEvent)
-- boolean reJoin(Player)
-- ConcurrentHashMap getShowTime()
-- RestartingTask getRestartingTask()
-- String getWorldName()
-- void setWorldName(String)
-- int getPlayerKills(Player, boolean)
-- boolean isProtected(Location)
-- List getSpectators()
-- List getLeavingPlayers()
-- ConcurrentHashMap getRespawnSessions()
-- ITeam getTeam(Player)
-- ITeam getTeam(String)
-- Location getWaitingLocation()
-- void updateSpectatorCollideRule(Player, boolean)
-- String getArenaName()
-- List getOreGenerators()
-- void sendSpectatorCommandItems(Player)
-- int getUpgradeDiamondsCount()
-- String getDisplayStatus(Language)
-- void setTeamAssigner(ITeamAssigner)
-- void checkWinner()
-- int getIslandRadius()
-- void updateNextEvent()
-- void restart()
-- LinkedList getPlaced()
-- int getMaxInTeam()
-- int getPlayerBedsDestroyed(Player)
-- int getMaxPlayers()
-- void setStatus(GameState)
-- ConfigManager getConfig()
-- void disable()
-- void setAllowMapBreak(boolean)
-- void sendDiamondsUpgradeMessages()
-- StartingTask getStartingTask()
-- void addSign(Location)
-- ITeam getPlayerTeam(String)
-- List getNextEvents()
-- void addPlayerKill(Player, boolean, Player)
-- void abandonGame(Player)
-- Location getSpectatorLocation()
-- boolean isTeamBed(Location)
-- void addPlayerBedDestroyed(Player)
-- void sendPreGameCommandItems(Player)
-
-### Class: com.andrei1058.bedwars.api.arena.GameState
-Type: Enum
-Extends: java.lang.Enum
-
-Methods:
-- **static** GameState valueOf(String)
-- **static** GameState[] values()
-
-### Class: com.andrei1058.bedwars.api.arena.NextEvent
-Type: Enum
-Extends: java.lang.Enum
-
-Methods:
-- **static** NextEvent valueOf(String)
-- **static** NextEvent[] values()
-- String getSoundPath()
-
-## Package: com.andrei1058.bedwars.api.arena.generator
-
-### Class: com.andrei1058.bedwars.api.arena.generator.IGenHolo
-Type: Interface
-
-Methods:
-- void setTierName(String)
-- void setTimerName(String)
-- String getIso()
-- void destroy()
-- void updateForPlayer(Player, String)
-- void updateForAll()
-
-### Class: com.andrei1058.bedwars.api.arena.generator.IGenerator
-Type: Interface
-
-Methods:
-- ITeam getBwt()
-- void rotate()
-- void setSpawnLimit(int)
-- Location getLocation()
-- int getDelay()
-- ArmorStand getHologramHolder()
-- void destroyData()
-- boolean isStack()
-- void dropItem(Location)
-- void updateHolograms(Player, String)
-- void setAmount(int)
-- int getNextSpawn()
-- void setDelay(int)
-- int getAmount()
-- void setOre(ItemStack)
-- ItemStack getOre()
-- void upgrade()
-- void setNextSpawn(int)
-- HashMap getLanguageHolograms()
-- int getSpawnLimit()
-- void setType(GeneratorType)
-- void setStack(boolean)
-- void spawn()
-- GeneratorType getType()
-- void disable()
-- IArena getArena()
-- void enableRotation()
-
-### Class: com.andrei1058.bedwars.api.arena.generator.GeneratorType
-Type: Enum
-Extends: java.lang.Enum
-
-Methods:
-- **static** GeneratorType valueOf(String)
-- **static** GeneratorType[] values()
-
-## Package: com.andrei1058.bedwars.api.arena.shop
-
-### Class: com.andrei1058.bedwars.api.arena.shop.IBuyItem
-Type: Interface
-
-Methods:
-- boolean isPermanent()
-- void give(Player, IArena)
-- boolean isAutoEquip()
-- void setPermanent(boolean)
-- boolean isUnbreakable()
-- void setAutoEquip(boolean)
-- void setUnbreakable(boolean)
-- void setItemStack(ItemStack)
-- ItemStack getItemStack()
-- String getUpgradeIdentifier()
-- boolean isLoaded()
-
-### Class: com.andrei1058.bedwars.api.arena.shop.ICategoryContent
-Type: Interface
-
-Methods:
-- boolean isPermanent()
-- int getSlot()
-- boolean hasQuick(Player)
-- String getIdentifier()
-- boolean isDowngradable()
-- List getContentTiers()
-- ItemStack getItemStack(Player)
-
-### Class: com.andrei1058.bedwars.api.arena.shop.IContentTier
-Type: Interface
-
-Methods:
-- int getValue()
-- Material getCurrency()
-- List getBuyItemsList()
-- void setBuyItemsList(List)
-- ItemStack getItemStack()
-- void setItemStack(ItemStack)
-- void setPrice(int)
-- void setCurrency(Material)
-- int getPrice()
-
-### Class: com.andrei1058.bedwars.api.arena.shop.ShopHolo
-Type: Class
-
-Methods:
-- **static** List getShopHolo()
-- String getIso()
-- **static** void clearForArena(IArena)
-- void update()
-- void updateForPlayer(Player, String)
-- IArena getA()
-
-## Package: com.andrei1058.bedwars.api.arena.stats
-
-### Class: com.andrei1058.bedwars.api.arena.stats.GameStatistic
-Type: Interface
-Implements: java.lang.Comparable
-
-Methods:
-- Object getValue()
-- String getDisplayValue(Language)
-- int compareTo(GameStatistic)
-- int compareTo(Object)
-
-### Class: com.andrei1058.bedwars.api.arena.stats.GameStatisticProvider
-Type: Interface
-
-Methods:
-- String getVoidReplacement(Language)
-- String getIdentifier()
-- GameStatistic getDefault()
-- Plugin getOwner()
-
-### Class: com.andrei1058.bedwars.api.arena.stats.GameStatsHolder
-Type: Interface
-
-Methods:
-- Collection getOrderedBy(DefaultStatistics)
-- List getOrderedBy(String)
-- PlayerGameStats init(Player)
-- List getRegistered()
-- boolean hasStatistic(String)
-- void unregisterPlayer(UUID)
-- Optional get(UUID)
-- Optional get(Player)
-- IArena getArena()
-- GameStatisticProvider getProvider(String)
-- Collection getTrackedPlayers()
-- PlayerGameStats getCreate(Player)
-- void register(GameStatisticProvider)
-
-### Class: com.andrei1058.bedwars.api.arena.stats.Incrementable
-Type: Interface
-
-Methods:
-- void increment()
-
-### Class: com.andrei1058.bedwars.api.arena.stats.PlayerGameStats
-Type: Interface
-
-Methods:
-- void registerStatistic(String, GameStatistic)
-- String getDisplayPlayer()
-- UUID getPlayer()
-- List getRegistered()
-- Optional getStatistic(String)
-- Optional getStatistic(DefaultStatistics)
-- String getUsername()
-
-### Class: com.andrei1058.bedwars.api.arena.stats.DefaultStatistics
-Type: Enum
-Extends: java.lang.Enum
-
-Methods:
-- **static** DefaultStatistics valueOf(String)
-- **static** DefaultStatistics[] values()
-- String toString()
-- boolean isIncrementable()
-
-## Package: com.andrei1058.bedwars.api.arena.team
-
-### Class: com.andrei1058.bedwars.api.arena.team.ITeam
-Type: Interface
-
-Methods:
-- List getSwordsEnchantments()
-- Vector getKillDropsLocation()
-- void setDragons(int)
-- void addPlayers(Player[])
-- Location getBed()
-- String getName()
-- void onBedDestroy(Location)
-- void addBowEnchantment(Enchantment, int)
-- int getDragons()
-- void addBaseEffect(PotionEffectType, int, int)
-- void reJoin(Player)
-- void reJoin(Player, int)
-- IGenerator getIronGenerator()
-- boolean isBedDestroyed()
-- boolean isBed(Location)
-- void destroyData()
-- IGenerator getGoldGenerator()
-- boolean isMember(Player)
-- void spawnNPCs()
-- List getGenerators()
-- List getBaseEffects()
-- Location getTeamUpgrades()
-- void addTeamEffect(PotionEffectType, int, int)
-- void addArmorEnchantment(Enchantment, int)
-- void firstSpawn(Player)
-- boolean wasMember(UUID)
-- ConcurrentHashMap getTeamUpgradeTiers()
-- void respawnMember(Player)
-- List getBowsEnchantments()
-- LinkedList getActiveTraps()
-- List getMembersCache()
-- void setBedDestroyed(boolean)
-- Location getSpawn()
-- void setKillDropsLocation(Vector)
-- void sendArmor(Player)
-- List getArmorsEnchantments()
-- Location getShop()
-- TeamColor getColor()
-- void defaultSword(Player, boolean)
-- int getSize()
-- String getDisplayName(Language)
-- UUID getIdentity()
-- IGenerator getEmeraldGenerator()
-- void destroyBedHolo(Player)
-- IArena getArena()
-- void addSwordEnchantment(Enchantment, int)
-- void sendDefaultInventory(Player, boolean)
-- void setEmeraldGenerator(IGenerator)
-- List getMembers()
-
-### Class: com.andrei1058.bedwars.api.arena.team.ITeamAssigner
-Type: Interface
-
-Methods:
-- void assignTeams(IArena)
-
-### Class: com.andrei1058.bedwars.api.arena.team.TeamEnchant
-Type: Interface
-
-Methods:
-- int getAmplifier()
-- Enchantment getEnchantment()
-
-### Class: com.andrei1058.bedwars.api.arena.team.TeamColor
-Type: Enum
-Extends: java.lang.Enum
-
-Methods:
-- Material glassPaneMaterial()
-- **static** byte itemColor(TeamColor)
-- **static** ChatColor getChatColor(String)
-- **static** ChatColor getChatColor(TeamColor)
-- **static** TeamColor valueOf(String)
-- **static** Material getGlassPane(TeamColor)
-- Material bedMaterial()
-- **static** TeamColor[] values()
-- **static** Color getColor(TeamColor)
-- **static** Material getGlazedTerracotta(TeamColor)
-- **static** Material getWool(TeamColor)
-- DyeColor dye()
-- **static** DyeColor getDyeColor(String)
-- ChatColor chat()
-- **static** String enName(String)
-- **static** String enName(byte)
-- Material glassMaterial()
-- Material glazedTerracottaMaterial()
-- Color bukkitColor()
-- byte itemByte()
-- **static** Material getGlass(TeamColor)
-- Material woolMaterial()
-- **static** Material getBedBlock(TeamColor)
-
-## Package: com.andrei1058.bedwars.api.command
-
-### Class: com.andrei1058.bedwars.api.command.ParentCommand
-Type: Interface
-
-Methods:
-- String getName()
-- List getSubCommands()
-- void addSubCommand(SubCommand)
-- boolean hasSubCommand(String)
-- void sendSubCommands(Player)
-
-### Class: com.andrei1058.bedwars.api.command.SubCommand
-Type: Abstract Class
-
-Methods:
-- ParentCommand getParent()
-- List getTabComplete()
-- String getSubCommandName()
-- void setDisplayInfo(TextComponent)
-- boolean isArenaSetupCommand()
-- boolean execute(String[], CommandSender)
-- boolean isShow()
-- void setArenaSetupCommand(boolean)
-- void showInList(boolean)
-- boolean hasPermission(CommandSender)
-- int getPriority()
-- boolean canSee(CommandSender, BedWars)
-- TextComponent getDisplayInfo()
-- void setPermission(String)
-- void setPriority(int)
-
-## Package: com.andrei1058.bedwars.api.configuration
-
-### Class: com.andrei1058.bedwars.api.configuration.GameMainOverridable
-Type: Interface
-Implements: java.lang.annotation.Annotation
-
-No public methods found
-
-### Class: com.andrei1058.bedwars.api.configuration.ConfigManager
-Type: Class
-
-Methods:
-- void setName(String)
-- void saveArenaLoc(String, Location)
-- String getName()
-- void set(String, Object)
-- void save()
-- Location getArenaLoc(String)
-- double getDouble(String)
-- YamlConfiguration getYml()
-- String getString(String)
-- void saveConfigLoc(String, Location)
-- int getInt(String)
-- List getArenaLocations(String)
-- Location getConfigLoc(String)
-- String stringLocationArenaFormat(Location)
-- String stringLocationConfigFormat(Location)
-- void reload()
-- boolean compareArenaLoc(Location, Location)
-- List getList(String)
-- boolean isFirstTime()
-- boolean getBoolean(String)
-- Location convertStringToArenaLocation(String)
-
-### Class: com.andrei1058.bedwars.api.configuration.ConfigPath
-Type: Class
-
-No public methods found
-
-## Package: com.andrei1058.bedwars.api.entity
-
-### Class: com.andrei1058.bedwars.api.entity.Despawnable
-Type: Class
-
-Methods:
-- PlayerKillEvent$PlayerKillCause getDeathFinalCause()
-- PlayerKillEvent$PlayerKillCause getDeathRegularCause()
-- ITeam getTeam()
-- boolean equals(Object)
-- void destroy()
-- void refresh()
-- int getDespawn()
-- LivingEntity getEntity()
-
-## Package: com.andrei1058.bedwars.api.events.gameplay
-
-### Class: com.andrei1058.bedwars.api.events.gameplay.EggBridgeBuildEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- Block getBlock()
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- TeamColor getTeamColor()
-- IArena getArena()
-
-### Class: com.andrei1058.bedwars.api.events.gameplay.EggBridgeThrowEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- boolean isCancelled()
-- Player getPlayer()
-- HandlerList getHandlers()
-- void setCancelled(boolean)
-- **static** HandlerList getHandlerList()
-- IArena getArena()
-
-### Class: com.andrei1058.bedwars.api.events.gameplay.GameEndEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- ITeam getTeamWinner()
-- HandlerList getHandlers()
-- List getAliveWinners()
-- **static** HandlerList getHandlerList()
-- IArena getArena()
-- List getLosers()
-- List getWinners()
-
-### Class: com.andrei1058.bedwars.api.events.gameplay.GameStateChangeEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- IArena getArena()
-- GameState getOldState()
-- GameState getNewState()
-
-### Class: com.andrei1058.bedwars.api.events.gameplay.GeneratorUpgradeEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- IGenerator getGenerator()
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-
-### Class: com.andrei1058.bedwars.api.events.gameplay.NextEventChangeEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- NextEvent getNewEvent()
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- IArena getArena()
-- NextEvent getOldEvent()
-
-### Class: com.andrei1058.bedwars.api.events.gameplay.TeamAssignEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- boolean isCancelled()
-- Player getPlayer()
-- HandlerList getHandlers()
-- void setCancelled(boolean)
-- ITeam getTeam()
-- **static** HandlerList getHandlerList()
-- IArena getArena()
-
-## Package: com.andrei1058.bedwars.api.events.player
-
-### Class: com.andrei1058.bedwars.api.events.player.PlayerAfkEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- Player getPlayer()
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- PlayerAfkEvent$AFKType getAfkType()
-
-### Class: com.andrei1058.bedwars.api.events.player.PlayerAfkEvent$AFKType
-Type: Enum
-Extends: java.lang.Enum
-
-Methods:
-- **static** PlayerAfkEvent$AFKType valueOf(String)
-- **static** PlayerAfkEvent$AFKType[] values()
-
-### Class: com.andrei1058.bedwars.api.events.player.PlayerBaseEnterEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- Player getPlayer()
-- HandlerList getHandlers()
-- ITeam getTeam()
-- **static** HandlerList getHandlerList()
-
-### Class: com.andrei1058.bedwars.api.events.player.PlayerBaseLeaveEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- Player getPlayer()
-- HandlerList getHandlers()
-- ITeam getTeam()
-- **static** HandlerList getHandlerList()
-
-### Class: com.andrei1058.bedwars.api.events.player.PlayerBedBreakEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- Player getPlayer()
-- Function getTitle()
-- ITeam getVictimTeam()
-- void setSubTitle(Function)
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- Function getSubTitle()
-- IArena getArena()
-- ITeam getPlayerTeam()
-- void setTitle(Function)
-- Function getMessage()
-- void setMessage(Function)
-
-### Class: com.andrei1058.bedwars.api.events.player.PlayerBedBugSpawnEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- Player getPlayer()
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- ITeam getPlayerTeam()
-- IArena getArena()
-
-### Class: com.andrei1058.bedwars.api.events.player.PlayerDreamDefenderSpawnEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- Player getPlayer()
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- ITeam getPlayerTeam()
-- IArena getArena()
-
-### Class: com.andrei1058.bedwars.api.events.player.PlayerFirstSpawnEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- Player getPlayer()
-- HandlerList getHandlers()
-- ITeam getTeam()
-- **static** HandlerList getHandlerList()
-- IArena getArena()
-
-### Class: com.andrei1058.bedwars.api.events.player.PlayerGeneratorCollectEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- boolean isCancelled()
-- Player getPlayer()
-- HandlerList getHandlers()
-- void setCancelled(boolean)
-- **static** HandlerList getHandlerList()
-- IArena getArena()
-- Item getItem()
-- ItemStack getItemStack()
-
-### Class: com.andrei1058.bedwars.api.events.player.PlayerInvisibilityPotionEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- Player getPlayer()
-- PlayerInvisibilityPotionEvent$Type getType()
-- HandlerList getHandlers()
-- ITeam getTeam()
-- **static** HandlerList getHandlerList()
-- IArena getArena()
-
-### Class: com.andrei1058.bedwars.api.events.player.PlayerInvisibilityPotionEvent$Type
-Type: Enum
-Extends: java.lang.Enum
-
-Methods:
-- **static** PlayerInvisibilityPotionEvent$Type valueOf(String)
-- **static** PlayerInvisibilityPotionEvent$Type[] values()
-
-### Class: com.andrei1058.bedwars.api.events.player.PlayerJoinArenaEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- boolean isSpectator()
-- boolean isCancelled()
-- Player getPlayer()
-- HandlerList getHandlers()
-- void setCancelled(boolean)
-- **static** HandlerList getHandlerList()
-- IArena getArena()
-
-### Class: com.andrei1058.bedwars.api.events.player.PlayerKillEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- Function getMessage()
-- Player getKiller()
-- void setVictimTeam(ITeam)
-- void setMessage(Function)
-- PlayerKillEvent$PlayerKillCause getCause()
-- ITeam getKillerTeam()
-- ITeam getVictimTeam()
-- void setPlaySound(boolean)
-- boolean playSound()
-- Player getVictim()
-- IArena getArena()
-- void setKillerTeam(ITeam)
-
-### Class: com.andrei1058.bedwars.api.events.player.PlayerKillEvent$PlayerKillCause
-Type: Enum
-Extends: java.lang.Enum
-
-Methods:
-- boolean isPvpLogOut()
-- boolean isDespawnable()
-- **static** PlayerKillEvent$PlayerKillCause valueOf(String)
-- **static** PlayerKillEvent$PlayerKillCause[] values()
-- boolean isFinalKill()
-
-### Class: com.andrei1058.bedwars.api.events.player.PlayerLangChangeEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- Player getPlayer()
-- boolean isCancelled()
-- HandlerList getHandlers()
-- void setCancelled(boolean)
-- **static** HandlerList getHandlerList()
-- String getNewLang()
-- String getOldLang()
-
-### Class: com.andrei1058.bedwars.api.events.player.PlayerLeaveArenaEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- Player getLastDamager()
-- boolean isSpectator()
-- Player getPlayer()
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- IArena getArena()
-
-### Class: com.andrei1058.bedwars.api.events.player.PlayerLevelUpEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- Player getPlayer()
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- int getNewXpTarget()
-- int getNewLevel()
-
-### Class: com.andrei1058.bedwars.api.events.player.PlayerReJoinEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- boolean isCancelled()
-- void setRespawnTime(int)
-- Player getPlayer()
-- int getRespawnTime()
-- HandlerList getHandlers()
-- void setCancelled(boolean)
-- **static** HandlerList getHandlerList()
-- IArena getArena()
-
-### Class: com.andrei1058.bedwars.api.events.player.PlayerReSpawnEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- Player getPlayer()
-- HandlerList getHandlers()
-- ITeam getTeam()
-- **static** HandlerList getHandlerList()
-- IArena getArena()
-
-### Class: com.andrei1058.bedwars.api.events.player.PlayerXpGainEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- Player getPlayer()
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- PlayerXpGainEvent$XpSource getXpSource()
-- int getAmount()
-
-### Class: com.andrei1058.bedwars.api.events.player.PlayerXpGainEvent$XpSource
-Type: Enum
-Extends: java.lang.Enum
-
-Methods:
-- **static** PlayerXpGainEvent$XpSource valueOf(String)
-- **static** PlayerXpGainEvent$XpSource[] values()
-
-## Package: com.andrei1058.bedwars.api.events.server
-
-### Class: com.andrei1058.bedwars.api.events.server.ArenaDisableEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- String getWorldName()
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- String getArenaName()
-
-### Class: com.andrei1058.bedwars.api.events.server.ArenaEnableEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- IArena getArena()
-
-### Class: com.andrei1058.bedwars.api.events.server.ArenaRestartEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- String getWorldName()
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- String getArenaName()
-
-### Class: com.andrei1058.bedwars.api.events.server.SetupSessionCloseEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- ISetupSession getSetupSession()
-
-### Class: com.andrei1058.bedwars.api.events.server.SetupSessionStartEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- ISetupSession getSetupSession()
-
-## Package: com.andrei1058.bedwars.api.events.shop
-
-### Class: com.andrei1058.bedwars.api.events.shop.ShopBuyEvent
-Type: Class
-Extends: org.bukkit.event.Event
-Implements: org.bukkit.event.Cancellable
-
-Methods:
-- boolean isCancelled()
-- Player getBuyer()
-- void setCancelled(boolean)
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- ICategoryContent getCategoryContent()
-- IArena getArena()
-
-### Class: com.andrei1058.bedwars.api.events.shop.ShopOpenEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- boolean isCancelled()
-- Player getPlayer()
-- HandlerList getHandlers()
-- void setCancelled(boolean)
-- **static** HandlerList getHandlerList()
-- IArena getArena()
-
-## Package: com.andrei1058.bedwars.api.events.sidebar
-
-### Class: com.andrei1058.bedwars.api.events.sidebar.PlayerSidebarInitEvent
-Type: Class
-Extends: org.bukkit.event.Event
-Implements: org.bukkit.event.Cancellable
-
-Methods:
-- ISidebar getSidebar()
-- void setSidebar(ISidebar)
-- Player getPlayer()
-- boolean isCancelled()
-- void setCancelled(boolean)
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- void setPlayer(Player)
-
-## Package: com.andrei1058.bedwars.api.events.spectator
-
-### Class: com.andrei1058.bedwars.api.events.spectator.SpectatorFirstPersonEnterEvent
-Type: Class
-Extends: org.bukkit.event.Event
-Implements: org.bukkit.event.Cancellable
-
-Methods:
-- void setFadeOut(int)
-- boolean isCancelled()
-- void setFadeIn(int)
-- int getFadeOut()
-- void setSubTitle(Function)
-- HandlerList getHandlers()
-- void setCancelled(boolean)
-- **static** HandlerList getHandlerList()
-- Function getSubTitle()
-- void setTitle(Function)
-- int getStay()
-- void setStay(int)
-- Player getTarget()
-- Function getTitle()
-- IArena getArena()
-- int getFadeIn()
-- Player getSpectator()
-
-### Class: com.andrei1058.bedwars.api.events.spectator.SpectatorFirstPersonLeaveEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- void setFadeOut(int)
-- void setFadeIn(int)
-- int getFadeOut()
-- void setSubTitle(Function)
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- Function getSubTitle()
-- void setTitle(Function)
-- int getStay()
-- void setStay(int)
-- Function getTitle()
-- IArena getArena()
-- int getFadeIn()
-- Player getSpectator()
-
-### Class: com.andrei1058.bedwars.api.events.spectator.SpectatorTeleportToPlayerEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- boolean isCancelled()
-- Player getTarget()
-- HandlerList getHandlers()
-- void setCancelled(boolean)
-- **static** HandlerList getHandlerList()
-- IArena getArena()
-- Player getSpectator()
-
-## Package: com.andrei1058.bedwars.api.events.team
-
-### Class: com.andrei1058.bedwars.api.events.team.TeamEliminatedEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- HandlerList getHandlers()
-- ITeam getTeam()
-- **static** HandlerList getHandlerList()
-- IArena getArena()
-
-## Package: com.andrei1058.bedwars.api.events.upgrades
-
-### Class: com.andrei1058.bedwars.api.events.upgrades.UpgradeBuyEvent
-Type: Class
-Extends: org.bukkit.event.Event
-Implements: org.bukkit.event.Cancellable
-
-Methods:
-- boolean isCancelled()
-- Player getPlayer()
-- void setCancelled(boolean)
-- HandlerList getHandlers()
-- ITeam getTeam()
-- **static** HandlerList getHandlerList()
-- IArena getArena()
-- TeamUpgrade getTeamUpgrade()
-
-## Package: com.andrei1058.bedwars.api.exceptions
-
-### Class: com.andrei1058.bedwars.api.exceptions.InvalidEffectException
-Type: Class
-Extends: java.lang.Throwable
-
-No public methods found
-
-### Class: com.andrei1058.bedwars.api.exceptions.InvalidMaterialException
-Type: Class
-Extends: java.lang.Exception
-
-No public methods found
-
-### Class: com.andrei1058.bedwars.api.exceptions.InvalidSoundException
-Type: Class
-Extends: java.lang.Throwable
-
-No public methods found
-
-## Package: com.andrei1058.bedwars.api.language
-
-### Class: com.andrei1058.bedwars.api.language.Language
-Type: Class
-Extends: com.andrei1058.bedwars.api.configuration.ConfigManager
-
-Methods:
-- **static** void addDefaultMessagesCommandItems(Language)
-- **static** String getMsg(Player, String)
-- String getIso()
-- **static** List getLanguages()
-- **static** boolean isLanguageExist(String)
-- **static** void addCategoryMessages(YamlConfiguration, String, String, String, List)
-- **static** Language getDefaultLanguage()
-- **static** void setDefaultLanguage(Language)
-- String getLangName()
-- **static** List getList(Player, String)
-- **static** List getScoreboard(Player, String, String)
-- **static** void setupCustomStatsMessages()
-- **static** void saveIfNotExists(String, Object)
-- **static** void addContentMessages(YamlConfiguration, String, String, String, List)
-- **static** Language getPlayerLanguage(Player)
-- **static** Language getPlayerLanguage(UUID)
-- void setPrefixStatic(String)
-- void setupUnSetCategories()
-- **static** Language getLang(String)
-- List l(String)
-- String m(String)
-- void relocate(String, String)
-- void setPrefix(String)
-- **static** String[] getCountDownTitle(Language, int)
-- boolean exists(String)
-- **static** HashMap getLangByPlayer()
-- void addDefaultStatsMsg(YamlConfiguration, String, String, String[])
-- **static** boolean setPlayerLanguage(UUID, String)
-
-### Class: com.andrei1058.bedwars.api.language.Messages
-Type: Class
-
-No public methods found
-
-## Package: com.andrei1058.bedwars.api.levels
-
-### Class: com.andrei1058.bedwars.api.levels.Level
-Type: Interface
-
-Methods:
-- String getLevel(Player)
-- int getCurrentXp(Player)
-- int getPlayerLevel(Player)
-- String getProgressBar(Player)
-- int getRequiredXp(Player)
-- String getRequiredXpFormatted(Player)
-- String getCurrentXpFormatted(Player)
-- void addXp(Player, int, PlayerXpGainEvent$XpSource)
-- void setXp(Player, int)
-- void setLevel(Player, int)
-
-## Package: com.andrei1058.bedwars.api.party
-
-### Class: com.andrei1058.bedwars.api.party.Party
-Type: Interface
-
-Methods:
-- boolean isInternal()
-- void promote(Player, Player)
-- void addMember(Player, Player)
-- void createParty(Player, Player[])
-- boolean isOwner(Player)
-- boolean hasParty(Player)
-- void removeFromParty(Player)
-- boolean isMember(Player, Player)
-- Player getOwner(Player)
-- int partySize(Player)
-- void disband(Player)
-- void removePlayer(Player, Player)
-- List getMembers(Player)
-
-## Package: com.andrei1058.bedwars.api.region
-
-### Class: com.andrei1058.bedwars.api.region.Region
-Type: Interface
-
-Methods:
-- boolean isProtected()
-- boolean isInRegion(Location)
-
-### Class: com.andrei1058.bedwars.api.region.Cuboid
-Type: Class
-Implements: com.andrei1058.bedwars.api.region.Region
-
-Methods:
-- boolean isProtected()
-- void setMinY(int)
-- int getMaxY()
-- void setMaxY(int)
-- void setProtect(boolean)
-- boolean isInRegion(Location)
-- int getMinY()
-
-## Package: com.andrei1058.bedwars.api.server
-
-### Class: com.andrei1058.bedwars.api.server.ISetupSession
-Type: Interface
-
-Methods:
-- String getWorldName()
-- Player getPlayer()
-- void teleportPlayer()
-- void close()
-- ConfigManager getConfig()
-- SetupType getSetupType()
-
-### Class: com.andrei1058.bedwars.api.server.RestoreAdapter
-Type: Abstract Class
-
-Methods:
-- void onRestart(IArena)
-- List getWorldsList()
-- boolean isWorld(String)
-- void onSetupSessionClose(ISetupSession)
-- void convertWorlds()
-- void deleteWorld(String)
-- void onEnable(IArena)
-- void onSetupSessionStart(ISetupSession)
-- Plugin getOwner()
-- void onDisable(IArena)
-- void clearItems(World)
-- void cloneArena(String, String)
-- String getDisplayName()
-- void foreachBlockInRegion(Location, Location, Consumer)
-- void onLobbyRemoval(IArena)
-
-### Class: com.andrei1058.bedwars.api.server.ServerType
-Type: Enum
-Extends: java.lang.Enum
-
-Methods:
-- **static** ServerType valueOf(String)
-- **static** ServerType[] values()
-
-### Class: com.andrei1058.bedwars.api.server.SetupType
-Type: Enum
-Extends: java.lang.Enum
-
-Methods:
-- **static** SetupType valueOf(String)
-- **static** SetupType[] values()
-
-### Class: com.andrei1058.bedwars.api.server.VersionSupport
-Type: Abstract Class
-
-Methods:
-- **static** String getName()
-- ItemStack setShopUpgradeIdentifier(ItemStack, String)
-- boolean isSword(ItemStack)
-- ItemStack colourItem(ItemStack, ITeam)
-- boolean isBed(Material)
-- Material materialNetheriteChestPlate()
-- Fireball setFireballDirection(Fireball, Vector)
-- boolean itemStackDataCompare(ItemStack, short)
-- void spawnDragon(Location, ITeam)
-- Material materialGoldenChestPlate()
-- void setJoinSignBackground(BlockState, Material)
-- void spawnIronGolem(Location, ITeam, double, double, int)
-- void colorBed(ITeam)
-- void playRedStoneDot(Player)
-- boolean isInvisibilityPotion(ItemStack)
-- void placeLadder(Block, int, int, int, IArena, int)
-- ItemStack getItemInHand(Player)
-- double getDamage(ItemStack)
-- String getInventoryName(InventoryEvent)
-- Material materialCake()
-- void playVillagerEffect(Player, Location)
-- void spawnSilverfish(Location, ITeam, double, double, int, double)
-- void showArmor(Player, Player)
-- void hideArmor(Player, Player)
-- ConcurrentHashMap getDespawnablesList()
-- void setCollide(Player, IArena, boolean)
-- void setBlockTeamColor(Block, TeamColor)
-- void setUnbreakable(ItemMeta)
-- Material materialGoldenLeggings()
-- Material materialFireball()
-- void playAction(Player, String)
-- void minusAmount(Player, ItemStack, int)
-- boolean isGlass(Material)
-- void clearArrowsFromPlayerBody(Player)
-- Effect eggBridge()
-- boolean isBow(ItemStack)
-- void setJoinSignBackgroundBlockData(BlockState, byte)
-- void spigotHidePlayer(Player, Player)
-- Material materialPlayerHead()
-- boolean isArmor(ItemStack)
-- void setSource(TNTPrimed, Player)
-- String getCustomData(ItemStack)
-- void sendTitle(Player, String, String, int, int, int)
-- Material materialCraftingTable()
-- boolean isTool(ItemStack)
-- boolean isProjectile(ItemStack)
-- boolean isBukkitCommandRegistered(String)
-- void spawnShop(Location, String, List, IArena)
-- Material materialSnowball()
-- Material materialElytra()
-- void sendPlayerSpawnPackets(Player, IArena)
-- Material materialNetheriteHelmet()
-- Material materialEnchantingTable()
-- void registerTntWhitelist(float, float)
-- ItemStack setTag(ItemStack, String, String)
-- void registerCommand(String, Command)
-- Material woolMaterial()
-- boolean isCustomBedWarsItem(ItemStack)
-- ItemStack addCustomData(ItemStack, String)
-- int getVersion()
-- void voidKill(Player)
-- Material materialNetheriteLeggings()
-- boolean isDespawnable(Entity)
-- void placeTowerBlocks(Block, IArena, TeamColor, int, int, int)
-- void setEggBridgeEffect(String) throws InvalidEffectException
-- void registerEntities()
-- String getTag(ItemStack, String)
-- String getShopUpgradeIdentifier(ItemStack)
-- ItemStack getPlayerHead(Player, ItemStack)
-- void hideEntity(Entity, Player)
-- String getMainLevel()
-- void registerVersionListeners()
-- Plugin getPlugin()
-- boolean isAxe(ItemStack)
-- void spigotShowPlayer(Player, Player)
-- boolean isPlayerHead(String, int)
-- ItemStack createItemStack(String, int, short)
-- byte getCompressedAngle(float)
-- Material materialGoldenHelmet()
-
-## Package: com.andrei1058.bedwars.api.sidebar
-
-### Class: com.andrei1058.bedwars.api.sidebar.ISidebar
-Type: Interface
-
-Methods:
-- SidebarLine normalizeTitle(List)
-- void setContent(List, List, IArena)
-- Player getPlayer()
-- boolean isTabFormattingDisabled()
-- boolean registerPersistentPlaceholder(PlaceholderProvider)
-- void giveUpdateTabFormat(Player, boolean, Boolean)
-- void giveUpdateTabFormat(Player, boolean)
-- Sidebar getHandle()
-- IArena getArena()
-- List normalizeLines(List)
-
-### Class: com.andrei1058.bedwars.api.sidebar.ISidebarService
-Type: Interface
-
-Methods:
-- void refreshTitles()
-- ISidebar getSidebar(Player)
-- void refreshTabList()
-- void refreshPlaceholders()
-- void refreshPlaceholders(IArena)
-- void refreshHealth()
-- void giveSidebar(Player, IArena, boolean)
-- void remove(Player)
-
-## Package: com.andrei1058.bedwars.api.tasks
-
-### Class: com.andrei1058.bedwars.api.tasks.PlayingTask
-Type: Interface
-
-Methods:
-- void cancel()
-- int getGameEndCountdown()
-- int getDragonSpawnCountdown()
-- int getBedsDestroyCountdown()
-- IArena getArena()
-- BukkitTask getBukkitTask()
-- int getTask()
-
-### Class: com.andrei1058.bedwars.api.tasks.RestartingTask
-Type: Interface
-
-Methods:
-- void cancel()
-- int getRestarting()
-- IArena getArena()
-- BukkitTask getBukkitTask()
-- int getTask()
-
-### Class: com.andrei1058.bedwars.api.tasks.StartingTask
-Type: Interface
-
-Methods:
-- void cancel()
-- void setCountdown(int)
-- IArena getArena()
-- BukkitTask getBukkitTask()
-- int getCountdown()
-- int getTask()
-
-## Package: com.andrei1058.bedwars.api.upgrades
-
-### Class: com.andrei1058.bedwars.api.upgrades.EnemyBaseEnterTrap
-Type: Interface
-
-Methods:
-- String getLoreMsgPath()
-- String getNameMsgPath()
-- void trigger(ITeam, Player)
-- ItemStack getItemStack()
-
-### Class: com.andrei1058.bedwars.api.upgrades.MenuContent
-Type: Interface
-
-Methods:
-- void onClick(Player, ClickType, ITeam)
-- String getName()
-- ItemStack getDisplayItem(Player, ITeam)
-
-### Class: com.andrei1058.bedwars.api.upgrades.TeamUpgrade
-Type: Interface
-
-Methods:
-- String getName()
-- int getTierCount()
-
-### Class: com.andrei1058.bedwars.api.upgrades.TrapAction
-Type: Interface
-
-Methods:
-- void onTrigger(Player, ITeam, ITeam)
-- String getName()
-
-### Class: com.andrei1058.bedwars.api.upgrades.UpgradeAction
-Type: Interface
-
-Methods:
-- void onBuy(ITeam)
-- void onBuy(Player, ITeam)
-
-### Class: com.andrei1058.bedwars.api.upgrades.UpgradesIndex
-Type: Interface
-
-Methods:
-- ImmutableMap getMenuContentBySlot()
-- String getName()
-- boolean addContent(MenuContent, int)
-- int countTiers()
-- void open(Player)
-
-## Package: com.andrei1058.bedwars.api.util
-
-### Class: com.andrei1058.bedwars.api.util.BlastProtectionUtil
-Type: Class
-
-Methods:
-- boolean isProtected(IArena, Location, Block, double)
-
-### Class: com.andrei1058.bedwars.api.util.BlockRay
-Type: Class
-Implements: java.util.Iterator
-
-Methods:
-- Block next()
-- Object next()
-- boolean hasNext()
-
-### Class: com.andrei1058.bedwars.api.util.FileUtil
-Type: Class
-
-Methods:
-- **static** void setMainLevel(String, VersionSupport)
-- **static** void delete(File)
-
-### Class: com.andrei1058.bedwars.api.util.ZipFileUtil
-Type: Class
-
-Methods:
-- **static** void zipDirectory(File, File) throws IOException
-- **static** void unzipFileIntoDirectory(File, File) throws IOException
-
+```
+
+---
+
+## API Reference
+
+### Main API -- `com.andrei1058.bedwars.api.BedWars` (interface)
+
+| Method | Returns | Description |
+|---|---|---|
+| `getArenaUtil()` | `BedWars.ArenaUtil` | Arena management |
+| `getStatsUtil()` | `BedWars.IStats` | Player statistics |
+| `getShopUtil()` | `BedWars.ShopUtil` | Shop/currency utilities |
+| `getTeamUpgradesUtil()` | `BedWars.TeamUpgradesUtil` | Team upgrades |
+| `getAFKUtil()` | `BedWars.AFKUtil` | AFK detection |
+| `getScoreboardUtil()` | `BedWars.ScoreboardUtil` | Sidebar management |
+| `getScoreboardManager()` | `ISidebarService` | Sidebar service |
+| `getBedWarsCommand()` | `ParentCommand` | Register subcommands |
+| `getConfigs()` | `BedWars.Configs` | Config file access |
+| `getVersionSupport()` | `VersionSupport` | NMS version layer |
+| `getRestoreAdapter()` | `RestoreAdapter` | World restore system |
+| `setRestoreAdapter(RestoreAdapter)` | `void` | Replace restore system |
+| `setLevelAdapter(Level)` | `void` | Replace level system |
+| `getLevelsUtil()` | `Level` | Current level adapter |
+| `getPartyUtil()` | `Party` | Party system |
+| `setPartyAdapter(Party)` | `void` | Replace party system |
+| `getDefaultLang()` | `Language` | Default language |
+| `getPlayerLanguage(Player)` | `Language` | Player's language |
+| `getLanguageByIso(String)` | `Language` | Language by ISO code |
+| `getLangIso(Player)` | `String` | Player's language ISO |
+| `getAddonsPath()` | `File` | Addons config folder |
+| `getLobbyWorld()` | `String` | Lobby world name |
+| `getServerType()` | `ServerType` | BUNGEE, MULTIARENA, or SHARED |
+| `isAutoScale()` | `boolean` | Auto-scale enabled |
+| `isShuttingDown()` | `boolean` | Server shutting down |
+| `getSetupSession(UUID)` | `ISetupSession` | Active setup session |
+| `isInSetupSession(UUID)` | `boolean` | Player in setup mode |
+
+### ArenaUtil -- `com.andrei1058.bedwars.api.BedWars.ArenaUtil` (interface)
+
+| Method | Returns | Description |
+|---|---|---|
+| `getArenaByPlayer(Player)` | `IArena` | Get arena player is in (null if none) |
+| `getArenaByName(String)` | `IArena` | Get arena by name |
+| `getArenaByIdentifier(String)` | `IArena` | Get arena by identifier |
+| `getArenas()` | `LinkedList<IArena>` | All loaded arenas |
+| `isPlaying(Player)` | `boolean` | Player is in active game |
+| `isSpectating(Player)` | `boolean` | Player is spectating |
+| `joinRandomArena(Player)` | `boolean` | Join random available arena |
+| `joinRandomFromGroup(Player, String)` | `boolean` | Join random from group |
+| `vipJoin(Player)` | `boolean` | VIP priority join |
+| `getPlayers(String)` | `int` | Player count in group |
+| `loadArena(String, Player)` | `void` | Load arena from config |
+| `getGamesBeforeRestart()` | `int` | Games until server restart |
+| `setGamesBeforeRestart(int)` | `void` | Set restart threshold |
+| `sendLobbyCommandItems(Player)` | `void` | Give lobby items |
+
+### IArena -- `com.andrei1058.bedwars.api.arena.IArena` (interface)
+
+| Method | Returns | Description |
+|---|---|---|
+| `getArenaName()` | `String` | Arena name |
+| `getWorldName()` | `String` | World name |
+| `getWorld()` | `World` | Bukkit world |
+| `getStatus()` | `GameState` | Current game state |
+| `getGroup()` | `String` | Arena group name |
+| `getDisplayName()` | `String` | Display name |
+| `getPlayers()` | `List<Player>` | Active players |
+| `getSpectators()` | `List<Player>` | Spectators |
+| `getTeams()` | `List<ITeam>` | All teams |
+| `getTeam(Player)` | `ITeam` | Player's team |
+| `getTeam(String)` | `ITeam` | Team by name |
+| `getExTeam(UUID)` | `ITeam` | Team player was on (after elimination) |
+| `getOreGenerators()` | `List<IGenerator>` | Map generators (diamond/emerald) |
+| `getNextEvent()` | `NextEvent` | Next scheduled event |
+| `getMaxPlayers()` | `int` | Max player count |
+| `getMaxInTeam()` | `int` | Max per team |
+| `isPlayer(Player)` | `boolean` | Is active player |
+| `isSpectator(Player)` | `boolean` | Is spectating |
+| `addPlayer(Player, boolean)` | `boolean` | Add player (boolean = spectator) |
+| `removePlayer(Player, boolean)` | `void` | Remove player |
+| `addSpectator(Player, boolean, Location)` | `boolean` | Add spectator |
+| `reJoin(Player)` | `boolean` | Rejoin after disconnect |
+| `isBlockPlaced(Block)` | `boolean` | Is player-placed block |
+| `addPlacedBlock(Block)` | `void` | Track placed block |
+| `getWinner()` | `ITeam` | Winning team |
+| `updateNextEvent()` | `void` | Progress to next event |
+| `getConfig()` | `ConfigManager` | Arena config |
+| `getStatsHolder()` | `GameStatsHolder` | In-game stats tracker |
+
+### ITeam -- `com.andrei1058.bedwars.api.arena.team.ITeam` (interface)
+
+| Method | Returns | Description |
+|---|---|---|
+| `getName()` | `String` | Team name |
+| `getColor()` | `TeamColor` | Team color enum |
+| `getDisplayName(Language)` | `String` | Localized display name |
+| `getMembers()` | `List<Player>` | Living members |
+| `getMembersCache()` | `List<Player>` | All members ever assigned |
+| `getArena()` | `IArena` | Parent arena |
+| `isBedDestroyed()` | `boolean` | Bed status |
+| `isMember(Player)` | `boolean` | Is current member |
+| `wasMember(UUID)` | `boolean` | Was ever on this team |
+| `getGenerators()` | `List<IGenerator>` | Team generators |
+| `getIronGenerator()` | `IGenerator` | Iron generator |
+| `getGoldGenerator()` | `IGenerator` | Gold generator |
+| `getEmeraldGenerator()` | `IGenerator` | Emerald generator (if exists) |
+| `getBed()` | `Location` | Bed location |
+| `getSpawn()` | `Location` | Team spawn |
+| `getShop()` | `Location` | Shop NPC location |
+| `getTeamUpgrades()` | `Location` | Upgrades NPC location |
+| `getTeamUpgradeTiers()` | `ConcurrentHashMap` | Purchased upgrade tiers |
+| `getActiveTraps()` | `LinkedList` | Active traps |
+| `getDragons()` | `int` | Dragon count (sudden death) |
+| `getSize()` | `int` | Current member count |
+| `addSwordEnchantment(Enchantment, int)` | `void` | Add sword enchant to team |
+| `addBowEnchantment(Enchantment, int)` | `void` | Add bow enchant to team |
+| `addArmorEnchantment(Enchantment, int)` | `void` | Add armor enchant to team |
+| `addBaseEffect(PotionEffectType, int, int)` | `void` | Add base potion effect |
+| `addTeamEffect(PotionEffectType, int, int)` | `void` | Add team potion effect |
+| `respawnMember(Player)` | `void` | Force respawn |
+| `firstSpawn(Player)` | `void` | Initial spawn |
+| `sendDefaultInventory(Player, boolean)` | `void` | Give default items |
+| `sendArmor(Player)` | `void` | Give team armor |
+| `onBedDestroy(Location)` | `void` | Trigger bed destroy |
+| `setBedDestroyed(boolean)` | `void` | Set bed status |
+
+### IStats -- `com.andrei1058.bedwars.api.BedWars.IStats` (interface)
+
+All methods take `UUID` parameter:
+
+| Method | Returns |
+|---|---|
+| `getPlayerWins(UUID)` | `int` |
+| `getPlayerLoses(UUID)` | `int` |
+| `getPlayerKills(UUID)` | `int` |
+| `getPlayerTotalKills(UUID)` | `int` |
+| `getPlayerFinalKills(UUID)` | `int` |
+| `getPlayerDeaths(UUID)` | `int` |
+| `getPlayerFinalDeaths(UUID)` | `int` |
+| `getPlayerBedsDestroyed(UUID)` | `int` |
+| `getPlayerGamesPlayed(UUID)` | `int` |
+| `getPlayerFirstPlay(UUID)` | `Timestamp` |
+| `getPlayerLastPlay(UUID)` | `Timestamp` |
+
+### Enums
+
+**`com.andrei1058.bedwars.api.arena.GameState`**: `waiting`, `starting`, `playing`, `restarting`
+
+**`com.andrei1058.bedwars.api.arena.NextEvent`**: `DIAMOND_GENERATOR_TIER_II`, `DIAMOND_GENERATOR_TIER_III`, `EMERALD_GENERATOR_TIER_II`, `EMERALD_GENERATOR_TIER_III`, `BEDS_DESTROY`, `ENDER_DRAGON`, `GAME_END`
+
+**`com.andrei1058.bedwars.api.arena.team.TeamColor`**: RED, BLUE, GREEN, YELLOW, AQUA, WHITE, PINK, GRAY. Key methods: `chat()` returns ChatColor, `dye()` returns DyeColor, `woolMaterial()`, `glassMaterial()`, `glassPaneMaterial()`, `bedMaterial()`, `glazedTerracottaMaterial()`, `bukkitColor()`.
+
+**`com.andrei1058.bedwars.api.server.ServerType`**: `BUNGEE`, `MULTIARENA`, `SHARED`
+
+**`com.andrei1058.bedwars.api.events.player.PlayerKillEvent.PlayerKillCause`**: `UNKNOWN`, `UNKNOWN_FINAL_KILL`, `EXPLOSION`, `EXPLOSION_FINAL_KILL`, `VOID`, `VOID_FINAL_KILL`, `PVP`, `PVP_FINAL_KILL`, `PLAYER_SHOOT`, `PLAYER_SHOOT_FINAL_KILL`, `SILVERFISH`, `SILVERFISH_FINAL_KILL`, `IRON_GOLEM`, `IRON_GOLEM_FINAL_KILL`, `PLAYER_PUSH`, `PLAYER_PUSH_FINAL`, `PLAYER_DISCONNECT`, `PLAYER_DISCONNECT_FINAL`. Key methods: `isFinalKill()`, `isDespawnable()`, `isPvpLogOut()`.
+
+### Events Quick Reference
+
+All events extend `org.bukkit.event.Event`. Cancellable events implement `Cancellable`.
+
+**Gameplay** (`com.andrei1058.bedwars.api.events.gameplay`):
+
+| Event | Key Methods | Cancellable |
+|---|---|---|
+| `GameStateChangeEvent` | `getArena()`, `getOldState()`, `getNewState()` | No |
+| `GameEndEvent` | `getArena()`, `getTeamWinner()`, `getWinners()`, `getLosers()`, `getAliveWinners()` | No |
+| `TeamAssignEvent` | `getPlayer()`, `getTeam()`, `getArena()` | Yes |
+| `NextEventChangeEvent` | `getArena()`, `getOldEvent()`, `getNewEvent()` | No |
+| `GeneratorUpgradeEvent` | `getGenerator()` | No |
+| `EggBridgeThrowEvent` | `getPlayer()`, `getArena()` | Yes |
+| `EggBridgeBuildEvent` | `getBlock()`, `getTeamColor()`, `getArena()` | No |
+
+**Player** (`com.andrei1058.bedwars.api.events.player`):
+
+| Event | Key Methods | Cancellable |
+|---|---|---|
+| `PlayerJoinArenaEvent` | `getPlayer()`, `getArena()`, `isSpectator()` | Yes |
+| `PlayerLeaveArenaEvent` | `getPlayer()`, `getArena()`, `isSpectator()`, `getLastDamager()` | No |
+| `PlayerReJoinEvent` | `getPlayer()`, `getArena()`, `getRespawnTime()`, `setRespawnTime(int)` | Yes |
+| `PlayerKillEvent` | `getVictim()`, `getKiller()`, `getCause()`, `getArena()`, `getKillerTeam()`, `getVictimTeam()`, `setMessage(Function)` | No |
+| `PlayerBedBreakEvent` | `getPlayer()`, `getPlayerTeam()`, `getVictimTeam()`, `getArena()`, `setMessage(Function)`, `setTitle(Function)` | No |
+| `PlayerFirstSpawnEvent` | `getPlayer()`, `getTeam()`, `getArena()` | No |
+| `PlayerReSpawnEvent` | `getPlayer()`, `getTeam()`, `getArena()` | No |
+| `PlayerBaseEnterEvent` | `getPlayer()`, `getTeam()` | No |
+| `PlayerBaseLeaveEvent` | `getPlayer()`, `getTeam()` | No |
+| `PlayerGeneratorCollectEvent` | `getPlayer()`, `getArena()`, `getItem()`, `getItemStack()` | Yes |
+| `PlayerAfkEvent` | `getPlayer()`, `getAfkType()` | No |
+| `PlayerInvisibilityPotionEvent` | `getPlayer()`, `getTeam()`, `getArena()`, `getType()` | No |
+| `PlayerBedBugSpawnEvent` | `getPlayer()`, `getPlayerTeam()`, `getArena()` | No |
+| `PlayerDreamDefenderSpawnEvent` | `getPlayer()`, `getPlayerTeam()`, `getArena()` | No |
+| `PlayerXpGainEvent` | `getPlayer()`, `getAmount()`, `getXpSource()` | No |
+| `PlayerLevelUpEvent` | `getPlayer()`, `getNewLevel()`, `getNewXpTarget()` | No |
+| `PlayerLangChangeEvent` | `getPlayer()`, `getOldLang()`, `getNewLang()` | Yes |
+
+**Server** (`com.andrei1058.bedwars.api.events.server`):
+
+| Event | Key Methods | Cancellable |
+|---|---|---|
+| `ArenaEnableEvent` | `getArena()` | No |
+| `ArenaDisableEvent` | `getArenaName()`, `getWorldName()` | No |
+| `ArenaRestartEvent` | `getArenaName()`, `getWorldName()` | No |
+| `SetupSessionStartEvent` | `getSetupSession()` | No |
+| `SetupSessionCloseEvent` | `getSetupSession()` | No |
+
+**Shop** (`com.andrei1058.bedwars.api.events.shop`):
+
+| Event | Key Methods | Cancellable |
+|---|---|---|
+| `ShopBuyEvent` | `getBuyer()`, `getCategoryContent()`, `getArena()` | Yes |
+| `ShopOpenEvent` | `getPlayer()`, `getArena()` | Yes |
+
+**Team** (`com.andrei1058.bedwars.api.events.team`):
+
+| Event | Key Methods | Cancellable |
+|---|---|---|
+| `TeamEliminatedEvent` | `getTeam()`, `getArena()` | No |
+
+**Upgrades** (`com.andrei1058.bedwars.api.events.upgrades`):
+
+| Event | Key Methods | Cancellable |
+|---|---|---|
+| `UpgradeBuyEvent` | `getPlayer()`, `getTeam()`, `getArena()`, `getTeamUpgrade()` | Yes |
+
+**Spectator** (`com.andrei1058.bedwars.api.events.spectator`):
+
+| Event | Key Methods | Cancellable |
+|---|---|---|
+| `SpectatorFirstPersonEnterEvent` | `getSpectator()`, `getTarget()`, `getArena()`, `setTitle(Function)` | Yes |
+| `SpectatorFirstPersonLeaveEvent` | `getSpectator()`, `getArena()`, `setTitle(Function)` | No |
+| `SpectatorTeleportToPlayerEvent` | `getSpectator()`, `getTarget()`, `getArena()` | Yes |
+
+**Sidebar** (`com.andrei1058.bedwars.api.events.sidebar`):
+
+| Event | Key Methods | Cancellable |
+|---|---|---|
+| `PlayerSidebarInitEvent` | `getPlayer()`, `getSidebar()`, `setSidebar(ISidebar)` | Yes |
+
+### IGenerator -- `com.andrei1058.bedwars.api.arena.generator.IGenerator` (interface)
+
+| Method | Returns | Description |
+|---|---|---|
+| `getArena()` | `IArena` | Parent arena |
+| `getBwt()` | `ITeam` | Owning team (null for map generators) |
+| `getType()` | `GeneratorType` | DIAMOND, EMERALD, GOLD, IRON, CUSTOM |
+| `getOre()` | `ItemStack` | Item being spawned |
+| `setOre(ItemStack)` | `void` | Change spawn item |
+| `getLocation()` | `Location` | Generator location |
+| `getDelay()` | `int` | Spawn delay in seconds |
+| `setDelay(int)` | `void` | Set spawn delay |
+| `getAmount()` | `int` | Items per spawn |
+| `setAmount(int)` | `void` | Set items per spawn |
+| `getSpawnLimit()` | `int` | Max items before pausing |
+| `setSpawnLimit(int)` | `void` | Set spawn limit |
+| `getNextSpawn()` | `int` | Seconds until next drop |
+| `setNextSpawn(int)` | `void` | Set next spawn timer |
+| `isStack()` | `boolean` | Stack dropped items |
+| `setStack(boolean)` | `void` | Set stacking |
+| `upgrade()` | `void` | Upgrade generator tier |
+| `spawn()` | `void` | Force spawn items |
+| `dropItem(Location)` | `void` | Drop item at location |
+| `disable()` | `void` | Disable generator |
+| `enableRotation()` | `void` | Enable item rotation |
+| `rotate()` | `void` | Rotate display item |
+| `destroyData()` | `void` | Clean up on restart |
+
+### Language -- `com.andrei1058.bedwars.api.language.Language`
+
+| Method | Returns | Description |
+|---|---|---|
+| `static getMsg(Player, String)` | `String` | Get translated message for player |
+| `static getList(Player, String)` | `List<String>` | Get translated list |
+| `static getPlayerLanguage(Player)` | `Language` | Player's language object |
+| `static getPlayerLanguage(UUID)` | `Language` | Player's language by UUID |
+| `static getLanguages()` | `List<Language>` | All loaded languages |
+| `static getDefaultLanguage()` | `Language` | Default language |
+| `static setPlayerLanguage(UUID, String)` | `boolean` | Set player language by ISO |
+| `static getLang(String)` | `Language` | Get language by ISO |
+| `m(String)` | `String` | Get message from this language |
+| `l(String)` | `List<String>` | Get list from this language |
+| `getIso()` | `String` | Language ISO code |
+
+### ShopUtil -- `com.andrei1058.bedwars.api.BedWars.ShopUtil` (interface)
+
+| Method | Returns | Description |
+|---|---|---|
+| `calculateMoney(Player, Material)` | `int` | Count currency in inventory |
+| `takeMoney(Player, Material, int)` | `void` | Remove currency from inventory |
+| `getCurrency(String)` | `Material` | Get currency material by name |
+| `getCurrencyColor(Material)` | `ChatColor` | Color for currency type |
+| `getRomanNumber(int)` | `String` | Integer to Roman numeral |
+
+### AFKUtil -- `com.andrei1058.bedwars.api.BedWars.AFKUtil` (interface)
+
+| Method | Returns | Description |
+|---|---|---|
+| `isPlayerAFK(Player)` | `boolean` | Check AFK status |
+| `setPlayerAFK(Player, boolean)` | `void` | Set AFK status |
+| `getPlayerTimeAFK(Player)` | `int` | Seconds player has been AFK |
+
+### Configs -- `com.andrei1058.bedwars.api.BedWars.Configs` (interface)
+
+| Method | Returns | Description |
+|---|---|---|
+| `getMainConfig()` | `ConfigManager` | Main plugin config |
+| `getGeneratorsConfig()` | `ConfigManager` | Generators config |
+| `getShopConfig()` | `ConfigManager` | Shop config |
+| `getSignsConfig()` | `ConfigManager` | Join signs config |
+| `getUpgradesConfig()` | `ConfigManager` | Upgrades config |
+
+### ConfigManager -- `com.andrei1058.bedwars.api.configuration.ConfigManager`
+
+| Method | Returns | Description |
+|---|---|---|
+| `getYml()` | `YamlConfiguration` | Raw YAML access |
+| `getString(String)` | `String` | Get string value |
+| `getInt(String)` | `int` | Get int value |
+| `getDouble(String)` | `double` | Get double value |
+| `getBoolean(String)` | `boolean` | Get boolean value |
+| `getList(String)` | `List` | Get list value |
+| `set(String, Object)` | `void` | Set config value |
+| `save()` | `void` | Save to disk |
+| `reload()` | `void` | Reload from disk |

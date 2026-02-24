@@ -1,554 +1,274 @@
-# economy-bridge-1.2.1 API Reference
-
-## Package: su.nightexpress.economybridge
-
-### Class: su.nightexpress.economybridge.BridgePlugin
-Type: Class
-Extends: su.nightexpress.nightcore.NightPlugin
-Implements: su.nightexpress.nightcore.command.experimental.ImprovedCommands
-
-Methods:
-- void disable()
-- void enable()
-- ItemManager getItemManager()
-- CurrencyManager getCurrencyManager()
-
-### Class: su.nightexpress.economybridge.EconomyBridge
-Type: Class
-
-Methods:
-- **static** DummyCurrency getDummyCurrency()
-- **static** Currency getCurrency(String)
-- **static** boolean withdrawEconomy(Player, double)
-- **static** boolean withdrawEconomy(UUID, double)
-- **static** boolean hasEnough(Player, String, double)
-- **static** boolean hasEnough(UUID, String, double)
-- **static** boolean handle(String, Consumer)
-- **static** boolean hasCurrency(String)
-- **static** boolean hasCurrency()
-- **static** double getEconomyBalance(Player)
-- **static** double getEconomyBalance(UUID)
-- **static** void registerCurrency(Currency)
-- **static** double getBalance(Player, String)
-- **static** double getBalance(UUID, String)
-- **static** Set getCurrencies()
-- **static** BridgePlugin getPlugin()
-- **static** boolean deposit(Player, String, double)
-- **static** boolean deposit(UUID, String, double)
-- **static** Currency getCurrencyOrDummy(String)
-- **static** CurrencyManager getCurrencyManager()
-- **static** boolean isDisabled(String)
-- **static** boolean depositEconomy(Player, double)
-- **static** boolean depositEconomy(UUID, double)
-- **static** Set getCurrencyIds()
-- **static** boolean hasEconomy()
-- **static** boolean withdraw(Player, String, double)
-- **static** boolean withdraw(UUID, String, double)
-
-### Class: su.nightexpress.economybridge.ItemBridge
-Type: Class
-
-Methods:
-- **static** boolean registerHandler(ItemHandler)
-- **static** boolean isCustomItem(ItemStack)
-- **static** String getItemId(String, ItemStack)
-- **static** String getItemId(ItemStack)
-- **static** Set getHandlers()
-- **static** ItemStack createItem(String, String)
-- **static** ItemManager getItemManager()
-- **static** ItemHandler getHandlerOrDummy(String)
-- **static** ItemHandler getHandlerOrDummy(ItemStack)
-- **static** ItemHandler getHandler(String)
-- **static** ItemHandler getHandler(ItemStack)
-- **static** DummyHandler getDummyHandler()
-- **static** ItemHandler getItemHandler(String)
-- **static** ItemHandler getItemHandler(ItemStack)
-
-### Class: su.nightexpress.economybridge.Placeholders
-Type: Class
-Extends: su.nightexpress.nightcore.util.Placeholders
-
-Methods:
-- **static** UnaryOperator forCurrency(Currency)
-
-## Package: su.nightexpress.economybridge.api
-
-### Class: su.nightexpress.economybridge.api.Currency
-Type: Interface
-
-Methods:
-- ItemStack getDefaultIcon()
-- void give(Player, double)
-- void give(UUID, double)
-- UnaryOperator replacePlaceholders()
-- String getName()
-- boolean canHandleDecimals()
-- String getInternalId()
-- double fineValue(double)
-- String format(double)
-- String applyFormat(String, double)
-- ItemStack getIcon()
-- void take(Player, double)
-- void take(UUID, double)
-- double getBalance(Player)
-- double getBalance(UUID)
-- String formatValue(double)
-- String getDefaultFormat()
-- String getFormat()
-- String getOriginalId()
-- boolean canHandleOffline()
-- String getDefaultName()
-- boolean isDummy()
-
-## Package: su.nightexpress.economybridge.api.item
-
-### Class: su.nightexpress.economybridge.api.item.ItemHandler
-Type: Interface
-
-Methods:
-- String getItemId(ItemStack)
-- String getName()
-- boolean isValidId(String)
-- boolean canHandle(ItemStack)
-- ItemStack createItem(String)
-- boolean isDummy()
-
-## Package: su.nightexpress.economybridge.command
-
-### Class: su.nightexpress.economybridge.command.BaseCommands
-Type: Class
-
-Methods:
-- **static** void load(BridgePlugin)
-
-### Class: su.nightexpress.economybridge.command.CommandArguments
-Type: Class
-
-No public methods found
-
-## Package: su.nightexpress.economybridge.config
-
-### Class: su.nightexpress.economybridge.config.Config
-Type: Class
-
-Methods:
-- **static** boolean isDisabledCurrency(String)
-- **static** boolean isPlaceholderAPIInFormat()
-
-### Class: su.nightexpress.economybridge.config.Lang
-Type: Class
-Extends: su.nightexpress.nightcore.core.CoreLang
-
-No public methods found
-
-### Class: su.nightexpress.economybridge.config.Perms
-Type: Class
-
-No public methods found
-
-## Package: su.nightexpress.economybridge.currency
-
-### Class: su.nightexpress.economybridge.currency.CurrencyId
-Type: Class
-
-Methods:
-- **static** String forCoinsEngine(String)
-- **static** String reroute(String)
-- **static** String forUltraEconomy(String)
-
-### Class: su.nightexpress.economybridge.currency.CurrencyManager
-Type: Class
-Extends: su.nightexpress.nightcore.manager.AbstractManager
-
-Methods:
-- Currency getCurrency(String)
-- void loadCurrency(String, String, Function)
-- void loadCurrency(String, Function)
-- void loadCurrency(AbstractCurrency)
-- void loadCurrency(AbstractCurrency, CurrencySettings)
-- FileConfig getCurrenciesConfig()
-- void handlePluginLoad(String)
-- void loadItemCurrencies()
-- boolean hasCurrency()
-- void registerCurrency(Currency)
-- Set getCurrencies()
-- FileConfig getItemsConfig()
-- Map getCurrencyMap()
-- Currency getCurrencyOrDummy(String)
-- void saveCurrency(ItemStackCurrency)
-- Set getCurrencyIds()
-- void loadBuiltInCurrencies()
-
-### Class: su.nightexpress.economybridge.currency.CurrencyPlugins
-Type: Class
-
-No public methods found
-
-### Class: su.nightexpress.economybridge.currency.CurrencySettings
-Type: Class
-
-Methods:
-- **static** CurrencySettings fromDefaults(Currency)
-- String getName()
-- void load(FileConfig, String)
-- String getFormat()
-- void write(FileConfig, String)
-- ItemStack getIcon()
-
-## Package: su.nightexpress.economybridge.currency.impl
-
-### Class: su.nightexpress.economybridge.currency.impl.BeastTokensCurrency
-Type: Class
-Extends: su.nightexpress.economybridge.currency.type.AbstractCurrency
-
-Methods:
-- void take(Player, double)
-- void take(UUID, double)
-- void give(Player, double)
-- void give(UUID, double)
-- ItemStack getDefaultIcon()
-- double getBalance(Player)
-- double getBalance(UUID)
-- boolean canHandleDecimals()
-- boolean canHandleOffline()
-- String getDefaultName()
-
-### Class: su.nightexpress.economybridge.currency.impl.CoinsEngineCurrency
-Type: Class
-Implements: su.nightexpress.economybridge.api.Currency
-
-Methods:
-- void give(Player, double)
-- void give(UUID, double)
-- ItemStack getDefaultIcon()
-- UnaryOperator replacePlaceholders()
-- String getName()
-- boolean canHandleDecimals()
-- String getInternalId()
-- double fineValue(double)
-- ItemStack getIcon()
-- void take(Player, double)
-- void take(UUID, double)
-- double getBalance(Player)
-- double getBalance(UUID)
-- String formatValue(double)
-- **static** Set getCurrencies()
-- String getDefaultFormat()
-- String getFormat()
-- String getOriginalId()
-- boolean canHandleOffline()
-- String getDefaultName()
-
-### Class: su.nightexpress.economybridge.currency.impl.DummyCurrency
-Type: Class
-Implements: su.nightexpress.economybridge.api.Currency
-
-Methods:
-- void give(Player, double)
-- void give(UUID, double)
-- ItemStack getDefaultIcon()
-- String getName()
-- boolean canHandleDecimals()
-- String getInternalId()
-- ItemStack getIcon()
-- void take(Player, double)
-- void take(UUID, double)
-- double getBalance(Player)
-- double getBalance(UUID)
-- String getDefaultFormat()
-- String getFormat()
-- String getOriginalId()
-- boolean canHandleOffline()
-- String getDefaultName()
-
-### Class: su.nightexpress.economybridge.currency.impl.EliteMobsCurrency
-Type: Class
-Extends: su.nightexpress.economybridge.currency.type.AbstractCurrency
-
-Methods:
-- void take(Player, double)
-- void take(UUID, double)
-- void give(Player, double)
-- void give(UUID, double)
-- ItemStack getDefaultIcon()
-- double getBalance(Player)
-- double getBalance(UUID)
-- boolean canHandleDecimals()
-- boolean canHandleOffline()
-- String getDefaultName()
-
-### Class: su.nightexpress.economybridge.currency.impl.ItemStackCurrency
-Type: Class
-Extends: su.nightexpress.economybridge.currency.type.AbstractCurrency
-
-Methods:
-- void take(Player, double)
-- void take(UUID, double)
-- void give(Player, double)
-- void give(UUID, double)
-- ItemStack getDefaultIcon()
-- double getBalance(Player)
-- double getBalance(UUID)
-- boolean canHandleDecimals()
-- ItemStack getItem()
-- boolean canHandleOffline()
-- String getDefaultName()
-- void setItem(ItemStack)
-
-### Class: su.nightexpress.economybridge.currency.impl.PlayerPointsCurrency
-Type: Class
-Extends: su.nightexpress.economybridge.currency.type.AbstractCurrency
-
-Methods:
-- void take(Player, double)
-- void take(UUID, double)
-- void give(Player, double)
-- void give(UUID, double)
-- ItemStack getDefaultIcon()
-- double getBalance(Player)
-- double getBalance(UUID)
-- boolean canHandleDecimals()
-- boolean canHandleOffline()
-- String getDefaultName()
-
-### Class: su.nightexpress.economybridge.currency.impl.UltraEconomyCurrency
-Type: Class
-Implements: su.nightexpress.economybridge.api.Currency
-
-Methods:
-- void give(Player, double)
-- void give(UUID, double)
-- ItemStack getDefaultIcon()
-- String getName()
-- boolean canHandleDecimals()
-- String getInternalId()
-- String format(double)
-- ItemStack getIcon()
-- void take(Player, double)
-- void take(UUID, double)
-- double getBalance(Player)
-- double getBalance(UUID)
-- String formatValue(double)
-- **static** Set getCurrencies()
-- String getFormat()
-- String getOriginalId()
-- boolean canHandleOffline()
-- String getDefaultName()
-
-### Class: su.nightexpress.economybridge.currency.impl.VaultEconomyCurrency
-Type: Class
-Extends: su.nightexpress.economybridge.currency.type.AbstractCurrency
-
-Methods:
-- void take(Player, double)
-- void take(UUID, double)
-- void give(Player, double)
-- void give(UUID, double)
-- ItemStack getDefaultIcon()
-- double getBalance(Player)
-- double getBalance(UUID)
-- boolean canHandleDecimals()
-- String getDefaultFormat()
-- boolean canHandleOffline()
-- String getDefaultName()
-
-### Class: su.nightexpress.economybridge.currency.impl.VotingCurrency
-Type: Class
-Extends: su.nightexpress.economybridge.currency.type.AbstractCurrency
-
-Methods:
-- void take(Player, double)
-- void take(UUID, double)
-- void give(Player, double)
-- void give(UUID, double)
-- ItemStack getDefaultIcon()
-- double getBalance(Player)
-- double getBalance(UUID)
-- boolean canHandleDecimals()
-- boolean canHandleOffline()
-- String getDefaultName()
-
-### Class: su.nightexpress.economybridge.currency.impl.XPLevelsCurrency
-Type: Class
-Extends: su.nightexpress.economybridge.currency.type.AbstractCurrency
-
-Methods:
-- void take(Player, double)
-- void take(UUID, double)
-- void give(Player, double)
-- void give(UUID, double)
-- ItemStack getDefaultIcon()
-- double getBalance(Player)
-- double getBalance(UUID)
-- boolean canHandleDecimals()
-- boolean canHandleOffline()
-- String getDefaultName()
-
-### Class: su.nightexpress.economybridge.currency.impl.XPPointsCurrency
-Type: Class
-Extends: su.nightexpress.economybridge.currency.type.AbstractCurrency
-
-Methods:
-- void take(Player, double)
-- void take(UUID, double)
-- void give(Player, double)
-- void give(UUID, double)
-- ItemStack getDefaultIcon()
-- double getBalance(Player)
-- double getBalance(UUID)
-- boolean canHandleDecimals()
-- boolean canHandleOffline()
-- String getDefaultName()
-
-## Package: su.nightexpress.economybridge.currency.listener
-
-### Class: su.nightexpress.economybridge.currency.listener.CurrencyListener
-Type: Class
-Extends: su.nightexpress.nightcore.manager.AbstractListener
-
-Methods:
-- void onPluginEnable(PluginEnableEvent)
-- void onServiceRegister(ServiceRegisterEvent)
-
-## Package: su.nightexpress.economybridge.currency.type
-
-### Class: su.nightexpress.economybridge.currency.type.AbstractCurrency
-Type: Abstract Class
-Implements: su.nightexpress.economybridge.api.Currency
-
-Methods:
-- String getName()
-- void load(CurrencySettings)
-- CurrencySettings getSettings()
-- String getInternalId()
-- String getFormat()
-- String getOriginalId()
-- ItemStack getIcon()
-
-## Package: su.nightexpress.economybridge.hook
-
-### Class: su.nightexpress.economybridge.hook.VaultHook
-Type: Class
-
-Methods:
-- **static** double getBalance(Player)
-- **static** double getBalance(OfflinePlayer)
-- **static** String getEconomyName()
-- **static** boolean setupEconomy()
-- **static** boolean deposit(Player, double)
-- **static** boolean deposit(OfflinePlayer, double)
-- **static** Economy getEconomy()
-- **static** boolean hasEconomy()
-- **static** void shutdown()
-- **static** boolean withdraw(Player, double)
-- **static** boolean withdraw(OfflinePlayer, double)
-
-## Package: su.nightexpress.economybridge.item
-
-### Class: su.nightexpress.economybridge.item.ItemManager
-Type: Class
-Extends: su.nightexpress.nightcore.manager.AbstractManager
-
-Methods:
-- Set getHandlers()
-- ItemHandler getHandler(String)
-- ItemHandler getHandler(ItemStack)
-- DummyHandler getDummyHandler()
-- boolean register(String, Supplier)
-- boolean register(ItemHandler)
-
-### Class: su.nightexpress.economybridge.item.ItemPlugins
-Type: Class
-
-Methods:
-- **static** List values()
-
-## Package: su.nightexpress.economybridge.item.handler
-
-### Class: su.nightexpress.economybridge.item.handler.AbstractItemHandler
-Type: Abstract Class
-Implements: su.nightexpress.economybridge.api.item.ItemHandler
-
-Methods:
-- boolean isDummy()
-
-## Package: su.nightexpress.economybridge.item.handler.impl
-
-### Class: su.nightexpress.economybridge.item.handler.impl.DummyHandler
-Type: Class
-Extends: su.nightexpress.economybridge.item.handler.AbstractItemHandler
-
-Methods:
-- String getItemId(ItemStack)
-- String getName()
-- boolean isValidId(String)
-- boolean canHandle(ItemStack)
-- ItemStack createItem(String)
-- boolean isDummy()
-
-### Class: su.nightexpress.economybridge.item.handler.impl.ExcellentCratesHandler
-Type: Class
-Extends: su.nightexpress.economybridge.item.handler.AbstractItemHandler
-
-Methods:
-- String getItemId(ItemStack)
-- String getName()
-- boolean isValidId(String)
-- boolean canHandle(ItemStack)
-- ItemStack createItem(String)
-
-### Class: su.nightexpress.economybridge.item.handler.impl.ExecutableItemsHandler
-Type: Class
-Extends: su.nightexpress.economybridge.item.handler.AbstractItemHandler
-
-Methods:
-- String getItemId(ItemStack)
-- String getName()
-- boolean isValidId(String)
-- boolean canHandle(ItemStack)
-- ItemStack createItem(String)
-
-### Class: su.nightexpress.economybridge.item.handler.impl.ItemsAdderHandler
-Type: Class
-Extends: su.nightexpress.economybridge.item.handler.AbstractItemHandler
-
-Methods:
-- String getItemId(ItemStack)
-- String getName()
-- boolean isValidId(String)
-- boolean canHandle(ItemStack)
-- ItemStack createItem(String)
-
-### Class: su.nightexpress.economybridge.item.handler.impl.MMOItemsHandler
-Type: Class
-Extends: su.nightexpress.economybridge.item.handler.AbstractItemHandler
-
-Methods:
-- String getItemId(ItemStack)
-- String getName()
-- boolean isValidId(String)
-- boolean canHandle(ItemStack)
-- ItemStack createItem(String)
-
-### Class: su.nightexpress.economybridge.item.handler.impl.NexoHandler
-Type: Class
-Extends: su.nightexpress.economybridge.item.handler.AbstractItemHandler
-
-Methods:
-- String getItemId(ItemStack)
-- String getName()
-- boolean isValidId(String)
-- boolean canHandle(ItemStack)
-- ItemStack createItem(String)
-
-### Class: su.nightexpress.economybridge.item.handler.impl.OraxenHandler
-Type: Class
-Extends: su.nightexpress.economybridge.item.handler.AbstractItemHandler
-
-Methods:
-- String getItemId(ItemStack)
-- String getName()
-- boolean isValidId(String)
-- boolean canHandle(ItemStack)
-- ItemStack createItem(String)
-
+# economy-bridge-1.2.1
+
+Lightweight library plugin providing a unified static API to handle multiple currency plugins (Vault, CoinsEngine, UltraEconomy, PlayerPoints, BeastTokens, EliteMobs, VotingPlugin) and custom item plugins (ItemsAdder, Nexo, Oraxen, MMOItems, ExecutableItems) with a few lines of code.
+
+## Currency Operations via EconomyBridge
+
+All currency operations go through the static `EconomyBridge` class. Currency IDs: `"vault"`, `"xp_levels"`, `"xp_points"`, `"player_points"`, `"beast_tokens"`, `"voting_plugin"`, `"elite_mobs"`, `"coinsengine_<name>"`, `"ultraeconomy_<name>"`.
+
+```java
+import su.nightexpress.economybridge.EconomyBridge;
+import su.nightexpress.economybridge.api.Currency;
+import org.bukkit.entity.Player;
+import java.util.UUID;
+import java.util.Set;
+
+// --- Check if any economy / specific currency is available ---
+boolean hasAnyEconomy = EconomyBridge.hasEconomy();         // Vault economy present
+boolean hasAnyCurrency = EconomyBridge.hasCurrency();        // any currency registered
+boolean hasCoins = EconomyBridge.hasCurrency("coinsengine_coins"); // specific currency
+boolean disabled = EconomyBridge.isDisabled("vault");        // check if disabled in config
+
+// --- Get balance ---
+Player player = /* ... */;
+double vaultBal = EconomyBridge.getEconomyBalance(player);       // Vault shorthand
+double vaultBalUuid = EconomyBridge.getEconomyBalance(player.getUniqueId());
+double coinsBal = EconomyBridge.getBalance(player, "coinsengine_coins");
+double coinsBal2 = EconomyBridge.getBalance(player.getUniqueId(), "coinsengine_coins");
+
+// --- Check affordability ---
+boolean canAfford = EconomyBridge.hasEnough(player, "vault", 100.0);
+boolean canAffordUuid = EconomyBridge.hasEnough(player.getUniqueId(), "coinsengine_coins", 50.0);
+
+// --- Deposit (add funds) ---
+boolean depositOk = EconomyBridge.deposit(player, "vault", 250.0);
+boolean depositOk2 = EconomyBridge.deposit(player.getUniqueId(), "coinsengine_coins", 100.0);
+boolean depositVault = EconomyBridge.depositEconomy(player, 250.0); // Vault shorthand
+boolean depositVaultUuid = EconomyBridge.depositEconomy(player.getUniqueId(), 250.0);
+
+// --- Withdraw (remove funds) ---
+boolean withdrawOk = EconomyBridge.withdraw(player, "vault", 50.0);
+boolean withdrawOk2 = EconomyBridge.withdraw(player.getUniqueId(), "ultraeconomy_gems", 25.0);
+boolean withdrawVault = EconomyBridge.withdrawEconomy(player, 50.0); // Vault shorthand
+boolean withdrawVaultUuid = EconomyBridge.withdrawEconomy(player.getUniqueId(), 50.0);
+```
+
+## Working with Currency Objects
+
+```java
+import su.nightexpress.economybridge.EconomyBridge;
+import su.nightexpress.economybridge.api.Currency;
+import org.bukkit.entity.Player;
+import java.util.Set;
+
+// --- Get currency object ---
+Currency currency = EconomyBridge.getCurrency("vault");            // null if not found
+Currency safe = EconomyBridge.getCurrencyOrDummy("vault");         // never null, returns dummy if missing
+
+// --- Query all registered currencies ---
+Set<Currency> all = EconomyBridge.getCurrencies();
+Set<String> allIds = EconomyBridge.getCurrencyIds();
+
+// --- Currency object methods ---
+if (currency != null) {
+    String name = currency.getName();                  // display name
+    String id = currency.getInternalId();              // internal id (lowercase)
+    String origId = currency.getOriginalId();          // original plugin id
+    boolean decimals = currency.canHandleDecimals();
+    boolean offline = currency.canHandleOffline();
+    boolean dummy = currency.isDummy();
+
+    // Direct balance/give/take on currency object
+    Player player = /* ... */;
+    double bal = currency.getBalance(player);
+    currency.give(player, 100.0);
+    currency.take(player, 50.0);
+    currency.give(player.getUniqueId(), 100.0);       // UUID overloads
+    currency.take(player.getUniqueId(), 50.0);
+
+    // Formatting
+    String formatted = currency.format(1234.56);       // e.g. "$1,234.56"
+    String valueOnly = currency.formatValue(1234.56);  // e.g. "1,234.56"
+    double fined = currency.fineValue(1234.567);       // rounds if no decimals
+}
+```
+
+## Handling Currencies with Consumer
+
+```java
+import su.nightexpress.economybridge.EconomyBridge;
+import su.nightexpress.economybridge.api.Currency;
+import java.util.function.Consumer;
+
+// Execute logic only if the currency exists; returns false if not found
+boolean handled = EconomyBridge.handle("coinsengine_coins", (Currency currency) -> {
+    // do something with the currency
+    double bal = currency.getBalance(somePlayer);
+});
+```
+
+## Registering a Custom Currency
+
+```java
+import su.nightexpress.economybridge.EconomyBridge;
+import su.nightexpress.economybridge.api.Currency;
+
+Currency myCurrency = /* your Currency implementation */;
+EconomyBridge.registerCurrency(myCurrency);
+```
+
+## Custom Item Operations via ItemBridge
+
+```java
+import su.nightexpress.economybridge.ItemBridge;
+import su.nightexpress.economybridge.api.item.ItemHandler;
+import org.bukkit.inventory.ItemStack;
+import java.util.Set;
+
+// --- Check if an item is custom ---
+ItemStack item = /* ... */;
+boolean isCustom = ItemBridge.isCustomItem(item);
+
+// --- Get item ID ---
+String itemId = ItemBridge.getItemId(item);                       // auto-detect handler
+String itemId2 = ItemBridge.getItemId("itemsadder", item);        // specific handler
+
+// --- Create a custom item ---
+ItemStack created = ItemBridge.createItem("nexo", "my_custom_sword");
+ItemStack created2 = ItemBridge.createItem("itemsadder", "namespace:item_id");
+
+// --- Get handler for an item ---
+ItemHandler handler = ItemBridge.getHandler(item);                // null if none
+ItemHandler handler2 = ItemBridge.getHandler("nexo");             // by name, null if not found
+ItemHandler safe = ItemBridge.getHandlerOrDummy(item);            // never null
+ItemHandler safe2 = ItemBridge.getHandlerOrDummy("nexo");         // never null
+
+// --- List all handlers ---
+Set<ItemHandler> handlers = ItemBridge.getHandlers();
+
+// --- Register custom handler ---
+ItemHandler myHandler = /* your ItemHandler implementation */;
+boolean registered = ItemBridge.registerHandler(myHandler);
+```
+
+## ItemHandler Interface
+
+```java
+import su.nightexpress.economybridge.api.item.ItemHandler;
+import org.bukkit.inventory.ItemStack;
+
+// Implement to add support for a custom item plugin
+public class MyItemHandler implements ItemHandler {
+    @Override public String getName() { return "my_plugin"; }
+    @Override public boolean canHandle(ItemStack item) { /* check if yours */ }
+    @Override public ItemStack createItem(String itemId) { /* create from id */ }
+    @Override public String getItemId(ItemStack itemStack) { /* extract id */ }
+    @Override public boolean isValidId(String itemId) { /* validate format */ }
+    @Override public boolean isDummy() { return false; }
+}
+```
+
+## Currency ID Constants
+
+```java
+import su.nightexpress.economybridge.currency.CurrencyId;
+
+// Built-in IDs
+String vault       = "vault";
+String xpLevels    = "xp_levels";
+String xpPoints    = "xp_points";
+String playerPts   = "player_points";
+String beastTokens = "beast_tokens";
+String voting      = "voting_plugin";
+String eliteMobs   = "elite_mobs";
+
+// Multi-currency plugin IDs (prefix + currency name, lowercase)
+String coinsEngine = CurrencyId.forCoinsEngine("coins");        // "coinsengine_coins"
+String ultraEcon   = CurrencyId.forUltraEconomy("gems");        // "ultraeconomy_gems"
+
+// Legacy ID rerouting
+String rerouted = CurrencyId.reroute("money");  // returns "vault"
+// "exp"/"level" -> "xp_levels", "xp" -> "xp_points", "money"/"economy" -> "vault"
+```
+
+## API Reference
+
+### su.nightexpress.economybridge.EconomyBridge
+| Method | Returns |
+|---|---|
+| `hasCurrency()` | `boolean` |
+| `hasCurrency(String id)` | `boolean` |
+| `hasEconomy()` | `boolean` |
+| `isDisabled(String id)` | `boolean` |
+| `getCurrency(String id)` | `Currency` (nullable) |
+| `getCurrencyOrDummy(String id)` | `Currency` |
+| `getDummyCurrency()` | `DummyCurrency` |
+| `getCurrencies()` | `Set<Currency>` |
+| `getCurrencyIds()` | `Set<String>` |
+| `getCurrencyManager()` | `CurrencyManager` |
+| `getBalance(Player, String id)` | `double` |
+| `getBalance(UUID, String id)` | `double` |
+| `getEconomyBalance(Player)` | `double` |
+| `getEconomyBalance(UUID)` | `double` |
+| `hasEnough(Player, String id, double)` | `boolean` |
+| `hasEnough(UUID, String id, double)` | `boolean` |
+| `deposit(Player, String id, double)` | `boolean` |
+| `deposit(UUID, String id, double)` | `boolean` |
+| `depositEconomy(Player, double)` | `boolean` |
+| `depositEconomy(UUID, double)` | `boolean` |
+| `withdraw(Player, String id, double)` | `boolean` |
+| `withdraw(UUID, String id, double)` | `boolean` |
+| `withdrawEconomy(Player, double)` | `boolean` |
+| `withdrawEconomy(UUID, double)` | `boolean` |
+| `handle(String id, Consumer<Currency>)` | `boolean` |
+| `registerCurrency(Currency)` | `void` |
+| `getPlugin()` | `BridgePlugin` |
+
+### su.nightexpress.economybridge.api.Currency
+| Method | Returns |
+|---|---|
+| `getName()` | `String` |
+| `getInternalId()` | `String` |
+| `getOriginalId()` | `String` |
+| `getBalance(Player)` | `double` |
+| `getBalance(UUID)` | `double` |
+| `give(Player, double)` | `void` |
+| `give(UUID, double)` | `void` |
+| `take(Player, double)` | `void` |
+| `take(UUID, double)` | `void` |
+| `format(double)` | `String` |
+| `formatValue(double)` | `String` |
+| `applyFormat(String, double)` | `String` |
+| `fineValue(double)` | `double` |
+| `getFormat()` | `String` |
+| `getDefaultFormat()` | `String` |
+| `getDefaultName()` | `String` |
+| `canHandleDecimals()` | `boolean` |
+| `canHandleOffline()` | `boolean` |
+| `isDummy()` | `boolean` |
+| `getIcon()` | `ItemStack` |
+| `getDefaultIcon()` | `ItemStack` |
+| `replacePlaceholders()` | `UnaryOperator<String>` |
+
+### su.nightexpress.economybridge.ItemBridge
+| Method | Returns |
+|---|---|
+| `isCustomItem(ItemStack)` | `boolean` |
+| `getItemId(ItemStack)` | `String` |
+| `getItemId(String handler, ItemStack)` | `String` |
+| `createItem(String handler, String itemId)` | `ItemStack` |
+| `getHandler(String)` | `ItemHandler` (nullable) |
+| `getHandler(ItemStack)` | `ItemHandler` (nullable) |
+| `getHandlerOrDummy(String)` | `ItemHandler` |
+| `getHandlerOrDummy(ItemStack)` | `ItemHandler` |
+| `getHandlers()` | `Set<ItemHandler>` |
+| `getDummyHandler()` | `DummyHandler` |
+| `getItemManager()` | `ItemManager` |
+| `registerHandler(ItemHandler)` | `boolean` |
+
+### su.nightexpress.economybridge.api.item.ItemHandler
+| Method | Returns |
+|---|---|
+| `getName()` | `String` |
+| `canHandle(ItemStack)` | `boolean` |
+| `createItem(String itemId)` | `ItemStack` (nullable) |
+| `getItemId(ItemStack)` | `String` (nullable) |
+| `isValidId(String)` | `boolean` |
+| `isDummy()` | `boolean` |
+
+### su.nightexpress.economybridge.currency.CurrencyId
+| Method | Returns |
+|---|---|
+| `forCoinsEngine(String id)` | `String` |
+| `forUltraEconomy(String id)` | `String` |
+| `reroute(String oldName)` | `String` |

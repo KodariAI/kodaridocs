@@ -1,961 +1,603 @@
-# ShopkeepersAPI-2.23.11-SNAPSHOT API Reference
-
-## Package: com.nisovin.shopkeepers.api
-
-### Class: com.nisovin.shopkeepers.api.ShopkeepersPlugin
-Type: Interface
-Implements: org.bukkit.plugin.Plugin
-
-Methods:
-- BookOffer createBookOffer(String, int)
-- boolean hasCreatePermission(Player)
-- TradeOffer createTradeOffer(ItemStack, ItemStack, ItemStack)
-- TradeOffer createTradeOffer(UnmodifiableItemStack, UnmodifiableItemStack, UnmodifiableItemStack)
-- ShopkeeperStorage getShopkeeperStorage()
-- DefaultShopTypes getDefaultShopTypes()
-- Shopkeeper handleShopkeeperCreation(ShopCreationData)
-- DefaultShopObjectTypes getDefaultShopObjectTypes()
-- int updateItems()
-- ShopkeeperRegistry getShopkeeperRegistry()
-- UIRegistry getUIRegistry()
-- DefaultUITypes getDefaultUITypes()
-- ShopTypesRegistry getShopTypeRegistry()
-- ShopkeepersPlugin getInstance()
-- PriceOffer createPriceOffer(ItemStack, int)
-- PriceOffer createPriceOffer(UnmodifiableItemStack, int)
-- ShopObjectTypesRegistry getShopObjectTypeRegistry()
-
-### Class: com.nisovin.shopkeepers.api.ShopkeepersAPI
-Type: Class
-
-Methods:
-- BookOffer createBookOffer(String, int)
-- boolean hasCreatePermission(Player)
-- TradeOffer createTradeOffer(ItemStack, ItemStack, ItemStack)
-- TradeOffer createTradeOffer(UnmodifiableItemStack, UnmodifiableItemStack, UnmodifiableItemStack)
-- ShopkeeperStorage getShopkeeperStorage()
-- DefaultShopTypes getDefaultShopTypes()
-- Shopkeeper handleShopkeeperCreation(ShopCreationData)
-- DefaultShopObjectTypes getDefaultShopObjectTypes()
-- int updateItems()
-- ShopkeeperRegistry getShopkeeperRegistry()
-- UIRegistry getUIRegistry()
-- DefaultUITypes getDefaultUITypes()
-- ShopkeepersPlugin getPlugin()
-- boolean isEnabled()
-- ShopTypesRegistry getShopTypeRegistry()
-- PriceOffer createPriceOffer(ItemStack, int)
-- PriceOffer createPriceOffer(UnmodifiableItemStack, int)
-- ShopObjectTypesRegistry getShopObjectTypeRegistry()
-
-## Package: com.nisovin.shopkeepers.api.events
-
-### Class: com.nisovin.shopkeepers.api.events.PlayerCreatePlayerShopkeeperEvent
-Type: Class
-Extends: com.nisovin.shopkeepers.api.events.PlayerCreateShopkeeperEvent
-
-Methods:
-- void setMaxShopsLimit(int)
-- int getMaxShopsLimit()
-
-### Class: com.nisovin.shopkeepers.api.events.PlayerCreateShopkeeperEvent
-Type: Class
-Extends: org.bukkit.event.Event
-Implements: org.bukkit.event.Cancellable
-
-Methods:
-- boolean isCancelled()
-- HandlerList getHandlers()
-- void setCancelled(boolean)
-- HandlerList getHandlerList()
-- ShopCreationData getShopCreationData()
-
-### Class: com.nisovin.shopkeepers.api.events.PlayerDeleteShopkeeperEvent
-Type: Class
-Extends: com.nisovin.shopkeepers.api.events.ShopkeeperEvent
-Implements: org.bukkit.event.Cancellable
-
-Methods:
-- boolean isCancelled()
-- Player getPlayer()
-- HandlerList getHandlers()
-- void setCancelled(boolean)
-- HandlerList getHandlerList()
-
-### Class: com.nisovin.shopkeepers.api.events.PlayerInactiveEvent
-Type: Class
-Extends: org.bukkit.event.Event
-Implements: org.bukkit.event.Cancellable
-
-Methods:
-- boolean isCancelled()
-- Collection getShopkeepers()
-- HandlerList getHandlers()
-- void setCancelled(boolean)
-- HandlerList getHandlerList()
-- User getUser()
-
-### Class: com.nisovin.shopkeepers.api.events.PlayerOpenUIEvent
-Type: Class
-Extends: org.bukkit.event.Event
-Implements: org.bukkit.event.Cancellable
-
-Methods:
-- boolean isCancelled()
-- Player getPlayer()
-- boolean isSilentRequest()
-- HandlerList getHandlers()
-- void setCancelled(boolean)
-- HandlerList getHandlerList()
-- UIType getUIType()
-
-### Class: com.nisovin.shopkeepers.api.events.PlayerShopkeeperHireEvent
-Type: Class
-Extends: com.nisovin.shopkeepers.api.events.ShopkeeperEvent
-Implements: org.bukkit.event.Cancellable
-
-Methods:
-- boolean isCancelled()
-- Player getPlayer()
-- PlayerShopkeeper getShopkeeper()
-- Shopkeeper getShopkeeper()
-- HandlerList getHandlers()
-- void setCancelled(boolean)
-- HandlerList getHandlerList()
-- void setMaxShopsLimit(int)
-- ItemStack[] getNewPlayerInventoryContents()
-- int getMaxShopsLimit()
-
-### Class: com.nisovin.shopkeepers.api.events.ShopkeeperAddedEvent
-Type: Class
-Extends: com.nisovin.shopkeepers.api.events.ShopkeeperEvent
-
-Methods:
-- HandlerList getHandlers()
-- HandlerList getHandlerList()
-- ShopkeeperAddedEvent$Cause getCause()
-
-### Class: com.nisovin.shopkeepers.api.events.ShopkeeperEditedEvent
-Type: Class
-Extends: com.nisovin.shopkeepers.api.events.ShopkeeperEvent
-
-Methods:
-- Player getPlayer()
-- HandlerList getHandlers()
-- HandlerList getHandlerList()
-
-### Class: com.nisovin.shopkeepers.api.events.ShopkeeperEvent
-Type: Abstract Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- Shopkeeper getShopkeeper()
-
-### Class: com.nisovin.shopkeepers.api.events.ShopkeeperOpenUIEvent
-Type: Class
-Extends: com.nisovin.shopkeepers.api.events.PlayerOpenUIEvent
-
-Methods:
-- Shopkeeper getShopkeeper()
-
-### Class: com.nisovin.shopkeepers.api.events.ShopkeeperRemoveEvent
-Type: Class
-Extends: com.nisovin.shopkeepers.api.events.ShopkeeperEvent
-
-Methods:
-- HandlerList getHandlers()
-- HandlerList getHandlerList()
-- ShopkeeperRemoveEvent$Cause getCause()
-
-### Class: com.nisovin.shopkeepers.api.events.ShopkeeperTradeCompletedEvent
-Type: Class
-Extends: com.nisovin.shopkeepers.api.events.ShopkeeperEvent
-
-Methods:
-- HandlerList getHandlers()
-- HandlerList getHandlerList()
-- ShopkeeperTradeEvent getCompletedTrade()
-
-### Class: com.nisovin.shopkeepers.api.events.ShopkeeperTradeEvent
-Type: Class
-Extends: com.nisovin.shopkeepers.api.events.ShopkeeperEvent
-Implements: org.bukkit.event.Cancellable
-
-Methods:
-- UnmodifiableItemStack getResultItem()
-- boolean isCancelled()
-- UnmodifiableItemStack getReceivedItem2()
-- Player getPlayer()
-- boolean isReceivedItem1Altered()
-- HandlerList getHandlers()
-- void setCancelled(boolean)
-- boolean isReceivedItem2Altered()
-- HandlerList getHandlerList()
-- boolean hasOfferedItem2()
-- TradingRecipe getTradingRecipe()
-- List getTradeEffects()
-- UnmodifiableItemStack getOfferedItem2()
-- InventoryClickEvent getClickEvent()
-- UnmodifiableItemStack getReceivedItem1()
-- UnmodifiableItemStack getOfferedItem1()
-- void setResultItem(UnmodifiableItemStack)
-- void setReceivedItem1(UnmodifiableItemStack)
-- void setReceivedItem2(UnmodifiableItemStack)
-- boolean isResultItemAltered()
-- boolean isItemOrderSwapped()
-
-### Class: com.nisovin.shopkeepers.api.events.ShopkeepersStartupEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- HandlerList getHandlers()
-- HandlerList getHandlerList()
-
-### Class: com.nisovin.shopkeepers.api.events.UpdateItemEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- boolean isItemAltered()
-- HandlerList getHandlers()
-- UnmodifiableItemStack getOriginalItem()
-- HandlerList getHandlerList()
-- UnmodifiableItemStack getItem()
-- void setItem(UnmodifiableItemStack)
-
-## Package: com.nisovin.shopkeepers.api.internal
-
-### Class: com.nisovin.shopkeepers.api.internal.ApiInternals
-Type: Interface
-
-Methods:
-- boolean isShopkeeperSnapshotNameValid(String)
-- BookOffer createBookOffer(String, int)
-- UnmodifiableItemStack createUnmodifiableItemStack(ItemStack)
-- TradeOffer createTradeOffer(ItemStack, ItemStack, ItemStack)
-- TradeOffer createTradeOffer(UnmodifiableItemStack, UnmodifiableItemStack, UnmodifiableItemStack)
-- boolean isEmpty(UnmodifiableItemStack)
-- ApiInternals getInstance()
-- int getShopkeeperSnapshotMaxNameLength()
-- PriceOffer createPriceOffer(ItemStack, int)
-- PriceOffer createPriceOffer(UnmodifiableItemStack, int)
-
-### Class: com.nisovin.shopkeepers.api.internal.InternalShopkeepersPlugin
-Type: Interface
-Implements: com.nisovin.shopkeepers.api.ShopkeepersPlugin
-
-Methods:
-- ApiInternals getApiInternals()
-
-### Class: com.nisovin.shopkeepers.api.internal.InternalShopkeepersAPI
-Type: Class
-
-Methods:
-- void disable()
-- void enable(InternalShopkeepersPlugin)
-- InternalShopkeepersPlugin getPlugin()
-- boolean isEnabled()
-
-## Package: com.nisovin.shopkeepers.api.internal.util
-
-### Class: com.nisovin.shopkeepers.api.internal.util.Unsafe
-Type: Class
-
-Methods:
-- Object nullableAsNonNull(Object)
-- Object cast(Object)
-- Object assertNonNull(Object)
-- Object nullable(Object)
-- Object uncheckedNull()
-- Object initialized(Object)
-- Object castNonNull(Object)
-
-## Package: com.nisovin.shopkeepers.api.shopkeeper
-
-### Class: com.nisovin.shopkeepers.api.shopkeeper.DefaultShopTypes
-Type: Interface
-
-Methods:
-- List getAll()
-- PlayerShopType PLAYER_BOOK()
-- PlayerShopType PLAYER_TRADING()
-- AdminShopType getRegularAdminShopType()
-- PlayerShopType getBuyingPlayerShopType()
-- AdminShopType ADMIN_REGULAR()
-- PlayerShopType getSellingPlayerShopType()
-- PlayerShopType getTradingPlayerShopType()
-- PlayerShopType getBookPlayerShopType()
-- PlayerShopType PLAYER_BUYING()
-- ShopType ADMIN()
-- DefaultShopTypes getInstance()
-- PlayerShopType PLAYER_SELLING()
-- ShopType getAdminShopType()
-
-### Class: com.nisovin.shopkeepers.api.shopkeeper.ShopType
-Type: Interface
-Implements: com.nisovin.shopkeepers.api.types.SelectableType
-
-Methods:
-- String getDisplayName()
-- List getTradeSetupDescription()
-- String getSetupDescription()
-- String getDescription()
-
-### Class: com.nisovin.shopkeepers.api.shopkeeper.ShopTypesRegistry
-Type: Interface
-Implements: com.nisovin.shopkeepers.api.types.SelectableTypeRegistry
-
-No public methods found
-
-### Class: com.nisovin.shopkeepers.api.shopkeeper.Shopkeeper
-Type: Interface
-
-Methods:
-- void setName(String)
-- Location getLocation()
-- String getName()
-- String getUniqueIdLogPrefix()
-- ShopObject getShopObject()
-- boolean hasTradingRecipes(Player)
-- void applySnapshot(ShopkeeperSnapshot) throws ShopkeeperLoadException
-- Collection getUISessions()
-- Collection getUISessions(UIType)
-- List getTradingRecipes(Player)
-- void save()
-- String getLogPrefix()
-- int getId()
-- void delete()
-- void delete(Player)
-- UUID getUniqueId()
-- String getWorldName()
-- String getLocatedLogPrefix()
-- ShopkeeperSnapshot createSnapshot(String)
-- ShopkeeperSnapshot removeSnapshot(int)
-- boolean openEditorWindow(Player)
-- String getIdString()
-- void abortUISessionsDelayed()
-- boolean openWindow(UIType, Player)
-- boolean isValid()
-- int getSnapshotIndex(String)
-- boolean openTradingWindow(Player)
-- int updateItems()
-- void addSnapshot(ShopkeeperSnapshot)
-- ShopkeeperSnapshot getSnapshot(int)
-- ShopkeeperSnapshot getSnapshot(String)
-- ChunkCoords getChunkCoords()
-- float getYaw()
-- int getX()
-- int getY()
-- List getSnapshots()
-- int getZ()
-- ShopType getType()
-- String getDisplayName()
-- void saveDelayed()
-- void removeAllSnapshots()
-- boolean isVirtual()
-- String getPositionString()
-
-### Class: com.nisovin.shopkeepers.api.shopkeeper.ShopkeeperRegistry
-Type: Interface
-
-Methods:
-- Stream getShopkeepersByNamePrefix(String)
-- Collection getPlayerShopkeepersByOwner(UUID)
-- Shopkeeper getShopkeeperByUniqueId(UUID)
-- Collection getShopkeepersAtLocation(Location)
-- Shopkeeper createShopkeeper(ShopCreationData) throws ShopkeeperCreateException
-- Collection getVirtualShopkeepers()
-- Shopkeeper getShopkeeperByBlock(Block)
-- Shopkeeper getShopkeeperByBlock(String, int, int, int)
-- Collection getAllPlayerShopkeepers()
-- Stream getShopkeepersByName(String)
-- Collection getActiveShopkeepers()
-- Collection getActiveShopkeepers(String)
-- Collection getActiveChunks(String)
-- boolean isShopkeeper(Entity)
-- boolean isShopkeeper(Block)
-- Map getShopkeepersByChunks(String)
-- Collection getShopkeepersInChunk(ChunkCoords)
-- Collection getShopkeepersInWorld(String)
-- Collection getWorldsWithShopkeepers()
-- Shopkeeper getShopkeeperByEntity(Entity)
-- boolean isChunkActive(ChunkCoords)
-- Shopkeeper getShopkeeperById(int)
-- Collection getAllShopkeepers()
-
-### Class: com.nisovin.shopkeepers.api.shopkeeper.ShopkeeperSnapshot
-Type: Interface
-
-Methods:
-- String getName()
-- Instant getTimestamp()
-- boolean isNameValid(String)
-- int getMaxNameLength()
-
-### Class: com.nisovin.shopkeepers.api.shopkeeper.TradingRecipe
-Type: Interface
-
-Methods:
-- UnmodifiableItemStack getResultItem()
-- UnmodifiableItemStack getItem2()
-- boolean areItemsEqual(ItemStack, ItemStack, ItemStack)
-- boolean areItemsEqual(UnmodifiableItemStack, UnmodifiableItemStack, UnmodifiableItemStack)
-- boolean areItemsEqual(TradingRecipe)
-- UnmodifiableItemStack getItem1()
-- boolean hasItem2()
-- boolean isOutOfStock()
-
-### Class: com.nisovin.shopkeepers.api.shopkeeper.ShopCreationData
-Type: Abstract Class
-
-Methods:
-- Object getValue(String)
-- ShopType getShopType()
-- ShopObjectType getShopObjectType()
-- void setValue(String, Object)
-- void setTargetedBlockFace(BlockFace)
-- void setSpawnLocation(Location)
-- Location getSpawnLocation()
-- Player getCreator()
-- BlockFace getTargetedBlockFace()
-
-### Class: com.nisovin.shopkeepers.api.shopkeeper.ShopkeeperCreateException
-Type: Class
-Extends: java.lang.Exception
-
-No public methods found
-
-### Class: com.nisovin.shopkeepers.api.shopkeeper.ShopkeeperLoadException
-Type: Class
-Extends: java.lang.Exception
-
-No public methods found
-
-## Package: com.nisovin.shopkeepers.api.shopkeeper.admin
-
-### Class: com.nisovin.shopkeepers.api.shopkeeper.admin.AdminShopType
-Type: Interface
-Implements: com.nisovin.shopkeepers.api.shopkeeper.ShopType
-
-No public methods found
-
-### Class: com.nisovin.shopkeepers.api.shopkeeper.admin.AdminShopkeeper
-Type: Interface
-Implements: com.nisovin.shopkeepers.api.shopkeeper.Shopkeeper
-
-Methods:
-- String getTradePermission()
-- void setTradePermission(String)
-
-### Class: com.nisovin.shopkeepers.api.shopkeeper.admin.AdminShopCreationData
-Type: Class
-Extends: com.nisovin.shopkeepers.api.shopkeeper.ShopCreationData
-
-Methods:
-- AdminShopCreationData create(Player, ShopType, ShopObjectType, Location, BlockFace)
-- AdminShopCreationData create(Player, AdminShopType, ShopObjectType, Location, BlockFace)
-
-## Package: com.nisovin.shopkeepers.api.shopkeeper.admin.regular
-
-### Class: com.nisovin.shopkeepers.api.shopkeeper.admin.regular.RegularAdminShopkeeper
-Type: Interface
-Implements: com.nisovin.shopkeepers.api.shopkeeper.admin.AdminShopkeeper
-
-Methods:
-- List getOffers()
-- void addOffer(TradeOffer)
-- void clearOffers()
-- void addOffers(List)
-- void setOffers(List)
-
-## Package: com.nisovin.shopkeepers.api.shopkeeper.offers
-
-### Class: com.nisovin.shopkeepers.api.shopkeeper.offers.BookOffer
-Type: Interface
-
-Methods:
-- String getBookTitle()
-- BookOffer create(String, int)
-- int getPrice()
-
-### Class: com.nisovin.shopkeepers.api.shopkeeper.offers.PriceOffer
-Type: Interface
-
-Methods:
-- UnmodifiableItemStack getItem()
-- PriceOffer create(ItemStack, int)
-- PriceOffer create(UnmodifiableItemStack, int)
-- int getPrice()
-
-### Class: com.nisovin.shopkeepers.api.shopkeeper.offers.TradeOffer
-Type: Interface
-
-Methods:
-- UnmodifiableItemStack getResultItem()
-- UnmodifiableItemStack getItem2()
-- boolean areItemsEqual(ItemStack, ItemStack, ItemStack)
-- boolean areItemsEqual(UnmodifiableItemStack, UnmodifiableItemStack, UnmodifiableItemStack)
-- boolean areItemsEqual(TradingRecipe)
-- UnmodifiableItemStack getItem1()
-- TradeOffer create(ItemStack, ItemStack, ItemStack)
-- TradeOffer create(UnmodifiableItemStack, UnmodifiableItemStack, UnmodifiableItemStack)
-- boolean hasItem2()
-
-## Package: com.nisovin.shopkeepers.api.shopkeeper.player
-
-### Class: com.nisovin.shopkeepers.api.shopkeeper.player.PlayerShopType
-Type: Interface
-Implements: com.nisovin.shopkeepers.api.shopkeeper.ShopType
-
-No public methods found
-
-### Class: com.nisovin.shopkeepers.api.shopkeeper.player.PlayerShopkeeper
-Type: Interface
-Implements: com.nisovin.shopkeepers.api.shopkeeper.Shopkeeper
-
-Methods:
-- UUID getOwnerUUID()
-- boolean openContainerWindow(Player)
-- boolean isNotifyOnTrades()
-- Block getContainer()
-- int getContainerX()
-- int getContainerY()
-- int getCurrencyInContainer()
-- int getContainerZ()
-- boolean isForHire()
-- Player getOwner()
-- String getOwnerString()
-- UnmodifiableItemStack getHireCost()
-- void setOwner(Player)
-- void setOwner(UUID, String)
-- boolean openHireWindow(Player)
-- boolean isOwner(Player)
-- void setForHire(ItemStack)
-- void setForHire(UnmodifiableItemStack)
-- void setContainer(int, int, int)
-- void setNotifyOnTrades(boolean)
-- String getOwnerName()
-
-### Class: com.nisovin.shopkeepers.api.shopkeeper.player.PlayerShopCreationData
-Type: Class
-Extends: com.nisovin.shopkeepers.api.shopkeeper.ShopCreationData
-
-Methods:
-- Block getShopContainer()
-- PlayerShopCreationData create(Player, ShopType, ShopObjectType, Location, BlockFace, Block)
-- PlayerShopCreationData create(Player, PlayerShopType, ShopObjectType, Location, BlockFace, Block)
-- Block getShopChest()
-
-## Package: com.nisovin.shopkeepers.api.shopkeeper.player.book
-
-### Class: com.nisovin.shopkeepers.api.shopkeeper.player.book.BookPlayerShopkeeper
-Type: Interface
-Implements: com.nisovin.shopkeepers.api.shopkeeper.player.PlayerShopkeeper
-
-Methods:
-- void removeOffer(String)
-- List getOffers()
-- void addOffer(BookOffer)
-- void clearOffers()
-- void addOffers(List)
-- void setOffers(List)
-- BookOffer getOffer(ItemStack)
-- BookOffer getOffer(UnmodifiableItemStack)
-- BookOffer getOffer(String)
-
-## Package: com.nisovin.shopkeepers.api.shopkeeper.player.buy
-
-### Class: com.nisovin.shopkeepers.api.shopkeeper.player.buy.BuyingPlayerShopkeeper
-Type: Interface
-Implements: com.nisovin.shopkeepers.api.shopkeeper.player.PlayerShopkeeper
-
-Methods:
-- void removeOffer(ItemStack)
-- void removeOffer(UnmodifiableItemStack)
-- List getOffers()
-- void addOffer(PriceOffer)
-- void clearOffers()
-- void addOffers(List)
-- void setOffers(List)
-- PriceOffer getOffer(ItemStack)
-- PriceOffer getOffer(UnmodifiableItemStack)
-
-## Package: com.nisovin.shopkeepers.api.shopkeeper.player.sell
-
-### Class: com.nisovin.shopkeepers.api.shopkeeper.player.sell.SellingPlayerShopkeeper
-Type: Interface
-Implements: com.nisovin.shopkeepers.api.shopkeeper.player.PlayerShopkeeper
-
-Methods:
-- void removeOffer(ItemStack)
-- void removeOffer(UnmodifiableItemStack)
-- List getOffers()
-- void addOffer(PriceOffer)
-- void clearOffers()
-- void addOffers(List)
-- void setOffers(List)
-- PriceOffer getOffer(ItemStack)
-- PriceOffer getOffer(UnmodifiableItemStack)
-
-## Package: com.nisovin.shopkeepers.api.shopkeeper.player.trade
-
-### Class: com.nisovin.shopkeepers.api.shopkeeper.player.trade.TradingPlayerShopkeeper
-Type: Interface
-Implements: com.nisovin.shopkeepers.api.shopkeeper.player.PlayerShopkeeper
-
-Methods:
-- List getOffers()
-- void addOffer(TradeOffer)
-- void clearOffers()
-- void addOffers(List)
-- void setOffers(List)
-
-## Package: com.nisovin.shopkeepers.api.shopobjects
-
-### Class: com.nisovin.shopkeepers.api.shopobjects.DefaultShopObjectTypes
-Type: Interface
-
-Methods:
-- CitizensShopObjectType getCitizensShopObjectType()
-- LivingShopObjectTypes getLivingShopObjectTypes()
-- List getAll()
-- HangingSignShopObjectType HANGING_SIGN()
-- LivingShopObjectTypes LIVING()
-- HangingSignShopObjectType getHangingSignShopObjectType()
-- SignShopObjectType SIGN()
-- DefaultShopObjectTypes getInstance()
-- SignShopObjectType getSignShopObjectType()
-- CitizensShopObjectType CITIZEN()
-
-### Class: com.nisovin.shopkeepers.api.shopobjects.ShopObject
-Type: Interface
-
-Methods:
-- void setName(String)
-- Location getLocation()
-- String getName()
-- ShopObjectType getType()
-- int getNameLengthLimit()
-- boolean isSpawned()
-- boolean isActive()
-- String prepareName(String)
-
-### Class: com.nisovin.shopkeepers.api.shopobjects.ShopObjectType
-Type: Interface
-Implements: com.nisovin.shopkeepers.api.types.SelectableType
-
-Methods:
-- String getDisplayName()
-- boolean isValidSpawnLocation(Location, BlockFace)
-
-### Class: com.nisovin.shopkeepers.api.shopobjects.ShopObjectTypesRegistry
-Type: Interface
-Implements: com.nisovin.shopkeepers.api.types.SelectableTypeRegistry
-
-No public methods found
-
-## Package: com.nisovin.shopkeepers.api.shopobjects.block
-
-### Class: com.nisovin.shopkeepers.api.shopobjects.block.BlockShopObject
-Type: Interface
-Implements: com.nisovin.shopkeepers.api.shopobjects.ShopObject
-
-Methods:
-- Block getBlock()
-
-### Class: com.nisovin.shopkeepers.api.shopobjects.block.BlockShopObjectType
-Type: Interface
-Implements: com.nisovin.shopkeepers.api.shopobjects.ShopObjectType
-
-Methods:
-- Shopkeeper getShopkeeper(Block)
-- Shopkeeper getShopkeeper(String, int, int, int)
-- boolean isShopkeeper(Block)
-- boolean isShopkeeper(String, int, int, int)
-
-## Package: com.nisovin.shopkeepers.api.shopobjects.citizens
-
-### Class: com.nisovin.shopkeepers.api.shopobjects.citizens.CitizensShopObject
-Type: Interface
-Implements: com.nisovin.shopkeepers.api.shopobjects.entity.EntityShopObject
-
-No public methods found
-
-### Class: com.nisovin.shopkeepers.api.shopobjects.citizens.CitizensShopObjectType
-Type: Interface
-Implements: com.nisovin.shopkeepers.api.shopobjects.entity.EntityShopObjectType
-
-No public methods found
-
-## Package: com.nisovin.shopkeepers.api.shopobjects.entity
-
-### Class: com.nisovin.shopkeepers.api.shopobjects.entity.EntityShopObject
-Type: Interface
-Implements: com.nisovin.shopkeepers.api.shopobjects.ShopObject
-
-Methods:
-- Entity getEntity()
-
-### Class: com.nisovin.shopkeepers.api.shopobjects.entity.EntityShopObjectType
-Type: Interface
-Implements: com.nisovin.shopkeepers.api.shopobjects.ShopObjectType
-
-Methods:
-- Shopkeeper getShopkeeper(Entity)
-- boolean isShopkeeper(Entity)
-
-## Package: com.nisovin.shopkeepers.api.shopobjects.living
-
-### Class: com.nisovin.shopkeepers.api.shopobjects.living.LivingShopEquipment
-Type: Interface
-
-Methods:
-- Map getItems()
-- void clear()
-- UnmodifiableItemStack getItem(EquipmentSlot)
-- void setItem(EquipmentSlot, UnmodifiableItemStack)
-
-### Class: com.nisovin.shopkeepers.api.shopobjects.living.LivingShopObject
-Type: Interface
-Implements: com.nisovin.shopkeepers.api.shopobjects.entity.EntityShopObject
-
-Methods:
-- boolean openEquipmentEditor(Player, boolean)
-- EntityType getEntityType()
-- LivingShopEquipment getEquipment()
-
-### Class: com.nisovin.shopkeepers.api.shopobjects.living.LivingShopObjectType
-Type: Interface
-Implements: com.nisovin.shopkeepers.api.shopobjects.entity.EntityShopObjectType
-
-Methods:
-- EntityType getEntityType()
-
-### Class: com.nisovin.shopkeepers.api.shopobjects.living.LivingShopObjectTypes
-Type: Interface
-
-Methods:
-- Collection getAll()
-- LivingShopObjectType get(EntityType)
-
-## Package: com.nisovin.shopkeepers.api.shopobjects.sign
-
-### Class: com.nisovin.shopkeepers.api.shopobjects.sign.HangingSignShopObject
-Type: Interface
-Implements: com.nisovin.shopkeepers.api.shopobjects.block.BlockShopObject
-
-No public methods found
-
-### Class: com.nisovin.shopkeepers.api.shopobjects.sign.HangingSignShopObjectType
-Type: Interface
-Implements: com.nisovin.shopkeepers.api.shopobjects.block.BlockShopObjectType
-
-No public methods found
-
-### Class: com.nisovin.shopkeepers.api.shopobjects.sign.SignShopObject
-Type: Interface
-Implements: com.nisovin.shopkeepers.api.shopobjects.block.BlockShopObject
-
-No public methods found
-
-### Class: com.nisovin.shopkeepers.api.shopobjects.sign.SignShopObjectType
-Type: Interface
-Implements: com.nisovin.shopkeepers.api.shopobjects.block.BlockShopObjectType
-
-No public methods found
-
-## Package: com.nisovin.shopkeepers.api.shopobjects.virtual
-
-### Class: com.nisovin.shopkeepers.api.shopobjects.virtual.VirtualShopObject
-Type: Interface
-Implements: com.nisovin.shopkeepers.api.shopobjects.ShopObject
-
-No public methods found
-
-### Class: com.nisovin.shopkeepers.api.shopobjects.virtual.VirtualShopObjectType
-Type: Interface
-Implements: com.nisovin.shopkeepers.api.shopobjects.ShopObjectType
-
-No public methods found
-
-## Package: com.nisovin.shopkeepers.api.storage
-
-### Class: com.nisovin.shopkeepers.api.storage.ShopkeeperStorage
-Type: Interface
-
-Methods:
-- void saveImmediate()
-- boolean isDirty()
-- void saveDelayed()
-- void save()
-- void saveNow()
-- void saveIfDirty()
-- void saveIfDirtyAndAwaitCompletion()
-
-## Package: com.nisovin.shopkeepers.api.trading
-
-### Class: com.nisovin.shopkeepers.api.trading.TradeEffect
-Type: Interface
-
-Methods:
-- void onTradeApplied(ShopkeeperTradeEvent)
-- void onTradeAborted(ShopkeeperTradeEvent)
-
-## Package: com.nisovin.shopkeepers.api.types
-
-### Class: com.nisovin.shopkeepers.api.types.SelectableType
-Type: Interface
-Implements: com.nisovin.shopkeepers.api.types.Type
-
-No public methods found
-
-### Class: com.nisovin.shopkeepers.api.types.SelectableTypeRegistry
-Type: Interface
-Implements: com.nisovin.shopkeepers.api.types.TypeRegistry
-
-Methods:
-- SelectableType getSelection(Player)
-- SelectableType getDefaultSelection(Player)
-- SelectableType selectPrevious(Player)
-- SelectableType selectNext(Player)
-- void clearSelection(Player)
-- void clearAllSelections()
-
-### Class: com.nisovin.shopkeepers.api.types.Type
-Type: Interface
-
-Methods:
-- Collection getAliases()
-- String getPermission()
-- String getDisplayName()
-- String getIdentifier()
-- boolean isEnabled()
-- boolean hasPermission(Player)
-- boolean matches(String)
-
-### Class: com.nisovin.shopkeepers.api.types.TypeRegistry
-Type: Interface
-
-Methods:
-- Collection getRegisteredTypes()
-- void registerAll(Collection)
-- Type get(String)
-- Type match(String)
-- void clearAll()
-- void register(Type)
-
-## Package: com.nisovin.shopkeepers.api.ui
-
-### Class: com.nisovin.shopkeepers.api.ui.DefaultUITypes
-Type: Interface
-
-Methods:
-- UIType getEditorUIType()
-- UIType EDITOR()
-- List getAllUITypes()
-- UIType getTradingUIType()
-- UIType HIRING()
-- UIType getHiringUIType()
-- DefaultUITypes getInstance()
-- UIType EQUIPMENT_EDITOR()
-- UIType TRADING()
-- UIType getEquipmentEditorUIType()
-
-### Class: com.nisovin.shopkeepers.api.ui.UIRegistry
-Type: Interface
-Implements: com.nisovin.shopkeepers.api.types.TypeRegistry
-
-Methods:
-- void abortUISessionsDelayed(Shopkeeper)
-- void abortUISessions()
-- void abortUISessions(Shopkeeper)
-- Collection getUISessions()
-- Collection getUISessions(Shopkeeper)
-- Collection getUISessions(Shopkeeper, UIType)
-- Collection getUISessions(UIType)
-- UISession getUISession(Player)
-
-### Class: com.nisovin.shopkeepers.api.ui.UISession
-Type: Interface
-
-Methods:
-- void deactivateUI()
-- void closeDelayedAndRunTask(Runnable)
-- Player getPlayer()
-- Shopkeeper getShopkeeper()
-- void abortDelayed()
-- void abortDelayedAndRunTask(Runnable)
-- void abort()
-- void closeDelayed()
-- boolean isValid()
-- boolean isUIActive()
-- void close()
-- void activateUI()
-- UIType getUIType()
-
-### Class: com.nisovin.shopkeepers.api.ui.UIType
-Type: Interface
-Implements: com.nisovin.shopkeepers.api.types.Type
-
-No public methods found
-
-## Package: com.nisovin.shopkeepers.api.user
-
-### Class: com.nisovin.shopkeepers.api.user.User
-Type: Interface
-
-Methods:
-- OfflinePlayer getOfflinePlayer()
-- Player getPlayer()
-- String getName()
-- String getDisplayName()
-- boolean isOnline()
-- String getLastKnownName()
-- UUID getUniqueId()
-
-## Package: com.nisovin.shopkeepers.api.util
-
-### Class: com.nisovin.shopkeepers.api.util.UnmodifiableItemStack
-Type: Interface
-Implements: org.bukkit.configuration.serialization.ConfigurationSerializable
-
-Methods:
-- int getMaxStackSize()
-- int getEnchantmentLevel(Enchantment)
-- boolean containsEnchantment(Enchantment)
-- ItemMeta getItemMeta()
-- Map getEnchantments()
-- Map serialize()
-- boolean hasItemMeta()
-- Material getType()
-- boolean equals(ItemStack)
-- boolean equals(Object)
-- UnmodifiableItemStack of(ItemStack)
-- UnmodifiableItemStack ofNonNull(ItemStack)
-- ItemStack copy()
-- boolean isSimilar(ItemStack)
-- boolean isSimilar(UnmodifiableItemStack)
-- UnmodifiableItemStack shallowCopy()
-- int getAmount()
-
-### Class: com.nisovin.shopkeepers.api.util.ChunkCoords
-Type: Class
-
-Methods:
-- String getWorldName()
-- boolean isChunkLoaded(Location)
-- boolean isChunkLoaded()
-- int fromBlock(int)
-- ChunkCoords fromBlock(String, int, int)
-- World getWorld()
-- boolean isSameChunk(Location, Location)
-- int getChunkZ()
-- int hashCode()
-- Chunk getChunk()
-- int getChunkX()
-- boolean equals(Object)
-- String toString()
-- boolean matches(String, int, int)
-- boolean matches(Chunk)
-
+# Shopkeepers API
+
+Bukkit plugin for creating custom villager shopkeepers (NPC merchants). Supports admin shops with unlimited stock and player shops backed by containers. Shopkeepers can appear as any living entity, sign, hanging sign, or Citizens NPC.
+
+## Code Examples
+
+### Getting the API
+
+```java
+import com.nisovin.shopkeepers.api.ShopkeepersAPI;
+import com.nisovin.shopkeepers.api.ShopkeepersPlugin;
+import com.nisovin.shopkeepers.api.shopkeeper.ShopkeeperRegistry;
+
+// Static access (preferred)
+ShopkeeperRegistry registry = ShopkeepersAPI.getShopkeeperRegistry();
+
+// Plugin instance access
+ShopkeepersPlugin plugin = ShopkeepersAPI.getPlugin();
+
+// Check if API is ready before using
+if (ShopkeepersAPI.isEnabled()) {
+    // Safe to use
+}
+```
+
+### Creating an Admin Shopkeeper Programmatically
+
+```java
+import com.nisovin.shopkeepers.api.ShopkeepersAPI;
+import com.nisovin.shopkeepers.api.shopkeeper.DefaultShopTypes;
+import com.nisovin.shopkeepers.api.shopkeeper.ShopkeeperRegistry;
+import com.nisovin.shopkeepers.api.shopkeeper.ShopkeeperCreateException;
+import com.nisovin.shopkeepers.api.shopkeeper.Shopkeeper;
+import com.nisovin.shopkeepers.api.shopkeeper.admin.AdminShopCreationData;
+import com.nisovin.shopkeepers.api.shopkeeper.admin.AdminShopType;
+import com.nisovin.shopkeepers.api.shopkeeper.admin.regular.RegularAdminShopkeeper;
+import com.nisovin.shopkeepers.api.shopkeeper.offers.TradeOffer;
+import com.nisovin.shopkeepers.api.shopobjects.DefaultShopObjectTypes;
+import com.nisovin.shopkeepers.api.shopobjects.ShopObjectType;
+import com.nisovin.shopkeepers.api.shopobjects.living.LivingShopObjectTypes;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.BlockFace;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+// Get default types
+AdminShopType<?> adminType = ShopkeepersAPI.getDefaultShopTypes().getRegularAdminShopType();
+
+// Choose shop object type - villager mob
+LivingShopObjectTypes livingTypes = ShopkeepersAPI.getDefaultShopObjectTypes().getLivingShopObjectTypes();
+ShopObjectType<?> villagerObject = livingTypes.get(EntityType.VILLAGER);
+
+// Build creation data (creator can be null for server-created shops)
+Location spawnLoc = new Location(world, 100, 65, 200);
+AdminShopCreationData creationData = AdminShopCreationData.create(
+    null,           // creator Player (null = server-created)
+    adminType,      // AdminShopType
+    villagerObject, // ShopObjectType
+    spawnLoc,       // spawn location
+    BlockFace.NORTH // targeted block face (can be null)
+);
+
+// Create via registry (throws ShopkeeperCreateException on failure)
+ShopkeeperRegistry registry = ShopkeepersAPI.getShopkeeperRegistry();
+try {
+    Shopkeeper shopkeeper = registry.createShopkeeper(creationData);
+    shopkeeper.setName("Weapon Smith");
+
+    // Cast to RegularAdminShopkeeper to add trade offers
+    if (shopkeeper instanceof RegularAdminShopkeeper adminShop) {
+        // TradeOffer.create(resultItem, item1cost, item2cost)
+        // item2 can be null for single-item trades
+        TradeOffer offer = TradeOffer.create(
+            new ItemStack(Material.DIAMOND_SWORD),  // result item
+            new ItemStack(Material.EMERALD, 10),    // cost item 1
+            null                                     // cost item 2 (optional)
+        );
+        adminShop.addOffer(offer);
+    }
+
+    shopkeeper.save();
+} catch (ShopkeeperCreateException e) {
+    e.printStackTrace();
+}
+```
+
+### Creating a Player Shopkeeper
+
+```java
+import com.nisovin.shopkeepers.api.ShopkeepersAPI;
+import com.nisovin.shopkeepers.api.shopkeeper.ShopkeeperRegistry;
+import com.nisovin.shopkeepers.api.shopkeeper.ShopkeeperCreateException;
+import com.nisovin.shopkeepers.api.shopkeeper.Shopkeeper;
+import com.nisovin.shopkeepers.api.shopkeeper.player.PlayerShopCreationData;
+import com.nisovin.shopkeepers.api.shopkeeper.player.PlayerShopType;
+import com.nisovin.shopkeepers.api.shopobjects.DefaultShopObjectTypes;
+import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+
+// Player selling shop - sells items from a container to customers
+PlayerShopType<?> sellingType = ShopkeepersAPI.getDefaultShopTypes().getSellingPlayerShopType();
+var villagerObj = ShopkeepersAPI.getDefaultShopObjectTypes().getLivingShopObjectTypes().get(EntityType.VILLAGER);
+
+Location spawnLoc = player.getLocation();
+Block containerBlock = player.getLocation().add(2, 0, 0).getBlock(); // chest block
+
+// Player shops require: non-null creator, a container block in the same world
+PlayerShopCreationData creationData = PlayerShopCreationData.create(
+    player,         // creator (required, non-null)
+    sellingType,    // PlayerShopType
+    villagerObj,    // ShopObjectType
+    spawnLoc,       // spawn location
+    BlockFace.NORTH,// targeted block face
+    containerBlock  // shop container (chest) - must be same world as spawnLoc
+);
+
+try {
+    Shopkeeper shopkeeper = ShopkeepersAPI.getShopkeeperRegistry().createShopkeeper(creationData);
+    shopkeeper.save();
+} catch (ShopkeeperCreateException e) {
+    e.printStackTrace();
+}
+```
+
+### Player-style Creation (with limits/messages)
+
+```java
+import com.nisovin.shopkeepers.api.ShopkeepersAPI;
+import com.nisovin.shopkeepers.api.shopkeeper.Shopkeeper;
+import com.nisovin.shopkeepers.api.shopkeeper.admin.AdminShopCreationData;
+
+// handleShopkeeperCreation respects player limits and sends feedback messages
+// Returns null on failure instead of throwing
+AdminShopCreationData data = AdminShopCreationData.create(
+    player,
+    ShopkeepersAPI.getDefaultShopTypes().getRegularAdminShopType(),
+    ShopkeepersAPI.getDefaultShopObjectTypes().getLivingShopObjectTypes().get(EntityType.VILLAGER),
+    player.getLocation(),
+    null
+);
+Shopkeeper shopkeeper = ShopkeepersAPI.handleShopkeeperCreation(data); // nullable
+if (shopkeeper != null) {
+    // Success
+}
+```
+
+### Finding Shopkeepers
+
+```java
+import com.nisovin.shopkeepers.api.ShopkeepersAPI;
+import com.nisovin.shopkeepers.api.shopkeeper.Shopkeeper;
+import com.nisovin.shopkeepers.api.shopkeeper.ShopkeeperRegistry;
+import com.nisovin.shopkeepers.api.shopkeeper.player.PlayerShopkeeper;
+import org.bukkit.Location;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import java.util.Collection;
+import java.util.UUID;
+
+ShopkeeperRegistry registry = ShopkeepersAPI.getShopkeeperRegistry();
+
+// By unique ID
+Shopkeeper sk = registry.getShopkeeperByUniqueId(someUUID); // nullable
+
+// By integer ID
+Shopkeeper sk2 = registry.getShopkeeperById(42); // nullable
+
+// By entity (right-clicked villager, etc.)
+Shopkeeper sk3 = registry.getShopkeeperByEntity(entity); // nullable
+boolean isShop = registry.isShopkeeper(entity);
+
+// By block (sign shops)
+Shopkeeper sk4 = registry.getShopkeeperByBlock(block); // nullable
+boolean isBlockShop = registry.isShopkeeper(block);
+
+// All shopkeepers at a specific location
+Collection<? extends Shopkeeper> atLoc = registry.getShopkeepersAtLocation(location);
+
+// All shopkeepers in a world
+Collection<? extends Shopkeeper> inWorld = registry.getShopkeepersInWorld("world");
+
+// All player shopkeepers owned by a player
+Collection<? extends PlayerShopkeeper> owned = registry.getPlayerShopkeepersByOwner(playerUUID);
+
+// Search by name (case-insensitive, ignores color codes)
+registry.getShopkeepersByName("Weapon Smith").forEach(s -> {
+    // process matching shopkeepers
+});
+
+// All shopkeepers
+Collection<? extends Shopkeeper> all = registry.getAllShopkeepers();
+```
+
+### Listening to Trade Events
+
+```java
+import com.nisovin.shopkeepers.api.events.ShopkeeperTradeEvent;
+import com.nisovin.shopkeepers.api.events.ShopkeeperTradeCompletedEvent;
+import com.nisovin.shopkeepers.api.shopkeeper.Shopkeeper;
+import com.nisovin.shopkeepers.api.shopkeeper.TradingRecipe;
+import com.nisovin.shopkeepers.api.util.UnmodifiableItemStack;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+
+public class ShopListener implements Listener {
+
+    // Fires BEFORE trade is applied -- can cancel or modify items
+    @EventHandler
+    public void onTrade(ShopkeeperTradeEvent event) {
+        Player player = event.getPlayer();
+        Shopkeeper shopkeeper = event.getShopkeeper();
+        TradingRecipe recipe = event.getTradingRecipe();
+
+        UnmodifiableItemStack resultItem = event.getResultItem();
+        UnmodifiableItemStack offeredItem1 = event.getOfferedItem1();
+        UnmodifiableItemStack offeredItem2 = event.getOfferedItem2(); // nullable
+
+        // Cancel the trade
+        event.setCancelled(true);
+
+        // Or modify what the shopkeeper receives
+        event.setReceivedItem1(UnmodifiableItemStack.of(someItemStack));
+
+        // Or modify the result the player gets
+        event.setResultItem(UnmodifiableItemStack.of(modifiedResult));
+    }
+
+    // Fires AFTER trade is successfully completed
+    @EventHandler
+    public void onTradeCompleted(ShopkeeperTradeCompletedEvent event) {
+        Shopkeeper shopkeeper = event.getShopkeeper();
+        ShopkeeperTradeEvent completedTrade = event.getCompletedTrade();
+        Player buyer = completedTrade.getPlayer();
+        // Log or reward
+    }
+}
+```
+
+### Listening to Shopkeeper Lifecycle Events
+
+```java
+import com.nisovin.shopkeepers.api.events.PlayerCreateShopkeeperEvent;
+import com.nisovin.shopkeepers.api.events.PlayerCreatePlayerShopkeeperEvent;
+import com.nisovin.shopkeepers.api.events.PlayerDeleteShopkeeperEvent;
+import com.nisovin.shopkeepers.api.events.ShopkeeperAddedEvent;
+import com.nisovin.shopkeepers.api.events.ShopkeeperRemoveEvent;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+
+public class ShopLifecycleListener implements Listener {
+
+    // Player is about to create a shopkeeper (cancellable)
+    @EventHandler
+    public void onCreate(PlayerCreateShopkeeperEvent event) {
+        // event.getShopCreationData() - inspect creation data
+        event.setCancelled(true); // block creation
+    }
+
+    // Player creating a player-owned shop (cancellable, can adjust shop limit)
+    @EventHandler
+    public void onCreatePlayerShop(PlayerCreatePlayerShopkeeperEvent event) {
+        event.setMaxShopsLimit(50); // override max shops for this creation
+    }
+
+    // Player is about to delete a shopkeeper (cancellable)
+    @EventHandler
+    public void onDelete(PlayerDeleteShopkeeperEvent event) {
+        event.getPlayer();
+        event.getShopkeeper();
+        event.setCancelled(true);
+    }
+
+    // Shopkeeper was added to the registry (not cancellable)
+    @EventHandler
+    public void onAdded(ShopkeeperAddedEvent event) {
+        ShopkeeperAddedEvent.Cause cause = event.getCause(); // CREATED, LOADED
+    }
+
+    // Shopkeeper is about to be removed from the registry (not cancellable)
+    @EventHandler
+    public void onRemove(ShopkeeperRemoveEvent event) {
+        ShopkeeperRemoveEvent.Cause cause = event.getCause(); // DELETE, UNLOAD, etc.
+    }
+}
+```
+
+### Shop Object Types
+
+```java
+import com.nisovin.shopkeepers.api.ShopkeepersAPI;
+import com.nisovin.shopkeepers.api.shopobjects.DefaultShopObjectTypes;
+import com.nisovin.shopkeepers.api.shopobjects.ShopObjectType;
+import com.nisovin.shopkeepers.api.shopobjects.living.LivingShopObjectType;
+import com.nisovin.shopkeepers.api.shopobjects.living.LivingShopObjectTypes;
+import org.bukkit.entity.EntityType;
+
+DefaultShopObjectTypes objectTypes = ShopkeepersAPI.getDefaultShopObjectTypes();
+
+// Living entity types (villager, zombie, etc.)
+LivingShopObjectTypes living = objectTypes.getLivingShopObjectTypes();
+LivingShopObjectType<?> villager = living.get(EntityType.VILLAGER);
+LivingShopObjectType<?> skeleton = living.get(EntityType.SKELETON);
+
+// Sign-based shopkeepers
+ShopObjectType<?> sign = objectTypes.getSignShopObjectType();
+ShopObjectType<?> hangingSign = objectTypes.getHangingSignShopObjectType();
+
+// Citizens NPC (requires Citizens plugin)
+ShopObjectType<?> citizens = objectTypes.getCitizensShopObjectType();
+
+// Static convenience accessors
+var signType = DefaultShopObjectTypes.SIGN();
+var livingTypes = DefaultShopObjectTypes.LIVING();
+```
+
+### Working with Player Shopkeeper Offers
+
+```java
+import com.nisovin.shopkeepers.api.shopkeeper.Shopkeeper;
+import com.nisovin.shopkeepers.api.shopkeeper.player.PlayerShopkeeper;
+import com.nisovin.shopkeepers.api.shopkeeper.player.sell.SellingPlayerShopkeeper;
+import com.nisovin.shopkeepers.api.shopkeeper.player.buy.BuyingPlayerShopkeeper;
+import com.nisovin.shopkeepers.api.shopkeeper.player.trade.TradingPlayerShopkeeper;
+import com.nisovin.shopkeepers.api.shopkeeper.player.book.BookPlayerShopkeeper;
+import com.nisovin.shopkeepers.api.shopkeeper.offers.PriceOffer;
+import com.nisovin.shopkeepers.api.shopkeeper.offers.TradeOffer;
+import com.nisovin.shopkeepers.api.shopkeeper.offers.BookOffer;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+
+// Selling shop: sells items to players for emeralds
+if (shopkeeper instanceof SellingPlayerShopkeeper seller) {
+    // PriceOffer: item + price in emeralds
+    PriceOffer offer = PriceOffer.create(new ItemStack(Material.DIAMOND), 5);
+    seller.addOffer(offer);
+    seller.save();
+}
+
+// Buying shop: buys items from players for emeralds
+if (shopkeeper instanceof BuyingPlayerShopkeeper buyer) {
+    PriceOffer offer = PriceOffer.create(new ItemStack(Material.WHEAT, 16), 1);
+    buyer.addOffer(offer);
+    buyer.save();
+}
+
+// Trading shop: custom item-for-item trades
+if (shopkeeper instanceof TradingPlayerShopkeeper trader) {
+    TradeOffer offer = TradeOffer.create(
+        new ItemStack(Material.DIAMOND),       // result
+        new ItemStack(Material.EMERALD, 3),    // cost 1
+        new ItemStack(Material.GOLD_INGOT, 2)  // cost 2 (nullable)
+    );
+    trader.addOffer(offer);
+    trader.save();
+}
+
+// Book shop: sells written books
+if (shopkeeper instanceof BookPlayerShopkeeper bookShop) {
+    BookOffer offer = BookOffer.create("My Book Title", 10); // title, price
+    bookShop.addOffer(offer);
+    bookShop.save();
+}
+```
+
+### PlayerShopkeeper Owner Management
+
+```java
+import com.nisovin.shopkeepers.api.shopkeeper.player.PlayerShopkeeper;
+import org.bukkit.entity.Player;
+import java.util.UUID;
+
+if (shopkeeper instanceof PlayerShopkeeper playerShop) {
+    UUID ownerUUID = playerShop.getOwnerUUID();
+    String ownerName = playerShop.getOwnerName();
+    boolean isOwner = playerShop.isOwner(player);
+
+    // Transfer ownership
+    playerShop.setOwner(newPlayer);
+    // or by UUID + name
+    playerShop.setOwner(newUUID, "NewPlayerName");
+
+    // Hire system
+    playerShop.setForHire(new ItemStack(Material.EMERALD, 20)); // set hire cost
+    boolean forHire = playerShop.isForHire();
+
+    // Notify owner on trades
+    playerShop.setNotifyOnTrades(true);
+
+    playerShop.save();
+}
+```
+
+### Opening Shopkeeper UIs
+
+```java
+import com.nisovin.shopkeepers.api.shopkeeper.Shopkeeper;
+import org.bukkit.entity.Player;
+
+// Open trading window for a player
+shopkeeper.openTradingWindow(player);
+
+// Open editor window
+shopkeeper.openEditorWindow(player);
+```
+
+## API Reference
+
+### Core Access - `com.nisovin.shopkeepers.api`
+
+**`ShopkeepersAPI`** - Static entry point.
+- `static boolean isEnabled()`
+- `static ShopkeepersPlugin getPlugin()`
+- `static ShopkeeperRegistry getShopkeeperRegistry()`
+- `static ShopkeeperStorage getShopkeeperStorage()`
+- `static DefaultShopTypes getDefaultShopTypes()`
+- `static DefaultShopObjectTypes getDefaultShopObjectTypes()`
+- `static DefaultUITypes getDefaultUITypes()`
+- `static UIRegistry<?> getUIRegistry()`
+- `static Shopkeeper handleShopkeeperCreation(ShopCreationData)` - creates like a player would (respects limits, sends messages). Returns null on failure.
+
+### Shopkeeper - `com.nisovin.shopkeepers.api.shopkeeper`
+
+**`Shopkeeper`** (interface) - Core shopkeeper entity.
+- `UUID getUniqueId()` / `int getId()`
+- `String getName()` / `void setName(String)`
+- `Location getLocation()` / `String getWorldName()`
+- `int getX()` / `int getY()` / `int getZ()` / `float getYaw()`
+- `ShopType<?> getType()` / `ShopObject getShopObject()`
+- `boolean isValid()` / `boolean isVirtual()`
+- `boolean openTradingWindow(Player)` / `boolean openEditorWindow(Player)`
+- `List<? extends TradingRecipe> getTradingRecipes(Player)`
+- `void save()` / `void saveDelayed()` / `void delete()` / `void delete(Player)`
+- `ShopkeeperSnapshot createSnapshot(String)` / `void applySnapshot(ShopkeeperSnapshot)`
+
+**`ShopkeeperRegistry`** (interface) - Query and create shopkeepers.
+- `Shopkeeper createShopkeeper(ShopCreationData) throws ShopkeeperCreateException`
+- `Shopkeeper getShopkeeperByUniqueId(UUID)` - nullable
+- `Shopkeeper getShopkeeperById(int)` - nullable
+- `Shopkeeper getShopkeeperByEntity(Entity)` - nullable
+- `Shopkeeper getShopkeeperByBlock(Block)` - nullable
+- `boolean isShopkeeper(Entity)` / `boolean isShopkeeper(Block)`
+- `Collection<? extends Shopkeeper> getShopkeepersAtLocation(Location)`
+- `Collection<? extends Shopkeeper> getShopkeepersInWorld(String)`
+- `Collection<? extends Shopkeeper> getAllShopkeepers()`
+- `Collection<? extends PlayerShopkeeper> getPlayerShopkeepersByOwner(UUID)`
+- `Collection<? extends PlayerShopkeeper> getAllPlayerShopkeepers()`
+- `Stream<? extends Shopkeeper> getShopkeepersByName(String)` - case-insensitive
+- `Stream<? extends Shopkeeper> getShopkeepersByNamePrefix(String)`
+- `Collection<? extends Shopkeeper> getActiveShopkeepers()`
+
+**`ShopCreationData`** (abstract class) - Base for creation data. Use subclasses.
+- `ShopType<?> getShopType()` / `ShopObjectType<?> getShopObjectType()`
+- `Player getCreator()` / `Location getSpawnLocation()`
+
+**`TradingRecipe`** (interface)
+- `UnmodifiableItemStack getResultItem()` / `getItem1()` / `getItem2()`
+- `boolean hasItem2()` / `boolean isOutOfStock()`
+
+**`DefaultShopTypes`** (interface)
+- `AdminShopType<?> getRegularAdminShopType()` / `static ShopType<?> ADMIN()`
+- `PlayerShopType<?> getSellingPlayerShopType()` / `static PlayerShopType<?> PLAYER_SELLING()`
+- `PlayerShopType<?> getBuyingPlayerShopType()` / `static PlayerShopType<?> PLAYER_BUYING()`
+- `PlayerShopType<?> getTradingPlayerShopType()` / `static PlayerShopType<?> PLAYER_TRADING()`
+- `PlayerShopType<?> getBookPlayerShopType()` / `static PlayerShopType<?> PLAYER_BOOK()`
+
+### Admin Shops - `com.nisovin.shopkeepers.api.shopkeeper.admin`
+
+**`AdminShopCreationData`** extends `ShopCreationData`
+- `static AdminShopCreationData create(Player, AdminShopType<?>, ShopObjectType<?>, Location, BlockFace)` - creator can be null
+
+**`AdminShopkeeper`** (interface) extends `Shopkeeper`
+- `String getTradePermission()` / `void setTradePermission(String)`
+
+**`RegularAdminShopkeeper`** (interface, `com.nisovin.shopkeepers.api.shopkeeper.admin.regular`) extends `AdminShopkeeper`
+- `List<? extends TradeOffer> getOffers()`
+- `void addOffer(TradeOffer)` / `void addOffers(List<? extends TradeOffer>)`
+- `void setOffers(List<? extends TradeOffer>)` / `void clearOffers()`
+
+### Player Shops - `com.nisovin.shopkeepers.api.shopkeeper.player`
+
+**`PlayerShopCreationData`** extends `ShopCreationData`
+- `static PlayerShopCreationData create(Player, PlayerShopType<?>, ShopObjectType<?>, Location, BlockFace, Block)` - creator must be non-null, container must be in same world
+
+**`PlayerShopkeeper`** (interface) extends `Shopkeeper`
+- `UUID getOwnerUUID()` / `String getOwnerName()` / `Player getOwner()`
+- `void setOwner(Player)` / `void setOwner(UUID, String)`
+- `boolean isOwner(Player)`
+- `Block getContainer()` / `void setContainer(int, int, int)`
+- `boolean isForHire()` / `void setForHire(ItemStack)` / `UnmodifiableItemStack getHireCost()`
+- `void setNotifyOnTrades(boolean)` / `boolean isNotifyOnTrades()`
+- `boolean openContainerWindow(Player)` / `boolean openHireWindow(Player)`
+
+**`SellingPlayerShopkeeper`** (`...player.sell`) / **`BuyingPlayerShopkeeper`** (`...player.buy`) - use `PriceOffer`
+- `List<? extends PriceOffer> getOffers()`
+- `void addOffer(PriceOffer)` / `void setOffers(List)` / `void clearOffers()`
+- `PriceOffer getOffer(ItemStack)` - nullable
+
+**`TradingPlayerShopkeeper`** (`...player.trade`) - uses `TradeOffer`
+- `List<? extends TradeOffer> getOffers()`
+- `void addOffer(TradeOffer)` / `void setOffers(List)` / `void clearOffers()`
+
+**`BookPlayerShopkeeper`** (`...player.book`) - uses `BookOffer`
+- `List<? extends BookOffer> getOffers()`
+- `void addOffer(BookOffer)` / `void setOffers(List)` / `void clearOffers()`
+- `BookOffer getOffer(String bookTitle)` - nullable
+
+### Offers - `com.nisovin.shopkeepers.api.shopkeeper.offers`
+
+**`TradeOffer`** (interface) - Custom item-for-item trade.
+- `static TradeOffer create(ItemStack resultItem, ItemStack item1, ItemStack item2)` - item2 can be null
+- `UnmodifiableItemStack getResultItem()` / `getItem1()` / `getItem2()`
+
+**`PriceOffer`** (interface) - Item for emerald price.
+- `static PriceOffer create(ItemStack item, int price)` - price must be positive
+- `UnmodifiableItemStack getItem()` / `int getPrice()`
+
+**`BookOffer`** (interface) - Book title for emerald price.
+- `static BookOffer create(String bookTitle, int price)`
+- `String getBookTitle()` / `int getPrice()`
+
+### Shop Objects - `com.nisovin.shopkeepers.api.shopobjects`
+
+**`DefaultShopObjectTypes`** (interface)
+- `LivingShopObjectTypes getLivingShopObjectTypes()` / `static LivingShopObjectTypes LIVING()`
+- `SignShopObjectType<?> getSignShopObjectType()` / `static SignShopObjectType<?> SIGN()`
+- `HangingSignShopObjectType<?> getHangingSignShopObjectType()` / `static HangingSignShopObjectType<?> HANGING_SIGN()`
+- `CitizensShopObjectType<?> getCitizensShopObjectType()` / `static CitizensShopObjectType<?> CITIZEN()`
+
+**`LivingShopObjectTypes`** (`...shopobjects.living`)
+- `LivingShopObjectType<?> get(EntityType)` - get type for any supported mob
+- `Collection<? extends LivingShopObjectType<?>> getAll()`
+
+**`ShopObject`** (interface) - The visual representation of a shopkeeper.
+- `ShopObjectType<?> getType()` / `Location getLocation()`
+- `String getName()` / `void setName(String)`
+- `boolean isSpawned()` / `boolean isActive()`
+
+### Events - `com.nisovin.shopkeepers.api.events`
+
+**`ShopkeeperTradeEvent`** extends `ShopkeeperEvent`, `Cancellable` - Before trade is applied.
+- `Player getPlayer()` / `Shopkeeper getShopkeeper()` / `TradingRecipe getTradingRecipe()`
+- `UnmodifiableItemStack getOfferedItem1()` / `getOfferedItem2()` / `getResultItem()`
+- `void setReceivedItem1(UnmodifiableItemStack)` / `setReceivedItem2(...)` / `setResultItem(...)`
+- `InventoryClickEvent getClickEvent()`
+
+**`ShopkeeperTradeCompletedEvent`** extends `ShopkeeperEvent` - After trade is done.
+- `ShopkeeperTradeEvent getCompletedTrade()`
+
+**`PlayerCreateShopkeeperEvent`** extends `Event`, `Cancellable`
+- `ShopCreationData getShopCreationData()`
+
+**`PlayerCreatePlayerShopkeeperEvent`** extends `PlayerCreateShopkeeperEvent`
+- `int getMaxShopsLimit()` / `void setMaxShopsLimit(int)`
+
+**`PlayerDeleteShopkeeperEvent`** extends `ShopkeeperEvent`, `Cancellable`
+- `Player getPlayer()`
+
+**`ShopkeeperAddedEvent`** extends `ShopkeeperEvent` - Shopkeeper added to registry.
+- `ShopkeeperAddedEvent.Cause getCause()` - CREATED, LOADED
+
+**`ShopkeeperRemoveEvent`** extends `ShopkeeperEvent` - Shopkeeper being removed.
+- `ShopkeeperRemoveEvent.Cause getCause()`
+
+**`ShopkeeperEditedEvent`** extends `ShopkeeperEvent`
+- `Player getPlayer()`
+
+**`ShopkeeperOpenUIEvent`** extends `PlayerOpenUIEvent`
+- `Shopkeeper getShopkeeper()`
+
+### UI - `com.nisovin.shopkeepers.api.ui`
+
+**`DefaultUITypes`** (interface)
+- `static UIType TRADING()` / `static UIType EDITOR()` / `static UIType HIRING()`
+
+**`UISession`** (interface) - Active UI session.
+- `Player getPlayer()` / `Shopkeeper getShopkeeper()` / `UIType getUIType()`
+- `boolean isValid()` / `void close()` / `void abort()`
+
+### Storage - `com.nisovin.shopkeepers.api.storage`
+
+**`ShopkeeperStorage`** (interface)
+- `void save()` / `void saveDelayed()` / `void saveImmediate()` / `void saveNow()`
+- `boolean isDirty()` / `void saveIfDirty()`
+
+### Utilities - `com.nisovin.shopkeepers.api.util`
+
+**`UnmodifiableItemStack`** (interface) - Immutable ItemStack wrapper.
+- `static UnmodifiableItemStack of(ItemStack)` - nullable-safe, returns null if input is null
+- `static UnmodifiableItemStack ofNonNull(ItemStack)` - throws if null
+- `ItemStack copy()` - mutable copy
+- `Material getType()` / `int getAmount()` / `boolean hasItemMeta()` / `ItemMeta getItemMeta()`
+- `boolean isSimilar(ItemStack)` / `boolean isSimilar(UnmodifiableItemStack)`
+
+**`ChunkCoords`** (class)
+- `static ChunkCoords fromBlock(String worldName, int blockX, int blockZ)`
+- `String getWorldName()` / `int getChunkX()` / `int getChunkZ()`
+- `boolean isChunkLoaded()`

@@ -1,615 +1,306 @@
-# CyberLevels-0.5.9 (2)-net-zerotoil-dev-cyberlevels API Reference
+# CyberLevels API
 
-**Package Filter:** `net.zerotoil.dev.cyberlevels`
+Server leveling system with XP, levels, custom rewards, and MySQL support.
 
-## Package: net.zerotoil.dev.cyberlevels
+## Accessing the API
 
-### Class: net.zerotoil.dev.cyberlevels.CyberLevels
-Type: Class
-Extends: org.bukkit.plugin.java.JavaPlugin
+Get the plugin instance and use `levelCache()` to access player data.
 
-Methods:
-- String serverFork()
-- int serverVersion()
-- LangUtils langUtils()
-- LevelUtils levelUtils()
-- void logger(String[])
-- void onEnable()
-- void onDisable()
-- void reloadClasses(boolean)
-- String getAuthors()
-- PlayerUtils playerUtils()
-- Files files()
-- LevelCache levelCache()
-- EXPListeners expListeners()
-- EXPCache expCache()
+```java
+import net.zerotoil.dev.cyberlevels.CyberLevels;
+import net.zerotoil.dev.cyberlevels.objects.levels.LevelCache;
+import net.zerotoil.dev.cyberlevels.objects.levels.PlayerData;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
-## Package: net.zerotoil.dev.cyberlevels.addons
+CyberLevels cyberLevels = (CyberLevels) Bukkit.getPluginManager().getPlugin("CyberLevels");
+LevelCache levelCache = cyberLevels.levelCache();
+```
 
-### Class: net.zerotoil.dev.cyberlevels.addons.Metrics
-Type: Class
+## Get Player Level and XP
 
-Methods:
-- void addCustomChart(Metrics$CustomChart)
+```java
+import net.zerotoil.dev.cyberlevels.CyberLevels;
+import net.zerotoil.dev.cyberlevels.objects.levels.LevelCache;
+import net.zerotoil.dev.cyberlevels.objects.levels.PlayerData;
+import org.bukkit.entity.Player;
 
-### Class: net.zerotoil.dev.cyberlevels.addons.Metrics$AdvancedBarChart
-Type: Class
-Extends: net.zerotoil.dev.cyberlevels.addons.Metrics$CustomChart
+Player player = /* target player */;
+LevelCache levelCache = cyberLevels.levelCache();
+PlayerData data = levelCache.playerLevels().get(player);
 
-No public methods found
+if (data != null) {
+    Long level = data.getLevel();
+    Double exp = data.getExp();
+    Long maxLevel = data.getMaxLevel();
+    double requiredXP = data.nextExpRequirement();
+}
+```
 
-### Class: net.zerotoil.dev.cyberlevels.addons.Metrics$AdvancedPie
-Type: Class
-Extends: net.zerotoil.dev.cyberlevels.addons.Metrics$CustomChart
+## Add, Remove, and Set XP
 
-No public methods found
+```java
+import net.zerotoil.dev.cyberlevels.objects.levels.PlayerData;
+import org.bukkit.entity.Player;
 
-### Class: net.zerotoil.dev.cyberlevels.addons.Metrics$CustomChart
-Type: Abstract Class
+PlayerData data = cyberLevels.levelCache().playerLevels().get(player);
 
-Methods:
-- Metrics$JsonObjectBuilder$JsonObject getRequestJsonObject(BiConsumer<String, Throwable>, boolean)
+// Add XP (doMultiplier: whether permission-based multipliers apply)
+data.addExp(100.0, true);
 
-### Class: net.zerotoil.dev.cyberlevels.addons.Metrics$DrilldownPie
-Type: Class
-Extends: net.zerotoil.dev.cyberlevels.addons.Metrics$CustomChart
+// Add XP with more control (amount, difference, sendMessage, doMultiplier)
+data.addExp(100.0, 0.0, true, true);
 
-Methods:
-- Metrics$JsonObjectBuilder$JsonObject getChartData() throws Exception
+// Remove XP
+data.removeExp(50.0);
 
-### Class: net.zerotoil.dev.cyberlevels.addons.Metrics$JsonObjectBuilder
-Type: Class
+// Set XP directly (amount, checkLevel, sendMessage)
+data.setExp(500.0, true, true);
 
-Methods:
-- Metrics$JsonObjectBuilder$JsonObject build()
-- Metrics$JsonObjectBuilder appendNull(String)
-- Metrics$JsonObjectBuilder appendField(String, String)
-- Metrics$JsonObjectBuilder appendField(String, int)
-- Metrics$JsonObjectBuilder appendField(String, Metrics$JsonObjectBuilder$JsonObject)
-- Metrics$JsonObjectBuilder appendField(String, String[])
-- Metrics$JsonObjectBuilder appendField(String, int[])
-- Metrics$JsonObjectBuilder appendField(String, Metrics$JsonObjectBuilder$JsonObject[])
+// Set XP with leaderboard control (amount, checkLevel, sendMessage, checkLeaderboard)
+data.setExp(500.0, true, true, true);
+```
 
-### Class: net.zerotoil.dev.cyberlevels.addons.Metrics$JsonObjectBuilder$JsonObject
-Type: Class
+## Add, Remove, and Set Levels
 
-Methods:
-- String toString()
+```java
+import net.zerotoil.dev.cyberlevels.objects.levels.PlayerData;
+import org.bukkit.entity.Player;
 
-### Class: net.zerotoil.dev.cyberlevels.addons.Metrics$MetricsBase
-Type: Class
+PlayerData data = cyberLevels.levelCache().playerLevels().get(player);
 
-Methods:
-- void addCustomChart(Metrics$CustomChart)
+// Add levels
+data.addLevel(5);
 
-### Class: net.zerotoil.dev.cyberlevels.addons.Metrics$MultiLineChart
-Type: Class
-Extends: net.zerotoil.dev.cyberlevels.addons.Metrics$CustomChart
+// Remove levels
+data.removeLevel(2);
 
-No public methods found
+// Set level directly (amount, sendMessage)
+data.setLevel(10, true);
 
-### Class: net.zerotoil.dev.cyberlevels.addons.Metrics$SimpleBarChart
-Type: Class
-Extends: net.zerotoil.dev.cyberlevels.addons.Metrics$CustomChart
+// Set max level cap for player
+data.setMaxLevel(100L);
+```
 
-No public methods found
+## Listen for XP Changes
 
-### Class: net.zerotoil.dev.cyberlevels.addons.Metrics$SimplePie
-Type: Class
-Extends: net.zerotoil.dev.cyberlevels.addons.Metrics$CustomChart
+The `XPChangeEvent` fires when a player gains or loses XP. You can modify the amount.
 
-No public methods found
+```java
+import net.zerotoil.dev.cyberlevels.api.events.XPChangeEvent;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
-### Class: net.zerotoil.dev.cyberlevels.addons.Metrics$SingleLineChart
-Type: Class
-Extends: net.zerotoil.dev.cyberlevels.addons.Metrics$CustomChart
+public class MyXPListener implements Listener {
 
-No public methods found
-
-### Class: net.zerotoil.dev.cyberlevels.addons.PlaceholderAPI
-Type: Class
-Extends: me.clip.placeholderapi.expansion.PlaceholderExpansion
-
-Methods:
-- String getVersion()
-- String onRequest(OfflinePlayer, String)
-- String getAuthor()
-- String getIdentifier()
-- boolean persist()
-
-## Package: net.zerotoil.dev.cyberlevels.api.events
-
-### Class: net.zerotoil.dev.cyberlevels.api.events.XPChangeEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- Player getPlayer()
-- double getOldXP()
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- double getNewXP()
-- void setAmount(double)
-- double getAmount()
-
-## Package: net.zerotoil.dev.cyberlevels.commands
-
-### Class: net.zerotoil.dev.cyberlevels.commands.CLVCommand
-Type: Class
-Implements: org.bukkit.command.CommandExecutor
-
-Methods:
-- boolean onCommand(CommandSender, Command, String, String[])
-
-### Class: net.zerotoil.dev.cyberlevels.commands.CLVTabComplete
-Type: Class
-Implements: org.bukkit.command.TabCompleter
-
-Methods:
-- List<String> onTabComplete(CommandSender, Command, String, String)
-
-## Package: net.zerotoil.dev.cyberlevels.interfaces
-
-### Class: net.zerotoil.dev.cyberlevels.interfaces.Reflection
-Type: Interface
-
-Methods:
-- void sendPacket(Player, Object)
-- Class<*> getNMSClass(String)
-
-## Package: net.zerotoil.dev.cyberlevels.listeners
-
-### Class: net.zerotoil.dev.cyberlevels.listeners.AntiAbuseListeners
-Type: Class
-Implements: org.bukkit.event.Listener
-
-No public methods found
-
-### Class: net.zerotoil.dev.cyberlevels.listeners.EXPListeners
-Type: Class
-Implements: org.bukkit.event.Listener
-
-Methods:
-- boolean checkAbuse(Player, EXPEarnEvent)
-- void sendExp(Player, EXPEarnEvent, String)
-- void sendPermissionExp(Player, EXPEarnEvent)
-
-### Class: net.zerotoil.dev.cyberlevels.listeners.EXPListenersV10
-Type: Class
-Implements: org.bukkit.event.Listener
-
-No public methods found
-
-### Class: net.zerotoil.dev.cyberlevels.listeners.JoinListener
-Type: Class
-Implements: org.bukkit.event.Listener
-
-No public methods found
-
-## Package: net.zerotoil.dev.cyberlevels.listeners.hooks
-
-### Class: net.zerotoil.dev.cyberlevels.listeners.hooks.RivalHarvesterHoesHook
-Type: Class
-Implements: org.bukkit.event.Listener
-
-Methods:
-- boolean checkAbuse(Player, EXPEarnEvent)
-- void onRivalBlockBreak(RivalBlockBreakEvent)
-- void sendExp(Player, EXPEarnEvent, String)
-
-## Package: net.zerotoil.dev.cyberlevels.objects
-
-### Class: net.zerotoil.dev.cyberlevels.objects.ActionBar$GetActionBar
-Type: Interface
-
-Methods:
-- void send(Player, String)
-
-### Class: net.zerotoil.dev.cyberlevels.objects.Title$GetTitle
-Type: Interface
-
-Methods:
-- void send(Player, String, String, int, int, int)
-
-### Class: net.zerotoil.dev.cyberlevels.objects.ActionBar
-Type: Class
-Implements: net.zerotoil.dev.cyberlevels.interfaces.Reflection
-
-Methods:
-- ActionBar$GetActionBar getMethod()
-
-### Class: net.zerotoil.dev.cyberlevels.objects.MySQL
-Type: Class
-
-Methods:
-- void disconnect()
-- PlayerData getPlayerData(Player)
-- void updatePlayer(Player)
-- List<LeaderboardPlayer> getAllPlayers()
-- boolean isConnected()
-- boolean playerInTable(Player)
-- boolean playerInTable(String)
-- void addTable(String)
-- void addTable(String, String)
-
-### Class: net.zerotoil.dev.cyberlevels.objects.RewardObject
-Type: Class
-
-Methods:
-- void giveReward(Player)
-- void sendMessage(Player)
-
-### Class: net.zerotoil.dev.cyberlevels.objects.Title
-Type: Class
-Implements: net.zerotoil.dev.cyberlevels.interfaces.Reflection
-
-Methods:
-- Title$GetTitle newTitle()
-- Title$GetTitle getMethod()
-
-## Package: net.zerotoil.dev.cyberlevels.objects.antiabuse
-
-### Class: net.zerotoil.dev.cyberlevels.objects.antiabuse.AntiAbuse
-Type: Class
-
-Methods:
-- boolean isLimited(Player, String)
-- long getPlayerLimiter(Player)
-- void resetLimiters()
-- boolean isCoolingDown(Player, String)
-- void cancelTimer()
-- long getPlayerCooldown(Player)
-- void resetLimiter(Player)
-- void resetCooldowns()
-- boolean isWorldLimited(Player, String)
-- void resetCooldown(Player)
-
-### Class: net.zerotoil.dev.cyberlevels.objects.antiabuse.TimedAbuseReset
-Type: Class
-
-Methods:
-- long timeToReset()
-- void formatTime(boolean) throws ParseException
-- void run(long)
-
-## Package: net.zerotoil.dev.cyberlevels.objects.exp
-
-### Class: net.zerotoil.dev.cyberlevels.objects.exp.EXPCache
-Type: Class
-
-Methods:
-- void startTimedEXP()
-- boolean isOnlyNaturalBlocks()
-- Map<String, EXPEarnEvent> expEarnEvents()
-- void cancelAntiAbuseTimers()
-- boolean roundExp()
-- boolean isPreventSilkTouchAbuse()
-- boolean isAntiAbuse(Player, String)
-- void loadAntiAbuse()
-- boolean useDouble()
-- void cancelTimedEXP()
-- void loadExpEvents()
-- boolean isIncludeNaturalCrops()
-
-### Class: net.zerotoil.dev.cyberlevels.objects.exp.EXPEarnEvent
-Type: Class
-
-Methods:
-- boolean hasPartialMatches(String, boolean)
-- String getName()
-- boolean isSpecificEnabled()
-- HashMap<String, Double> getSpecificMax()
-- String getCategory()
-- double getMaxEXP()
-- boolean isInGeneralList(String)
-- double getPartialMatchesExp(String)
-- double getSpecificExp(String)
-- HashMap<String, Double> getSpecificMin()
-- **static** Random getRandom()
-- double getMinEXP()
-- boolean isWhitelist()
-- List<String> getList()
-- Boolean getEnabled()
-- boolean hasPermission(Player)
-- boolean isEnabled()
-- boolean isIncludedEnabled()
-- boolean isInSpecificList(String)
-- boolean hasGeneralPermission(Player)
-- double getGeneralExp()
-
-## Package: net.zerotoil.dev.cyberlevels.objects.files
-
-### Class: net.zerotoil.dev.cyberlevels.objects.files.ConfigUpdater
-Type: Class
-
-Methods:
-- **static** V update(Plugin, String, File, List<String>) throws IOException
-
-### Class: net.zerotoil.dev.cyberlevels.objects.files.Files
-Type: Class
-
-Methods:
-- YAMLFile get(String)
-- HashMap<String, YAMLFile> getFiles()
-- Configuration getConfig(String)
-- void addFile(String, String)
-- void loadFiles()
-
-### Class: net.zerotoil.dev.cyberlevels.objects.files.KeyBuilder
-Type: Class
-Implements: java.lang.Cloneable
-
-Methods:
-- **static** String getIndents(String, char)
-- boolean isSubKey(String)
-- boolean isConfigSectionWithKeys()
-- boolean isSubKeyOf(String)
-- **static** boolean isSubKeyOf(String, String, char)
-- boolean isConfigSection()
-- void removeLastKey()
-- boolean isEmpty()
-- String toString()
-- String getLastKey()
-- void parseLine(String)
-
-### Class: net.zerotoil.dev.cyberlevels.objects.files.YAMLFile
-Type: Class
-
-Methods:
-- void updateConfig()
-- void reloadConfig()
-- void saveDefaultConfig()
-- FileConfiguration getConfig()
-- void saveConfig() throws IOException
-
-## Package: net.zerotoil.dev.cyberlevels.objects.leaderboard
-
-### Class: net.zerotoil.dev.cyberlevels.objects.leaderboard.Leaderboard
-Type: Class
-
-Methods:
-- void updateLeaderboard()
-- int checkFrom(Player)
-- boolean isUpdating()
-- List<LeaderboardPlayer> getTopTenPlayers()
-- LeaderboardPlayer getTopPlayer(int)
-
-### Class: net.zerotoil.dev.cyberlevels.objects.leaderboard.LeaderboardPlayer
-Type: Class
-Implements: java.lang.Comparable
-
-Methods:
-- long getLevel()
-- OfflinePlayer getPlayer()
-- String getUUID()
-- int compareTo(Object)
-- double getExp()
-
-## Package: net.zerotoil.dev.cyberlevels.objects.levels
-
-### Class: net.zerotoil.dev.cyberlevels.objects.levels.LevelCache
-Type: Class
-
-Methods:
-- boolean addLevelReward()
-- Long maxLevel()
-- void loadOnlinePlayers()
-- boolean isMessageConsole()
-- boolean isPreventDuplicateRewards()
-- Leaderboard getLeaderboard()
-- void cancelAutoSave()
-- Map<Player, PlayerData> playerLevels()
-- void saveOnlinePlayers(boolean)
-- boolean isLeaderboardEnabled()
-- Double startExp()
-- boolean doEventMultiplier()
-- boolean doCommandMultiplier()
-- void loadLeaderboard()
-- boolean isLeaderboardInstantUpdate()
-- Long startLevel()
-- void loadPlayer(Player)
-- Map<Long, LevelData> levelData()
-- void loadLevelData()
-- void savePlayer(Player, boolean)
-- void clearLevelData()
-- boolean isStackComboExp()
-- void loadRewards()
-- MySQL getMySQL()
-- void startAutoSave()
-
-### Class: net.zerotoil.dev.cyberlevels.objects.levels.LevelData
-Type: Class
-
-Methods:
-- Double getRequiredExp(Player)
-- void addReward(RewardObject)
-- void clearRewards()
-- List<RewardObject> getRewards()
-- V setRewards(List<RewardObject>)
-- void setLevel(Long)
-
-### Class: net.zerotoil.dev.cyberlevels.objects.levels.PlayerData
-Type: Class
-
-Methods:
-- Long getLevel()
-- void setMaxLevel(Long)
-- Player getPlayer()
-- double nextExpRequirement()
-- void removeExp(double)
-- void addLevel(long)
-- void setExp(double, boolean, boolean)
-- void setExp(double, boolean, boolean, boolean)
-- void addExp(double, boolean)
-- void addExp(double, double, boolean, boolean)
-- String toString()
-- Long getMaxLevel()
-- void removeLevel(long)
-- Double getExp()
-- void setLevel(long, boolean)
-
-## Package: net.zerotoil.dev.cyberlevels.utilities
-
-### Class: net.zerotoil.dev.cyberlevels.utilities.FontInfo
-Type: Enum
-Extends: java.lang.Enum
-
-Enum Constants:
-- A
-- a
-- B
-- b
-- C
-- c
-- D
-- d
-- E
-- e
-- F
-- f
-- G
-- g
-- H
-- h
-- I
-- i
-- J
-- j
-- K
-- k
-- L
-- l
-- M
-- m
-- N
-- n
-- O
-- o
-- P
-- p
-- Q
-- q
-- R
-- r
-- S
-- s
-- T
-- t
-- U
-- u
-- V
-- v
-- W
-- w
-- X
-- x
-- Y
-- y
-- Z
-- z
-- NUM_1
-- NUM_2
-- NUM_3
-- NUM_4
-- NUM_5
-- NUM_6
-- NUM_7
-- NUM_8
-- NUM_9
-- NUM_0
-- EXCLAMATION_POINT
-- AT_SYMBOL
-- NUM_SIGN
-- DOLLAR_SIGN
-- PERCENT
-- UP_ARROW
-- AMPERSAND
-- ASTERISK
-- LEFT_PARENTHESIS
-- RIGHT_PARENTHESIS
-- MINUS
-- UNDERSCORE
-- PLUS_SIGN
-- EQUALS_SIGN
-- LEFT_CURL_BRACE
-- RIGHT_CURL_BRACE
-- LEFT_BRACKET
-- RIGHT_BRACKET
-- COLON
-- SEMI_COLON
-- DOUBLE_QUOTE
-- SINGLE_QUOTE
-- LEFT_ARROW
-- RIGHT_ARROW
-- QUESTION_MARK
-- SLASH
-- BACK_SLASH
-- LINE
-- TILDE
-- TICK
-- PERIOD
-- COMMA
-- SPACE
-- DEFAULT
-- BAR_PIECE
-
-Methods:
-- **static** FontInfo valueOf(String)
-- **static** FontInfo[] values()
-- **static** FontInfo getDefaultFontInfo(char)
-- int getLength()
-- int getBoldLength()
-- char getCharacter()
-
-### Class: net.zerotoil.dev.cyberlevels.utilities.LangUtils
-Type: Class
-
-Methods:
-- void sendCentered(Player, String)
-- List<String> convertList(ConfigurationSection, String)
-- String colorize(Player, String)
-- String parseFormat(String, String)
-- void sendMixed(Player, String)
-- String parsePAPI(Player, String)
-- void sendMessage(Player, Player, String)
-- void sendMessage(Player, String)
-- void sendMessage(Player, String, boolean)
-- void sendMessage(Player, String, boolean, boolean)
-- void sendMessage(Player, Player, String, boolean, boolean, String[], String[])
-- void sendHelp(Player, boolean)
-- void title(Player, String[], String[])
-- void actionBar(Player, String)
-- void typeMessage(Player, String)
-
-### Class: net.zerotoil.dev.cyberlevels.utilities.LevelUtils
-Type: Class
-
-Methods:
-- int getDecimals()
-- String progressBar(Double, Double)
-- String roundStringDecimal(double)
-- String generalFormula()
-- String getPercent(Double, Double)
-- double roundDecimal(double)
-- String getPlaceholders(String, Player, boolean)
-- String getPlaceholders(String, Player, boolean, boolean)
-- Configuration levelsYML()
-- String levelFormula(long)
-- Configuration langYML()
-
-### Class: net.zerotoil.dev.cyberlevels.utilities.Logger
-Type: Class
-
-Methods:
-- void log(CommandSender, String[])
-- void log(String[])
-- void playerLog(Player, String[])
-- void rawLog(String[])
-
-### Class: net.zerotoil.dev.cyberlevels.utilities.PlayerUtils
-Type: Class
-
-Methods:
-- boolean hasParentPerm(Player, String, boolean)
-- double getMultiplier(Player)
-
+    @EventHandler
+    public void onXPChange(XPChangeEvent event) {
+        Player player = event.getPlayer();
+        double oldXP = event.getOldXP();
+        double newXP = event.getNewXP();
+        double amount = event.getAmount();
+
+        // Modify the XP change amount
+        event.setAmount(amount * 2.0);
+    }
+}
+```
+
+## Leaderboard Access
+
+```java
+import net.zerotoil.dev.cyberlevels.objects.leaderboard.Leaderboard;
+import net.zerotoil.dev.cyberlevels.objects.leaderboard.LeaderboardPlayer;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
+import java.util.List;
+
+Leaderboard leaderboard = cyberLevels.levelCache().getLeaderboard();
+
+// Get top 10 players
+List<LeaderboardPlayer> topTen = leaderboard.getTopTenPlayers();
+
+// Get a specific rank (0-indexed)
+LeaderboardPlayer top1 = leaderboard.getTopPlayer(0);
+long level = top1.getLevel();
+double exp = top1.getExp();
+String uuid = top1.getUUID();
+OfflinePlayer offlinePlayer = top1.getPlayer();
+
+// Check a player's rank
+int rank = leaderboard.checkFrom(player);
+
+// Force leaderboard refresh
+leaderboard.updateLeaderboard();
+```
+
+## Player Multipliers
+
+```java
+import net.zerotoil.dev.cyberlevels.utilities.PlayerUtils;
+import org.bukkit.entity.Player;
+
+PlayerUtils playerUtils = cyberLevels.playerUtils();
+double multiplier = playerUtils.getMultiplier(player);
+```
+
+## Utility Methods
+
+```java
+import net.zerotoil.dev.cyberlevels.utilities.LevelUtils;
+import org.bukkit.entity.Player;
+
+LevelUtils levelUtils = cyberLevels.levelUtils();
+
+// Get progress bar string between current and required XP
+String bar = levelUtils.progressBar(currentExp, requiredExp);
+
+// Get percentage string
+String percent = levelUtils.getPercent(currentExp, requiredExp);
+
+// Round a decimal according to plugin settings
+String rounded = levelUtils.roundStringDecimal(3.14159);
+double roundedD = levelUtils.roundDecimal(3.14159);
+
+// Parse placeholders in a string for a player
+String parsed = levelUtils.getPlaceholders("{level}", player, true);
+```
+
+## API Reference
+
+### net.zerotoil.dev.cyberlevels.CyberLevels
+Extends: `org.bukkit.plugin.java.JavaPlugin`
+- `LevelCache levelCache()`
+- `LevelUtils levelUtils()`
+- `PlayerUtils playerUtils()`
+- `LangUtils langUtils()`
+- `EXPCache expCache()`
+- `EXPListeners expListeners()`
+- `Files files()`
+- `int serverVersion()`
+- `String serverFork()`
+
+### net.zerotoil.dev.cyberlevels.objects.levels.PlayerData
+- `Long getLevel()`
+- `Double getExp()`
+- `Long getMaxLevel()`
+- `Player getPlayer()`
+- `double nextExpRequirement()`
+- `void addLevel(long)`
+- `void removeLevel(long)`
+- `void setLevel(long, boolean sendMessage)`
+- `void setMaxLevel(Long)`
+- `void addExp(double amount, boolean doMultiplier)`
+- `void addExp(double amount, double difference, boolean sendMessage, boolean doMultiplier)`
+- `void removeExp(double)`
+- `void setExp(double amount, boolean checkLevel, boolean sendMessage)`
+- `void setExp(double amount, boolean checkLevel, boolean sendMessage, boolean checkLeaderboard)`
+
+### net.zerotoil.dev.cyberlevels.objects.levels.LevelCache
+- `Map<Player, PlayerData> playerLevels()`
+- `Map<Long, LevelData> levelData()`
+- `Leaderboard getLeaderboard()`
+- `Long maxLevel()`
+- `Long startLevel()`
+- `Double startExp()`
+- `MySQL getMySQL()`
+- `void loadPlayer(Player)`
+- `void savePlayer(Player, boolean)`
+- `void saveOnlinePlayers(boolean)`
+- `void loadOnlinePlayers()`
+- `boolean addLevelReward()`
+- `boolean doEventMultiplier()`
+- `boolean doCommandMultiplier()`
+- `boolean isLeaderboardEnabled()`
+- `boolean isLeaderboardInstantUpdate()`
+- `boolean isPreventDuplicateRewards()`
+- `boolean isStackComboExp()`
+
+### net.zerotoil.dev.cyberlevels.objects.levels.LevelData
+- `Double getRequiredExp(Player)`
+- `List<RewardObject> getRewards()`
+- `void addReward(RewardObject)`
+- `void clearRewards()`
+
+### net.zerotoil.dev.cyberlevels.api.events.XPChangeEvent
+Extends: `org.bukkit.event.Event`
+- `Player getPlayer()`
+- `double getOldXP()`
+- `double getNewXP()`
+- `double getAmount()`
+- `void setAmount(double)`
+- `static HandlerList getHandlerList()`
+- `HandlerList getHandlers()`
+
+### net.zerotoil.dev.cyberlevels.objects.leaderboard.Leaderboard
+- `List<LeaderboardPlayer> getTopTenPlayers()`
+- `LeaderboardPlayer getTopPlayer(int)`
+- `int checkFrom(Player)`
+- `void updateLeaderboard()`
+- `boolean isUpdating()`
+
+### net.zerotoil.dev.cyberlevels.objects.leaderboard.LeaderboardPlayer
+Implements: `Comparable`
+- `long getLevel()`
+- `double getExp()`
+- `String getUUID()`
+- `OfflinePlayer getPlayer()`
+
+### net.zerotoil.dev.cyberlevels.utilities.PlayerUtils
+- `double getMultiplier(Player)`
+- `boolean hasParentPerm(Player, String, boolean)`
+
+### net.zerotoil.dev.cyberlevels.utilities.LevelUtils
+- `String progressBar(Double current, Double required)`
+- `String getPercent(Double current, Double required)`
+- `String roundStringDecimal(double)`
+- `double roundDecimal(double)`
+- `String getPlaceholders(String, Player, boolean)`
+- `String getPlaceholders(String, Player, boolean, boolean)`
+- `int getDecimals()`
+- `String generalFormula()`
+- `String levelFormula(long)`
+
+### net.zerotoil.dev.cyberlevels.utilities.LangUtils
+- `void sendMessage(Player, String)`
+- `void sendMessage(Player, String, boolean)`
+- `void sendMessage(Player, Player, String)`
+- `String colorize(Player, String)`
+- `String parsePAPI(Player, String)`
+- `void sendCentered(Player, String)`
+- `void actionBar(Player, String)`
+- `void title(Player, String[], String[])`
+
+### net.zerotoil.dev.cyberlevels.objects.exp.EXPCache
+- `Map<String, EXPEarnEvent> expEarnEvents()`
+- `boolean isAntiAbuse(Player, String)`
+- `boolean roundExp()`
+- `boolean useDouble()`
+- `boolean isOnlyNaturalBlocks()`
+- `boolean isPreventSilkTouchAbuse()`
+- `boolean isIncludeNaturalCrops()`
+
+### net.zerotoil.dev.cyberlevels.objects.exp.EXPEarnEvent
+- `String getName()`
+- `String getCategory()`
+- `Boolean getEnabled()`
+- `boolean isEnabled()`
+- `double getMinEXP()`
+- `double getMaxEXP()`
+- `double getGeneralExp()`
+- `double getSpecificExp(String)`
+- `double getPartialMatchesExp(String)`
+- `boolean hasPermission(Player)`
+- `boolean hasGeneralPermission(Player)`
+- `boolean isWhitelist()`
+- `boolean isInGeneralList(String)`
+- `boolean isInSpecificList(String)`
+- `boolean hasPartialMatches(String, boolean)`
+- `List<String> getList()`
+- `HashMap<String, Double> getSpecificMin()`
+- `HashMap<String, Double> getSpecificMax()`
+
+### net.zerotoil.dev.cyberlevels.objects.RewardObject
+- `void giveReward(Player)`
+- `void sendMessage(Player)`

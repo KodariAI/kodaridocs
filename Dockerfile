@@ -24,4 +24,7 @@ USER appuser
 
 EXPOSE 9093
 
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
+  CMD bash -c 'cat < /dev/tcp/localhost/9093' || exit 1
+
 ENTRYPOINT ["java", "-jar", "app.jar"]

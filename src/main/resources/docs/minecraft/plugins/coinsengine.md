@@ -1,147 +1,172 @@
-# CoinsEngine-2.5.0-su-nightexpress-coinsengine-api API Reference
+# CoinsEngine API Reference
 
-**Package Filter:** `su.nightexpress.coinsengine.api`
+CoinsEngine by NightExpress is a lightweight custom virtual currency plugin with Vault integration. Supports unlimited currencies, decimal/integer modes, exchange rates, and leaderboards.
 
-## Package: su.nightexpress.coinsengine.api
+## Code Examples
+
+### Get a currency and check a player's balance
+```java
+import su.nightexpress.coinsengine.api.CoinsEngineAPI;
+import su.nightexpress.coinsengine.api.currency.Currency;
+import org.bukkit.entity.Player;
+
+Currency currency = CoinsEngineAPI.getCurrency("coins");
+if (currency == null) return;
+
+double balance = CoinsEngineAPI.getBalance(player, currency);
+player.sendMessage("Balance: " + currency.format(balance));
+```
+
+### Add, remove, and set balance
+```java
+import su.nightexpress.coinsengine.api.CoinsEngineAPI;
+import su.nightexpress.coinsengine.api.currency.Currency;
+import org.bukkit.entity.Player;
+import java.util.UUID;
+
+Currency currency = CoinsEngineAPI.getCurrency("gems");
+
+// Online player methods (auto-saves)
+CoinsEngineAPI.addBalance(player, currency, 100.0);
+CoinsEngineAPI.removeBalance(player, currency, 50.0);
+CoinsEngineAPI.setBalance(player, currency, 500.0);
+
+// Offline player by UUID (returns boolean success)
+UUID uuid = targetUUID;
+boolean success = CoinsEngineAPI.addBalance(uuid, currency, 100.0);
+boolean removed = CoinsEngineAPI.removeBalance(uuid, "coins", 50.0);
+boolean set = CoinsEngineAPI.setBalance(uuid, "coins", 500.0);
+```
+
+### Access user data directly
+```java
+import su.nightexpress.coinsengine.api.CoinsEngineAPI;
+import su.nightexpress.coinsengine.api.CoinsUser;
+import su.nightexpress.coinsengine.api.currency.Currency;
+import java.util.concurrent.CompletableFuture;
+import java.util.UUID;
+
+// Online player
+CoinsUser user = CoinsEngineAPI.getUserData(player);
+
+// By name or UUID
+CoinsUser userByName = CoinsEngineAPI.getUserData("PlayerName");
+CoinsUser userByUuid = CoinsEngineAPI.getUserData(uuid);
+
+// Async for offline players (returns CompletableFuture)
+CompletableFuture<CoinsUser> future = CoinsEngineAPI.getUserDataAsync(uuid);
+future.thenAccept(coinsUser -> {
+    if (coinsUser != null) {
+        // Use on main thread if needed
+    }
+});
+```
+
+### Listen for balance changes
+```java
+import su.nightexpress.coinsengine.api.event.ChangeBalanceEvent;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+
+public class BalanceListener implements Listener {
+
+    @EventHandler
+    public void onBalanceChange(ChangeBalanceEvent event) {
+        String currencyId = event.getCurrency().getId();
+        double oldAmount = event.getOldAmount();
+        double newAmount = event.getNewAmount();
+
+        if (currencyId.equals("coins") && newAmount > 10000) {
+            event.setCancelled(true); // Block the change
+        }
+    }
+}
+```
+
+### Iterate all currencies
+```java
+import su.nightexpress.coinsengine.api.CoinsEngineAPI;
+import su.nightexpress.coinsengine.api.currency.Currency;
+import java.util.Collection;
+
+Collection<Currency> currencies = CoinsEngineAPI.getCurrencies();
+for (Currency c : currencies) {
+    String id = c.getId();
+    String name = c.getName();
+    boolean isVault = c.isVaultEconomy();
+}
+```
+
+## API Reference
 
 ### Class: su.nightexpress.coinsengine.api.CoinsEngineAPI
-Type: Class
+Static utility class. All balance methods work with online Player or offline UUID.
 
-Methods:
-- **static** Currency getCurrency(String)
-- **static** void clear()
-- **static** boolean hasCurrency(String)
-- **static** UserManager getUserManager()
 - **static** boolean isLoaded()
-- **static** CompletableFuture getUserDataAsync(String)
-- **static** CompletableFuture getUserDataAsync(UUID)
-- **static** boolean removeBalance(UUID, String, double)
-- **static** boolean removeBalance(UUID, Currency, double)
-- **static** void removeBalance(Player, Currency, double)
-- **static** double getBalance(UUID, String)
-- **static** double getBalance(UUID, Currency)
-- **static** double getBalance(Player, Currency)
-- **static** CoinsEnginePlugin plugin()
-- **static** void load(CoinsEnginePlugin)
-- **static** Collection getCurrencies()
-- **static** CoinsUser getUserData(Player)
-- **static** CoinsUser getUserData(String)
-- **static** CoinsUser getUserData(UUID)
+- **static** Currency getCurrency(String id)
+- **static** boolean hasCurrency(String id)
+- **static** Collection\<Currency\> getCurrencies()
 - **static** CurrencyManager getCurrencyManager()
-- **static** boolean setBalance(UUID, String, double)
-- **static** boolean setBalance(UUID, Currency, double)
-- **static** void setBalance(Player, Currency, double)
-- **static** void regsiterCurrency(Currency)
-- **static** boolean addBalance(UUID, String, double)
-- **static** boolean addBalance(UUID, Currency, double)
+- **static** UserManager getUserManager()
+- **static** CoinsUser getUserData(Player)
+- **static** CoinsUser getUserData(String name)
+- **static** CoinsUser getUserData(UUID)
+- **static** CompletableFuture\<CoinsUser\> getUserDataAsync(String name)
+- **static** CompletableFuture\<CoinsUser\> getUserDataAsync(UUID)
+- **static** double getBalance(Player, Currency)
+- **static** double getBalance(UUID, Currency)
+- **static** double getBalance(UUID, String currencyId)
 - **static** void addBalance(Player, Currency, double)
+- **static** boolean addBalance(UUID, Currency, double)
+- **static** boolean addBalance(UUID, String currencyId, double)
+- **static** void removeBalance(Player, Currency, double)
+- **static** boolean removeBalance(UUID, Currency, double)
+- **static** boolean removeBalance(UUID, String currencyId, double)
+- **static** void setBalance(Player, Currency, double)
+- **static** boolean setBalance(UUID, Currency, double)
+- **static** boolean setBalance(UUID, String currencyId, double)
 
-## Package: su.nightexpress.coinsengine.api.currency
+### Interface: su.nightexpress.coinsengine.api.currency.Currency
+Represents a single currency definition.
 
-### Class: su.nightexpress.coinsengine.api.currency.Currency
-Type: Interface
-
-Methods:
-- CompactNumber formatCompactValue(double)
-- String formatCompact(double)
-- Map getExchangeRates()
-- String getName()
-- boolean isLeaderboardEnabled()
-- void sendPrefixed(LangText, CommandSender)
-- void sendPrefixed(LangText, CommandSender, Consumer)
-- void sendPrefixed(LangMessage, CommandSender)
-- void sendPrefixed(LangMessage, CommandSender, Consumer)
-- double floorAndLimit(double)
-- boolean isInteger()
-- boolean isUnlimited()
-- double fine(double)
-- String getFormatShort()
-- boolean isVaultEconomy()
-- double limit(double)
-- boolean isDecimal()
-- String getFormat()
-- boolean isUnderLimit(double)
-- UnaryOperator replacePlaceholders()
-- String getPrefix()
-- String getPermission()
-- void setVaultEconomy(boolean)
-- void setDecimal(boolean)
-- void setStartValue(double)
-- boolean isTransferAllowed()
-- String format(double)
-- boolean isSynchronizable()
-- double getExchangeRate(Currency)
-- double getExchangeRate(String)
-- void setIcon(ItemStack)
-- void setIcon(NightItem)
-- void setMaxValue(double)
-- double floorIfNeeded(double)
-- boolean hasPermission(Player)
-- void setCommandAliases(String[])
-- double fineAndLimit(double)
-- String[] getCommandAliases()
-- String getSymbol()
-- void setName(String)
-- void setSynchronizable(boolean)
-- double getMaxValue()
-- CompactNumber compacted(double)
-- NightItem icon()
-- void setPermissionRequired(boolean)
-- String getColumnName()
-- double getMinTransferAmount()
 - String getId()
-- double getStartValue()
-- void setExchangeAllowed(boolean)
-- String formatValue(double)
-- void setFormat(String)
-- boolean isPermissionRequired()
-- void setColumnName(String)
-- boolean isLimited()
-- double limitIfNeeded(double)
+- String getName()
+- String getSymbol()
+- String getPrefix()
+- String format(double) - Formats value with currency prefix/symbol
+- String formatValue(double) - Formats only the numeric value
+- String formatCompact(double) - Compact format (e.g. 1.2K)
+- boolean isVaultEconomy()
+- boolean isDecimal()
+- boolean isInteger()
+- boolean isTransferAllowed()
 - boolean isExchangeAllowed()
-- double getExchangeResult(Currency, double)
-- boolean canExchangeTo(Currency)
+- boolean isLimited()
+- boolean isUnlimited()
+- double getMaxValue()
+- double getStartValue()
+- double getMinTransferAmount()
+- double getExchangeRate(Currency other)
+- double getExchangeRate(String currencyId)
+- boolean canExchangeTo(Currency other)
+- double getExchangeResult(Currency target, double amount)
+- double fine(double) - Rounds to integer if needed
+- double limit(double) - Clamps to max value
+- double fineAndLimit(double) - Rounds and clamps
+- boolean hasPermission(Player)
 - ItemStack getIcon()
-- void setTransferAllowed(boolean)
-- void setPrefix(String)
-- void setMinTransferAmount(double)
-- void setFormatShort(String)
-- void setSymbol(String)
-
-### Class: su.nightexpress.coinsengine.api.currency.CurrencyOperation
-Type: Interface
-
-Methods:
-- boolean isLoggable()
-- Currency getCurrency()
-- CoinsUser getUser()
-- OperationResult perform()
-- void setLoggable(boolean)
-- double getAmount()
-
-### Class: su.nightexpress.coinsengine.api.currency.OperationResult
-Type: Class
-
-Methods:
-- String getLog()
-- long getTimestamp()
-- boolean isSuccess()
-
-## Package: su.nightexpress.coinsengine.api.event
+- String[] getCommandAliases()
+- Map\<String, Double\> getExchangeRates()
 
 ### Class: su.nightexpress.coinsengine.api.event.ChangeBalanceEvent
-Type: Class
-Extends: org.bukkit.event.Event
-Implements: org.bukkit.event.Cancellable
+Extends: org.bukkit.event.Event | Implements: org.bukkit.event.Cancellable
 
-Methods:
-- Currency getCurrency()
-- double getNewAmount()
+Fired whenever any player's balance changes for any currency.
+
 - Player getPlayer()
+- CoinsUser getUser()
+- Currency getCurrency()
+- double getOldAmount()
+- double getNewAmount()
 - boolean isCancelled()
 - void setCancelled(boolean)
-- HandlerList getHandlers()
-- CoinsUser getUser()
-- **static** HandlerList getHandlerList()
-- double getOldAmount()
-

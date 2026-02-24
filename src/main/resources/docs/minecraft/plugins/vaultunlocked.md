@@ -1,598 +1,366 @@
-# VaultUnlocked-2.15.0 API Reference
+# VaultUnlocked API Reference
 
-## Package: net.milkbowl.vault
+VaultUnlocked is the actively maintained fork of Vault, providing a unified abstraction layer for Economy, Permissions, and Chat on Bukkit/Spigot/Paper servers. It is fully backward-compatible with original Vault plugins and adds Folia support plus a modern vault2 API with UUID-based accounts and multi-currency via BigDecimal. The legacy vault1 API (OfflinePlayer/double-based) remains functional. When writing new code, check the plugin with "Vault" in the plugin manager -- VaultUnlocked registers under that name.
 
-### Class: net.milkbowl.vault.PluginEnableListener
-Type: Class
-Implements: org.bukkit.event.Listener
+## Hooking into VaultUnlocked (Economy, Permission, Chat)
 
-Methods:
-- void onEvent(PluginEnableEvent)
+```java
+import net.milkbowl.vault.chat.Chat;
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.economy.EconomyResponse;
+import net.milkbowl.vault.permission.Permission;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.RegisteredServiceProvider;
+import org.bukkit.plugin.java.JavaPlugin;
 
-### Class: net.milkbowl.vault.Vault
-Type: Class
-Extends: org.bukkit.plugin.java.JavaPlugin
+public class MyPlugin extends JavaPlugin {
 
-Methods:
-- Vault instance()
-- boolean onCommand(CommandSender, Command, String, String[])
-- Optional modernProvider()
-- void onEnable()
-- void onDisable()
-- double updateCheck(double)
+    private static Economy econ = null;
+    private static Permission perms = null;
+    private static Chat chat = null;
 
-## Package: net.milkbowl.vault.chat
+    @Override
+    public void onEnable() {
+        if (!setupEconomy()) {
+            getLogger().severe("No Vault/VaultUnlocked economy provider found! Disabling.");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+        setupPermissions();
+        setupChat();
+    }
 
-### Class: net.milkbowl.vault.chat.Chat
-Type: Abstract Class
+    private boolean setupEconomy() {
+        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            return false;
+        }
+        RegisteredServiceProvider<Economy> rsp =
+                getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            return false;
+        }
+        econ = rsp.getProvider();
+        return econ != null;
+    }
 
-Methods:
-- String getName()
-- void setPlayerInfoInteger(String, OfflinePlayer, String, int)
-- void setPlayerInfoInteger(String, String, String, int)
-- void setPlayerInfoInteger(World, String, String, int)
-- void setPlayerInfoInteger(Player, String, int)
-- void setGroupInfoString(String, String, String, String)
-- void setGroupInfoString(World, String, String, String)
-- String getGroupInfoString(String, String, String, String)
-- String getGroupInfoString(World, String, String, String)
-- boolean getGroupInfoBoolean(String, String, String, boolean)
-- boolean getGroupInfoBoolean(World, String, String, boolean)
-- void setGroupPrefix(String, String, String)
-- void setGroupPrefix(World, String, String)
-- boolean getPlayerInfoBoolean(String, OfflinePlayer, String, boolean)
-- boolean getPlayerInfoBoolean(String, String, String, boolean)
-- boolean getPlayerInfoBoolean(World, String, String, boolean)
-- boolean getPlayerInfoBoolean(Player, String, boolean)
-- String[] getPlayerGroups(String, OfflinePlayer)
-- String[] getPlayerGroups(String, String)
-- String[] getPlayerGroups(World, String)
-- String[] getPlayerGroups(Player)
-- void setPlayerInfoString(String, OfflinePlayer, String, String)
-- void setPlayerInfoString(String, String, String, String)
-- void setPlayerInfoString(World, String, String, String)
-- void setPlayerInfoString(Player, String, String)
-- boolean playerInGroup(String, OfflinePlayer, String)
-- boolean playerInGroup(String, String, String)
-- boolean playerInGroup(World, String, String)
-- boolean playerInGroup(Player, String)
-- String getGroupSuffix(String, String)
-- String getGroupSuffix(World, String)
-- void setPlayerInfoBoolean(String, OfflinePlayer, String, boolean)
-- void setPlayerInfoBoolean(String, String, String, boolean)
-- void setPlayerInfoBoolean(World, String, String, boolean)
-- void setPlayerInfoBoolean(Player, String, boolean)
-- String[] getGroups()
-- String getPlayerPrefix(String, String)
-- String getPlayerPrefix(String, OfflinePlayer)
-- String getPlayerPrefix(World, String)
-- String getPlayerPrefix(Player)
-- void setGroupInfoBoolean(String, String, String, boolean)
-- void setGroupInfoBoolean(World, String, String, boolean)
-- String getPrimaryGroup(String, OfflinePlayer)
-- String getPrimaryGroup(String, String)
-- String getPrimaryGroup(World, String)
-- String getPrimaryGroup(Player)
-- void setPlayerPrefix(String, String, String)
-- void setPlayerPrefix(String, OfflinePlayer, String)
-- void setPlayerPrefix(World, String, String)
-- void setPlayerPrefix(Player, String)
-- String getPlayerInfoString(String, OfflinePlayer, String, String)
-- String getPlayerInfoString(String, String, String, String)
-- String getPlayerInfoString(World, String, String, String)
-- String getPlayerInfoString(Player, String, String)
-- void setGroupSuffix(String, String, String)
-- void setGroupSuffix(World, String, String)
-- void setGroupInfoInteger(String, String, String, int)
-- void setGroupInfoInteger(World, String, String, int)
-- String getGroupPrefix(String, String)
-- String getGroupPrefix(World, String)
-- void setGroupInfoDouble(String, String, String, double)
-- void setGroupInfoDouble(World, String, String, double)
-- void setPlayerSuffix(String, String, String)
-- void setPlayerSuffix(String, OfflinePlayer, String)
-- void setPlayerSuffix(World, String, String)
-- void setPlayerSuffix(Player, String)
-- double getGroupInfoDouble(String, String, String, double)
-- double getGroupInfoDouble(World, String, String, double)
-- double getPlayerInfoDouble(String, OfflinePlayer, String, double)
-- double getPlayerInfoDouble(String, String, String, double)
-- double getPlayerInfoDouble(World, String, String, double)
-- double getPlayerInfoDouble(Player, String, double)
-- int getPlayerInfoInteger(String, OfflinePlayer, String, int)
-- int getPlayerInfoInteger(String, String, String, int)
-- int getPlayerInfoInteger(World, String, String, int)
-- int getPlayerInfoInteger(Player, String, int)
-- boolean isEnabled()
-- int getGroupInfoInteger(String, String, String, int)
-- int getGroupInfoInteger(World, String, String, int)
-- String getPlayerSuffix(String, String)
-- String getPlayerSuffix(String, OfflinePlayer)
-- String getPlayerSuffix(World, String)
-- String getPlayerSuffix(Player)
-- void setPlayerInfoDouble(String, OfflinePlayer, String, double)
-- void setPlayerInfoDouble(String, String, String, double)
-- void setPlayerInfoDouble(World, String, String, double)
-- void setPlayerInfoDouble(Player, String, double)
+    private boolean setupPermissions() {
+        RegisteredServiceProvider<Permission> rsp =
+                getServer().getServicesManager().getRegistration(Permission.class);
+        if (rsp == null) {
+            return false;
+        }
+        perms = rsp.getProvider();
+        return perms != null;
+    }
 
-## Package: net.milkbowl.vault.economy
+    private boolean setupChat() {
+        RegisteredServiceProvider<Chat> rsp =
+                getServer().getServicesManager().getRegistration(Chat.class);
+        if (rsp == null) {
+            return false;
+        }
+        chat = rsp.getProvider();
+        return chat != null;
+    }
 
-### Class: net.milkbowl.vault.economy.Economy
-Type: Interface
+    public static Economy getEconomy() { return econ; }
+    public static Permission getPermissions() { return perms; }
+    public static Chat getChat() { return chat; }
+}
+```
 
-Methods:
-- String currencyNamePlural()
-- EconomyResponse deleteBank(String)
-- String getName()
-- boolean hasAccount(String)
-- boolean hasAccount(OfflinePlayer)
-- boolean hasAccount(String, String)
-- boolean hasAccount(OfflinePlayer, String)
-- EconomyResponse depositPlayer(String, double)
-- EconomyResponse depositPlayer(OfflinePlayer, double)
-- EconomyResponse depositPlayer(String, String, double)
-- EconomyResponse depositPlayer(OfflinePlayer, String, double)
-- EconomyResponse bankBalance(String)
-- EconomyResponse bankDeposit(String, double)
-- EconomyResponse bankWithdraw(String, double)
-- String format(double)
-- EconomyResponse withdrawPlayer(String, double)
-- EconomyResponse withdrawPlayer(OfflinePlayer, double)
-- EconomyResponse withdrawPlayer(String, String, double)
-- EconomyResponse withdrawPlayer(OfflinePlayer, String, double)
-- EconomyResponse createBank(String, String)
-- EconomyResponse createBank(String, OfflinePlayer)
-- List getBanks()
-- double getBalance(String)
-- double getBalance(OfflinePlayer)
-- double getBalance(String, String)
-- double getBalance(OfflinePlayer, String)
-- boolean createPlayerAccount(String)
-- boolean createPlayerAccount(OfflinePlayer)
-- boolean createPlayerAccount(String, String)
-- boolean createPlayerAccount(OfflinePlayer, String)
-- EconomyResponse bankHas(String, double)
-- boolean isEnabled()
-- String currencyNameSingular()
-- EconomyResponse isBankMember(String, String)
-- EconomyResponse isBankMember(String, OfflinePlayer)
-- int fractionalDigits()
-- EconomyResponse isBankOwner(String, String)
-- EconomyResponse isBankOwner(String, OfflinePlayer)
-- boolean has(String, double)
-- boolean has(OfflinePlayer, double)
-- boolean has(String, String, double)
-- boolean has(OfflinePlayer, String, double)
-- boolean hasBankSupport()
+## Economy Usage Examples
 
-### Class: net.milkbowl.vault.economy.AbstractEconomy
-Type: Abstract Class
-Implements: net.milkbowl.vault.economy.Economy
+```java
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.economy.EconomyResponse;
+import org.bukkit.OfflinePlayer;
 
-Methods:
-- double getBalance(OfflinePlayer)
-- double getBalance(OfflinePlayer, String)
-- boolean createPlayerAccount(OfflinePlayer)
-- boolean createPlayerAccount(OfflinePlayer, String)
-- boolean hasAccount(OfflinePlayer)
-- boolean hasAccount(OfflinePlayer, String)
-- EconomyResponse depositPlayer(OfflinePlayer, double)
-- EconomyResponse depositPlayer(OfflinePlayer, String, double)
-- EconomyResponse isBankMember(String, OfflinePlayer)
-- EconomyResponse withdrawPlayer(OfflinePlayer, double)
-- EconomyResponse withdrawPlayer(OfflinePlayer, String, double)
-- EconomyResponse isBankOwner(String, OfflinePlayer)
-- boolean has(OfflinePlayer, double)
-- boolean has(OfflinePlayer, String, double)
-- EconomyResponse createBank(String, OfflinePlayer)
+// Check balance
+double balance = econ.getBalance(player);
 
-### Class: net.milkbowl.vault.economy.EconomyResponse
-Type: Class
+// Check if player can afford something
+boolean canAfford = econ.has(player, 500.0);
 
-Methods:
-- boolean transactionSuccess()
+// Withdraw money - always check transactionSuccess()
+EconomyResponse resp = econ.withdrawPlayer(player, 500.0);
+if (resp.transactionSuccess()) {
+    sender.sendMessage("Paid " + econ.format(resp.amount) + ". New balance: " + econ.format(resp.balance));
+} else {
+    sender.sendMessage("Transaction failed: " + resp.errorMessage);
+}
 
-## Package: net.milkbowl.vault.metrics
+// Deposit money
+EconomyResponse deposit = econ.depositPlayer(player, 100.0);
+if (deposit.transactionSuccess()) {
+    sender.sendMessage("Received " + econ.format(deposit.amount));
+}
 
-### Class: net.milkbowl.vault.metrics.MetricsBase
-Type: Class
+// Format currency for display
+String formatted = econ.format(1234.56); // e.g. "$1,234.56"
 
-Methods:
-- void addCustomChart(CustomChart)
+// World-specific balance (if provider supports it)
+double worldBalance = econ.getBalance(player, "world_nether");
 
-## Package: net.milkbowl.vault.metrics.bukkit
+// Bank operations (if hasBankSupport() returns true)
+if (econ.hasBankSupport()) {
+    econ.createBank("MyBank", player);
+    EconomyResponse bankBal = econ.bankBalance("MyBank");
+    econ.bankDeposit("MyBank", 1000.0);
+    econ.bankWithdraw("MyBank", 250.0);
+}
 
-### Class: net.milkbowl.vault.metrics.bukkit.Metrics
-Type: Class
+// Create player account (usually auto-created, but useful for first-join)
+if (!econ.hasAccount(player)) {
+    econ.createPlayerAccount(player);
+}
+```
 
-Methods:
-- void addCustomChart(CustomChart)
+## Permission Usage Examples
 
-## Package: net.milkbowl.vault.metrics.charts
+```java
+import net.milkbowl.vault.permission.Permission;
+import org.bukkit.entity.Player;
 
-### Class: net.milkbowl.vault.metrics.charts.AdvancedBarChart
-Type: Class
-Extends: net.milkbowl.vault.metrics.charts.CustomChart
+// Check if player has a permission
+boolean hasPerm = perms.playerHas(player, "myplugin.use");
 
-No public methods found
+// Also works with world-specific context
+boolean hasWorldPerm = perms.playerHas("world", player, "myplugin.admin");
 
-### Class: net.milkbowl.vault.metrics.charts.AdvancedPie
-Type: Class
-Extends: net.milkbowl.vault.metrics.charts.CustomChart
+// Add/remove permissions
+perms.playerAdd(player, "myplugin.vip");
+perms.playerRemove(player, "myplugin.vip");
 
-No public methods found
+// Transient permissions (session-only, lost on disconnect)
+perms.playerAddTransient(player, "myplugin.temp");
+perms.playerRemoveTransient(player, "myplugin.temp");
 
-### Class: net.milkbowl.vault.metrics.charts.CustomChart
-Type: Abstract Class
+// Group operations (if hasGroupSupport() returns true)
+if (perms.hasGroupSupport()) {
+    String primaryGroup = perms.getPrimaryGroup(player);
+    String[] groups = perms.getPlayerGroups(player);
+    boolean inGroup = perms.playerInGroup(player, "vip");
 
-Methods:
-- JsonObjectBuilder$JsonObject getRequestJsonObject(BiConsumer, boolean)
+    perms.playerAddGroup(player, "moderator");
+    perms.playerRemoveGroup(player, "moderator");
 
-### Class: net.milkbowl.vault.metrics.charts.DrilldownPie
-Type: Class
-Extends: net.milkbowl.vault.metrics.charts.CustomChart
+    // All registered groups
+    String[] allGroups = perms.getGroups();
 
-Methods:
-- JsonObjectBuilder$JsonObject getChartData() throws Exception
+    // Group-level permission management
+    perms.groupAdd("world", "admin", "myplugin.admin");
+    perms.groupRemove("world", "admin", "myplugin.admin");
+    boolean groupHas = perms.groupHas("world", "admin", "myplugin.admin");
+}
+```
 
-### Class: net.milkbowl.vault.metrics.charts.MultiLineChart
-Type: Class
-Extends: net.milkbowl.vault.metrics.charts.CustomChart
+## Chat (Prefix/Suffix) Usage Examples
 
-No public methods found
+```java
+import net.milkbowl.vault.chat.Chat;
+import org.bukkit.entity.Player;
 
-### Class: net.milkbowl.vault.metrics.charts.SimpleBarChart
-Type: Class
-Extends: net.milkbowl.vault.metrics.charts.CustomChart
+// Player prefix/suffix
+String prefix = chat.getPlayerPrefix(player);
+String suffix = chat.getPlayerSuffix(player);
+chat.setPlayerPrefix(player, "&a[VIP] ");
+chat.setPlayerSuffix(player, " &7[Pro]");
 
-No public methods found
+// Group prefix/suffix
+String groupPrefix = chat.getGroupPrefix("world", "admin");
+String groupSuffix = chat.getGroupSuffix("world", "admin");
+chat.setGroupPrefix("world", "admin", "&c[Admin] ");
+chat.setGroupSuffix("world", "admin", "");
 
-### Class: net.milkbowl.vault.metrics.charts.SimplePie
-Type: Class
-Extends: net.milkbowl.vault.metrics.charts.CustomChart
+// Info nodes (custom metadata stored per-player or per-group)
+int kills = chat.getPlayerInfoInteger(player, "kills", 0);
+chat.setPlayerInfoInteger(player, "kills", kills + 1);
 
-No public methods found
+double rating = chat.getPlayerInfoDouble(player, "rating", 0.0);
+String title = chat.getPlayerInfoString(player, "title", "Newcomer");
+boolean flagged = chat.getPlayerInfoBoolean(player, "flagged", false);
 
-### Class: net.milkbowl.vault.metrics.charts.SingleLineChart
-Type: Class
-Extends: net.milkbowl.vault.metrics.charts.CustomChart
+// Group info nodes
+chat.setGroupInfoInteger("world", "vip", "max_homes", 5);
+int maxHomes = chat.getGroupInfoInteger("world", "vip", "max_homes", 1);
+```
 
-No public methods found
+## Vault2 Modern Economy API (UUID + BigDecimal + Multi-Currency)
 
-## Package: net.milkbowl.vault.metrics.config
+VaultUnlocked provides a modern vault2 Economy interface under `net.milkbowl.vault2.economy`. Use this for new plugins that need UUID-based accounts, BigDecimal precision, or multi-currency support.
 
-### Class: net.milkbowl.vault.metrics.config.MetricsConfig
-Type: Class
+```java
+import net.milkbowl.vault2.economy.Economy;
+import net.milkbowl.vault2.economy.EconomyResponse;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.RegisteredServiceProvider;
 
-Methods:
-- boolean isLogResponseStatusTextEnabled()
-- boolean isLogSentDataEnabled()
-- boolean didExistBefore()
-- boolean isEnabled()
-- boolean isLogErrorsEnabled()
-- String getServerUUID()
+import java.math.BigDecimal;
+import java.util.UUID;
 
-## Package: net.milkbowl.vault.metrics.json
+// Setup (same pattern, different class)
+RegisteredServiceProvider<Economy> rsp =
+        Bukkit.getServicesManager().getRegistration(Economy.class);
+Economy econ2 = rsp.getProvider();
 
-### Class: net.milkbowl.vault.metrics.json.JsonObjectBuilder
-Type: Class
+UUID accountId = player.getUniqueId();
+String pluginName = "MyPlugin";
+
+// Balance (returns BigDecimal)
+BigDecimal balance = econ2.getBalance(pluginName, accountId);
+
+// Check affordability
+boolean canAfford = econ2.has(pluginName, accountId, new BigDecimal("500.00"));
+
+// Withdraw / Deposit
+EconomyResponse resp = econ2.withdraw(pluginName, accountId, new BigDecimal("100.50"));
+if (resp.transactionSuccess()) {
+    // resp.amount = BigDecimal, resp.balance = BigDecimal
+}
+EconomyResponse dep = econ2.deposit(pluginName, accountId, new BigDecimal("200.00"));
+
+// Multi-currency (if hasMultiCurrencySupport())
+String defaultCurrency = econ2.getDefaultCurrency(pluginName);
+BigDecimal gemBalance = econ2.getBalance(pluginName, accountId, "world", "gems");
+econ2.withdraw(pluginName, accountId, "world", "gems", new BigDecimal("10"));
+
+// Shared accounts
+UUID sharedAccId = UUID.randomUUID();
+econ2.createSharedAccount(pluginName, sharedAccId, "GuildBank", player.getUniqueId());
+
+// Format for display
+String formatted = econ2.format(new BigDecimal("1234.56"));
+String formattedCurrency = econ2.format(pluginName, new BigDecimal("1234.56"), "gems");
+```
+
+---
+
+## API Reference
+
+### net.milkbowl.vault.economy.Economy (interface) -- Legacy API
+
+Core methods (prefer OfflinePlayer overloads; String-name overloads are @Deprecated):
+
+- `boolean isEnabled()`
+- `String getName()`
+- `int fractionalDigits()`
+- `String format(double amount)`
+- `String currencyNamePlural()` / `String currencyNameSingular()`
+- `boolean hasBankSupport()`
+- `boolean hasAccount(OfflinePlayer player)` / `boolean hasAccount(OfflinePlayer player, String worldName)`
+- `double getBalance(OfflinePlayer player)` / `double getBalance(OfflinePlayer player, String world)`
+- `boolean has(OfflinePlayer player, double amount)` / `boolean has(OfflinePlayer player, String worldName, double amount)`
+- `EconomyResponse withdrawPlayer(OfflinePlayer player, double amount)` / `EconomyResponse withdrawPlayer(OfflinePlayer player, String worldName, double amount)`
+- `EconomyResponse depositPlayer(OfflinePlayer player, double amount)` / `EconomyResponse depositPlayer(OfflinePlayer player, String worldName, double amount)`
+- `boolean createPlayerAccount(OfflinePlayer player)` / `boolean createPlayerAccount(OfflinePlayer player, String worldName)`
+- `EconomyResponse createBank(String name, OfflinePlayer player)`
+- `EconomyResponse deleteBank(String name)`
+- `EconomyResponse bankBalance(String name)` / `EconomyResponse bankHas(String name, double amount)`
+- `EconomyResponse bankWithdraw(String name, double amount)` / `EconomyResponse bankDeposit(String name, double amount)`
+- `EconomyResponse isBankOwner(String name, OfflinePlayer player)` / `EconomyResponse isBankMember(String name, OfflinePlayer player)`
+- `List<String> getBanks()`
+
+### net.milkbowl.vault.economy.EconomyResponse (class)
+
+Fields (all `public final`):
+- `double amount` -- amount modified
+- `double balance` -- new account balance
+- `ResponseType type` -- SUCCESS, FAILURE, or NOT_IMPLEMENTED
+- `String errorMessage` -- error detail (null on success)
 
 Methods:
-- JsonObjectBuilder$JsonObject build()
-- JsonObjectBuilder appendNull(String)
-- JsonObjectBuilder appendField(String, String)
-- JsonObjectBuilder appendField(String, int)
-- JsonObjectBuilder appendField(String, JsonObjectBuilder$JsonObject)
-- JsonObjectBuilder appendField(String, String[])
-- JsonObjectBuilder appendField(String, int[])
-- JsonObjectBuilder appendField(String, JsonObjectBuilder$JsonObject[])
+- `boolean transactionSuccess()` -- returns true if type == SUCCESS
 
-## Package: net.milkbowl.vault.papi
+### net.milkbowl.vault.permission.Permission (abstract class)
 
-### Class: net.milkbowl.vault.papi.EconomyPlaceholders
-Type: Class
-Extends: me.clip.placeholderapi.expansion.PlaceholderExpansion
+- `boolean isEnabled()`
+- `String getName()`
+- `boolean hasSuperPermsCompat()`
+- `boolean hasGroupSupport()`
+- `boolean playerHas(Player player, String permission)` / `boolean playerHas(String world, OfflinePlayer player, String permission)`
+- `boolean playerAdd(Player player, String permission)` / `boolean playerAdd(String world, OfflinePlayer player, String permission)`
+- `boolean playerRemove(Player player, String permission)` / `boolean playerRemove(String world, OfflinePlayer player, String permission)`
+- `boolean playerAddTransient(Player player, String permission)` / `boolean playerAddTransient(String world, Player player, String permission)`
+- `boolean playerRemoveTransient(Player player, String permission)` / `boolean playerRemoveTransient(String world, Player player, String permission)`
+- `boolean playerInGroup(Player player, String group)` / `boolean playerInGroup(String world, OfflinePlayer player, String group)`
+- `boolean playerAddGroup(Player player, String group)` / `boolean playerAddGroup(String world, OfflinePlayer player, String group)`
+- `boolean playerRemoveGroup(Player player, String group)` / `boolean playerRemoveGroup(String world, OfflinePlayer player, String group)`
+- `String[] getPlayerGroups(Player player)` / `String[] getPlayerGroups(String world, OfflinePlayer player)`
+- `String getPrimaryGroup(Player player)` / `String getPrimaryGroup(String world, OfflinePlayer player)`
+- `String[] getGroups()`
+- `boolean groupHas(String world, String group, String permission)`
+- `boolean groupAdd(String world, String group, String permission)`
+- `boolean groupRemove(String world, String group, String permission)`
+- `boolean has(Player player, String permission)` / `boolean has(CommandSender sender, String permission)`
 
-Methods:
-- String getVersion()
-- String onRequest(OfflinePlayer, String)
-- String getAuthor()
-- String getIdentifier()
-- boolean persist()
+### net.milkbowl.vault.chat.Chat (abstract class)
 
-## Package: net.milkbowl.vault.permission
+- `boolean isEnabled()`
+- `String getName()`
+- `String getPlayerPrefix(Player player)` / `String getPlayerPrefix(String world, OfflinePlayer player)`
+- `void setPlayerPrefix(Player player, String prefix)` / `void setPlayerPrefix(String world, OfflinePlayer player, String prefix)`
+- `String getPlayerSuffix(Player player)` / `String getPlayerSuffix(String world, OfflinePlayer player)`
+- `void setPlayerSuffix(Player player, String suffix)` / `void setPlayerSuffix(String world, OfflinePlayer player, String suffix)`
+- `String getGroupPrefix(String world, String group)` / `void setGroupPrefix(String world, String group, String prefix)`
+- `String getGroupSuffix(String world, String group)` / `void setGroupSuffix(String world, String group, String suffix)`
+- `int getPlayerInfoInteger(Player player, String node, int defaultValue)` / `void setPlayerInfoInteger(Player player, String node, int value)`
+- `double getPlayerInfoDouble(Player player, String node, double defaultValue)` / `void setPlayerInfoDouble(Player player, String node, double value)`
+- `boolean getPlayerInfoBoolean(Player player, String node, boolean defaultValue)` / `void setPlayerInfoBoolean(Player player, String node, boolean value)`
+- `String getPlayerInfoString(Player player, String node, String defaultValue)` / `void setPlayerInfoString(Player player, String node, String value)`
+- `int getGroupInfoInteger(String world, String group, String node, int defaultValue)` / `void setGroupInfoInteger(String world, String group, String node, int value)`
+- `double getGroupInfoDouble(String world, String group, String node, double defaultValue)` / `void setGroupInfoDouble(String world, String group, String node, double value)`
+- `boolean getGroupInfoBoolean(String world, String group, String node, boolean defaultValue)` / `void setGroupInfoBoolean(String world, String group, String node, boolean value)`
+- `String getGroupInfoString(String world, String group, String node, String defaultValue)` / `void setGroupInfoString(String world, String group, String node, String value)`
+- `boolean playerInGroup(Player player, String group)` / `String[] getPlayerGroups(Player player)`
+- `String getPrimaryGroup(Player player)` / `String[] getGroups()`
 
-### Class: net.milkbowl.vault.permission.Permission
-Type: Abstract Class
+### net.milkbowl.vault2.economy.Economy (interface) -- Modern API
 
-Methods:
-- String getName()
-- String getPrimaryGroup(String, String)
-- String getPrimaryGroup(World, String)
-- String getPrimaryGroup(String, OfflinePlayer)
-- String getPrimaryGroup(Player)
-- boolean playerRemove(String, String, String)
-- boolean playerRemove(String, OfflinePlayer, String)
-- boolean playerRemove(World, String, String)
-- boolean playerRemove(Player, String)
-- boolean playerAddTransient(OfflinePlayer, String) throws UnsupportedOperationException
-- boolean playerAddTransient(Player, String)
-- boolean playerAddTransient(String, OfflinePlayer, String)
-- boolean playerAddTransient(String, Player, String)
-- boolean playerAdd(String, String, String)
-- boolean playerAdd(World, String, String)
-- boolean playerAdd(String, OfflinePlayer, String)
-- boolean playerAdd(Player, String)
-- boolean playerRemoveGroup(String, String, String)
-- boolean playerRemoveGroup(World, String, String)
-- boolean playerRemoveGroup(String, OfflinePlayer, String)
-- boolean playerRemoveGroup(Player, String)
-- boolean groupAdd(String, String, String)
-- boolean groupAdd(World, String, String)
-- boolean playerHas(String, String, String)
-- boolean playerHas(World, String, String)
-- boolean playerHas(String, OfflinePlayer, String)
-- boolean playerHas(Player, String)
-- boolean groupRemove(String, String, String)
-- boolean groupRemove(World, String, String)
-- boolean hasSuperPermsCompat()
-- boolean groupHas(String, String, String)
-- boolean groupHas(World, String, String)
-- boolean playerAddGroup(String, String, String)
-- boolean playerAddGroup(World, String, String)
-- boolean playerAddGroup(String, OfflinePlayer, String)
-- boolean playerAddGroup(Player, String)
-- boolean isEnabled()
-- boolean hasGroupSupport()
-- String[] getPlayerGroups(String, String)
-- String[] getPlayerGroups(World, String)
-- String[] getPlayerGroups(String, OfflinePlayer)
-- String[] getPlayerGroups(Player)
-- boolean playerRemoveTransient(String, OfflinePlayer, String)
-- boolean playerRemoveTransient(String, Player, String)
-- boolean playerRemoveTransient(OfflinePlayer, String)
-- boolean playerRemoveTransient(Player, String)
-- boolean playerInGroup(String, String, String)
-- boolean playerInGroup(World, String, String)
-- boolean playerInGroup(String, OfflinePlayer, String)
-- boolean playerInGroup(Player, String)
-- boolean has(String, String, String)
-- boolean has(World, String, String)
-- boolean has(CommandSender, String)
-- boolean has(Player, String)
-- String[] getGroups()
+Key methods (UUID-based, BigDecimal precision, multi-currency):
 
-## Package: net.milkbowl.vault2.chat
+- `boolean isEnabled()` / `String getName()`
+- `boolean hasMultiCurrencySupport()` / `boolean hasSharedAccountSupport()`
+- `int fractionalDigits(String pluginName)`
+- `String getDefaultCurrency(String pluginName)`
+- `Collection<String> currencies()`
+- `boolean hasCurrency(String currency)`
+- `String format(BigDecimal amount)` / `String format(String pluginName, BigDecimal amount, String currency)`
+- `boolean hasAccount(UUID accountID)` / `boolean hasAccount(UUID accountID, String worldName)`
+- `boolean createAccount(UUID accountID, String name)` / `boolean createAccount(UUID accountID, String name, String worldName, boolean player)`
+- `boolean deleteAccount(String pluginName, UUID accountID)`
+- `boolean renameAccount(UUID accountID, String name)`
+- `Optional<String> getAccountName(UUID accountID)`
+- `Map<UUID, String> getUUIDNameMap()`
+- `BigDecimal getBalance(String pluginName, UUID accountID)` / `BigDecimal getBalance(String pluginName, UUID accountID, String world, String currency)`
+- `boolean has(String pluginName, UUID accountID, BigDecimal amount)` / `boolean has(String pluginName, UUID accountID, String world, String currency, BigDecimal amount)`
+- `EconomyResponse withdraw(String pluginName, UUID accountID, BigDecimal amount)` / `EconomyResponse withdraw(String pluginName, UUID accountID, String world, String currency, BigDecimal amount)`
+- `EconomyResponse deposit(String pluginName, UUID accountID, BigDecimal amount)` / `EconomyResponse deposit(String pluginName, UUID accountID, String world, String currency, BigDecimal amount)`
+- `EconomyResponse set(String pluginName, UUID accountID, BigDecimal amount)`
+- `boolean createSharedAccount(String pluginName, UUID accountID, String name, UUID owner)`
+- `boolean isAccountOwner(String pluginName, UUID accountID, UUID uuid)`
+- `boolean isAccountMember(String pluginName, UUID accountID, UUID uuid)`
+- `boolean addAccountMember(String pluginName, UUID accountID, UUID uuid, AccountPermission... perms)`
+- `boolean removeAccountMember(String pluginName, UUID accountID, UUID uuid)`
 
-### Class: net.milkbowl.vault2.chat.Chat
-Type: Abstract Class
+### net.milkbowl.vault2.economy.EconomyResponse (class)
+
+Fields (all `public final`):
+- `BigDecimal amount` / `BigDecimal balance` / `ResponseType type` / `String errorMessage`
 
 Methods:
-- String getName()
-- void setPlayerInfoInteger(String, OfflinePlayer, String, int)
-- void setPlayerInfoInteger(String, String, String, int)
-- void setPlayerInfoInteger(World, String, String, int)
-- void setPlayerInfoInteger(Player, String, int)
-- void setGroupInfoString(String, String, String, String)
-- void setGroupInfoString(World, String, String, String)
-- String getGroupInfoString(String, String, String, String)
-- String getGroupInfoString(World, String, String, String)
-- boolean getGroupInfoBoolean(String, String, String, boolean)
-- boolean getGroupInfoBoolean(World, String, String, boolean)
-- void setGroupPrefix(String, String, String)
-- void setGroupPrefix(World, String, String)
-- boolean getPlayerInfoBoolean(String, OfflinePlayer, String, boolean)
-- boolean getPlayerInfoBoolean(String, String, String, boolean)
-- boolean getPlayerInfoBoolean(World, String, String, boolean)
-- boolean getPlayerInfoBoolean(Player, String, boolean)
-- String[] getPlayerGroups(String, OfflinePlayer)
-- String[] getPlayerGroups(String, String)
-- String[] getPlayerGroups(World, String)
-- String[] getPlayerGroups(Player)
-- void setPlayerInfoString(String, OfflinePlayer, String, String)
-- void setPlayerInfoString(String, String, String, String)
-- void setPlayerInfoString(World, String, String, String)
-- void setPlayerInfoString(Player, String, String)
-- boolean playerInGroup(String, OfflinePlayer, String)
-- boolean playerInGroup(String, String, String)
-- boolean playerInGroup(World, String, String)
-- boolean playerInGroup(Player, String)
-- String getGroupSuffix(String, String)
-- String getGroupSuffix(World, String)
-- void setPlayerInfoBoolean(String, OfflinePlayer, String, boolean)
-- void setPlayerInfoBoolean(String, String, String, boolean)
-- void setPlayerInfoBoolean(World, String, String, boolean)
-- void setPlayerInfoBoolean(Player, String, boolean)
-- String[] getGroups()
-- String getPlayerPrefix(String, String)
-- String getPlayerPrefix(String, OfflinePlayer)
-- String getPlayerPrefix(World, String)
-- String getPlayerPrefix(Player)
-- void setGroupInfoBoolean(String, String, String, boolean)
-- void setGroupInfoBoolean(World, String, String, boolean)
-- String getPrimaryGroup(String, OfflinePlayer)
-- String getPrimaryGroup(String, String)
-- String getPrimaryGroup(World, String)
-- String getPrimaryGroup(Player)
-- void setPlayerPrefix(String, String, String)
-- void setPlayerPrefix(String, OfflinePlayer, String)
-- void setPlayerPrefix(World, String, String)
-- void setPlayerPrefix(Player, String)
-- String getPlayerInfoString(String, OfflinePlayer, String, String)
-- String getPlayerInfoString(String, String, String, String)
-- String getPlayerInfoString(World, String, String, String)
-- String getPlayerInfoString(Player, String, String)
-- void setGroupSuffix(String, String, String)
-- void setGroupSuffix(World, String, String)
-- void setGroupInfoInteger(String, String, String, int)
-- void setGroupInfoInteger(World, String, String, int)
-- String getGroupPrefix(String, String)
-- String getGroupPrefix(World, String)
-- void setGroupInfoDouble(String, String, String, double)
-- void setGroupInfoDouble(World, String, String, double)
-- void setPlayerSuffix(String, String, String)
-- void setPlayerSuffix(String, OfflinePlayer, String)
-- void setPlayerSuffix(World, String, String)
-- void setPlayerSuffix(Player, String)
-- double getGroupInfoDouble(String, String, String, double)
-- double getGroupInfoDouble(World, String, String, double)
-- double getPlayerInfoDouble(String, OfflinePlayer, String, double)
-- double getPlayerInfoDouble(String, String, String, double)
-- double getPlayerInfoDouble(World, String, String, double)
-- double getPlayerInfoDouble(Player, String, double)
-- int getPlayerInfoInteger(String, OfflinePlayer, String, int)
-- int getPlayerInfoInteger(String, String, String, int)
-- int getPlayerInfoInteger(World, String, String, int)
-- int getPlayerInfoInteger(Player, String, int)
-- boolean isEnabled()
-- int getGroupInfoInteger(String, String, String, int)
-- int getGroupInfoInteger(World, String, String, int)
-- String getPlayerSuffix(String, String)
-- String getPlayerSuffix(String, OfflinePlayer)
-- String getPlayerSuffix(World, String)
-- String getPlayerSuffix(Player)
-- void setPlayerInfoDouble(String, OfflinePlayer, String, double)
-- void setPlayerInfoDouble(String, String, String, double)
-- void setPlayerInfoDouble(World, String, String, double)
-- void setPlayerInfoDouble(Player, String, double)
+- `boolean transactionSuccess()`
 
-## Package: net.milkbowl.vault2.economy
+### net.milkbowl.vault2.economy.AccountPermission (enum)
 
-### Class: net.milkbowl.vault2.economy.Economy
-Type: Interface
+Values: retrievable via `AccountPermission.valueOf(String)` and `AccountPermission.values()`. Used for shared account permission management.
 
-Methods:
-- String defaultCurrencyNameSingular(String)
-- boolean renameAccount(UUID, String)
-- boolean renameAccount(String, UUID, String)
-- String getName()
-- List accountsMemberOf(String, UUID)
-- boolean hasAccount(UUID)
-- boolean hasAccount(UUID, String)
-- boolean hasSharedAccountSupport()
-- boolean updateAccountPermission(String, UUID, UUID, AccountPermission, boolean)
-- boolean setOwner(String, UUID, UUID)
-- boolean accountSupportsCurrency(String, UUID, String)
-- boolean accountSupportsCurrency(String, UUID, String, String)
-- String defaultCurrencyNamePlural(String)
-- Optional getAccountName(UUID)
-- BigDecimal balance(String, UUID)
-- BigDecimal balance(String, UUID, String)
-- BigDecimal balance(String, UUID, String, String)
-- boolean hasAccountPermission(String, UUID, UUID, AccountPermission)
-- boolean has(String, UUID, BigDecimal)
-- boolean has(String, UUID, String, BigDecimal)
-- boolean has(String, UUID, String, String, BigDecimal)
-- boolean isAccountOwner(String, UUID, UUID)
-- boolean deleteAccount(String, UUID)
-- List accountsAccessTo(String, UUID, AccountPermission[])
-- EconomyResponse set(String, UUID, BigDecimal)
-- EconomyResponse set(String, UUID, String, BigDecimal)
-- EconomyResponse set(String, UUID, String, String, BigDecimal)
-- boolean removeAccountMember(String, UUID, UUID)
-- List accountsOwnedBy(String, UUID)
-- boolean addAccountMember(String, UUID, UUID)
-- boolean addAccountMember(String, UUID, UUID, AccountPermission[])
-- String format(BigDecimal)
-- String format(String, BigDecimal)
-- String format(BigDecimal, String)
-- String format(String, BigDecimal, String)
-- boolean createAccount(UUID, String)
-- boolean createAccount(UUID, String, boolean)
-- boolean createAccount(UUID, String, String)
-- boolean createAccount(UUID, String, String, boolean)
-- boolean hasCurrency(String)
-- Map getUUIDNameMap()
-- BigDecimal getBalance(String, UUID)
-- BigDecimal getBalance(String, UUID, String)
-- BigDecimal getBalance(String, UUID, String, String)
-- boolean isEnabled()
-- boolean createSharedAccount(String, UUID, String, UUID)
-- EconomyResponse deposit(String, UUID, BigDecimal)
-- EconomyResponse deposit(String, UUID, String, BigDecimal)
-- EconomyResponse deposit(String, UUID, String, String, BigDecimal)
-- String getDefaultCurrency(String)
-- int fractionalDigits(String)
-- boolean hasMultiCurrencySupport()
-- boolean isAccountMember(String, UUID, UUID)
-- EconomyResponse withdraw(String, UUID, BigDecimal)
-- EconomyResponse withdraw(String, UUID, String, BigDecimal)
-- EconomyResponse withdraw(String, UUID, String, String, BigDecimal)
-- Collection currencies()
+### net.milkbowl.vault2.permission.Permission (abstract class)
 
-### Class: net.milkbowl.vault2.economy.AccountPermission
-Type: Enum
-Extends: java.lang.Enum
+Identical method signatures to `net.milkbowl.vault.permission.Permission`. Use the vault2 package for new plugins.
 
-Methods:
-- AccountPermission valueOf(String)
-- AccountPermission[] values()
+### net.milkbowl.vault2.chat.Chat (abstract class)
 
-### Class: net.milkbowl.vault2.economy.EconomyResponse
-Type: Class
-
-Methods:
-- boolean transactionSuccess()
-
-## Package: net.milkbowl.vault2.permission
-
-### Class: net.milkbowl.vault2.permission.Permission
-Type: Abstract Class
-
-Methods:
-- String getName()
-- String getPrimaryGroup(String, String)
-- String getPrimaryGroup(World, String)
-- String getPrimaryGroup(String, OfflinePlayer)
-- String getPrimaryGroup(Player)
-- boolean playerRemove(String, String, String)
-- boolean playerRemove(String, OfflinePlayer, String)
-- boolean playerRemove(World, String, String)
-- boolean playerRemove(Player, String)
-- boolean playerAddTransient(OfflinePlayer, String) throws UnsupportedOperationException
-- boolean playerAddTransient(Player, String)
-- boolean playerAddTransient(String, OfflinePlayer, String)
-- boolean playerAddTransient(String, Player, String)
-- boolean playerAdd(String, String, String)
-- boolean playerAdd(World, String, String)
-- boolean playerAdd(String, OfflinePlayer, String)
-- boolean playerAdd(Player, String)
-- boolean playerRemoveGroup(String, String, String)
-- boolean playerRemoveGroup(World, String, String)
-- boolean playerRemoveGroup(String, OfflinePlayer, String)
-- boolean playerRemoveGroup(Player, String)
-- boolean groupAdd(String, String, String)
-- boolean groupAdd(World, String, String)
-- boolean playerHas(String, String, String)
-- boolean playerHas(World, String, String)
-- boolean playerHas(String, OfflinePlayer, String)
-- boolean playerHas(Player, String)
-- boolean groupRemove(String, String, String)
-- boolean groupRemove(World, String, String)
-- boolean hasSuperPermsCompat()
-- boolean groupHas(String, String, String)
-- boolean groupHas(World, String, String)
-- boolean playerAddGroup(String, String, String)
-- boolean playerAddGroup(World, String, String)
-- boolean playerAddGroup(String, OfflinePlayer, String)
-- boolean playerAddGroup(Player, String)
-- boolean isEnabled()
-- boolean hasGroupSupport()
-- String[] getPlayerGroups(String, String)
-- String[] getPlayerGroups(World, String)
-- String[] getPlayerGroups(String, OfflinePlayer)
-- String[] getPlayerGroups(Player)
-- boolean playerRemoveTransient(String, OfflinePlayer, String)
-- boolean playerRemoveTransient(String, Player, String)
-- boolean playerRemoveTransient(OfflinePlayer, String)
-- boolean playerRemoveTransient(Player, String)
-- boolean playerInGroup(String, String, String)
-- boolean playerInGroup(World, String, String)
-- boolean playerInGroup(String, OfflinePlayer, String)
-- boolean playerInGroup(Player, String)
-- boolean has(String, String, String)
-- boolean has(World, String, String)
-- boolean has(CommandSender, String)
-- boolean has(Player, String)
-- String[] getGroups()
-
+Identical method signatures to `net.milkbowl.vault.chat.Chat`. Use the vault2 package for new plugins.

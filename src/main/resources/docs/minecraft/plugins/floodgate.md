@@ -1,334 +1,371 @@
-# floodgate-spigot-org-geysermc-floodgate-api API Reference
-
-**Package Filter:** `org.geysermc.floodgate.api`
-
-## Package: org.geysermc.floodgate.api
-
-### Class: org.geysermc.floodgate.api.FloodgateApi
-Type: Interface
-
-Methods:
-- String getPlayerPrefix()
-- FloodgatePlayer getPlayer(UUID uuid)
-- boolean transferPlayer(UUID uuid, String address, int port)
-- int getPlayerCount()
-- boolean isFloodgateId(UUID uuid)
-- boolean isFloodgatePlayer(UUID uuid)
-- boolean closeForm(UUID uuid)
-- Unsafe unsafe()
-- CompletableFuture<Long> getXuidFor(String gamertag)
-- UUID createJavaPlayerId(long xuid)
-- FloodgateEventBus getEventBus()
-- PlayerLink getPlayerLink()
-- boolean sendForm(UUID uuid, Form form)
-- Z sendForm(UUID uuid, FormBuilder<***> formBuilder)
-- Z sendForm(UUID uuid, Form<*> form)
-- Z sendForm(UUID uuid, FormBuilder<**> formBuilder)
-- CompletableFuture<UUID> getUuidFor(String gamertag)
-- **static** FloodgateApi getInstance()
-- Collection<FloodgatePlayer> getPlayers()
-- CompletableFuture<String> getGamertagFor(long xuid)
-
-### Class: org.geysermc.floodgate.api.InstanceHolder
-Type: Class
-
-Methods:
-- **static** FloodgateEventBus getEventBus()
-- **static** PacketHandlers getPacketHandlers()
-- **static** boolean set(FloodgateApi floodgateApi, PlayerLink link, FloodgateEventBus floodgateEventBus, PlatformInjector platformInjector, PacketHandlers packetHandlers, HandshakeHandlers handshakeHandlers, UUID key)
-- **static** PlayerLink getPlayerLink()
-- **static** PlatformInjector getInjector()
-- **static** HandshakeHandlers getHandshakeHandlers()
-- **static** FloodgateApi getApi()
-
-### Class: org.geysermc.floodgate.api.ProxyFloodgateApi
-Type: Class
-Extends: org.geysermc.floodgate.api.SimpleFloodgateApi
-
-Methods:
-- byte[] createEncryptedData(BedrockData bedrockData)
-- String createEncryptedDataString(BedrockData bedrockData)
-
-### Class: org.geysermc.floodgate.api.SimpleFloodgateApi
-Type: Class
-Implements: org.geysermc.floodgate.api.FloodgateApi
-
-Methods:
-- String getPlayerPrefix()
-- boolean setPendingRemove(FloodgatePlayer player)
-- FloodgatePlayer getPlayer(UUID uuid)
-- boolean transferPlayer(UUID uuid, String address, int port)
-- int getPlayerCount()
-- boolean isFloodgateId(UUID uuid)
-- void playerRemoved(UUID correctUuid)
-- boolean isFloodgatePlayer(UUID uuid)
-- boolean closeForm(UUID uuid)
-- Unsafe unsafe()
-- CompletableFuture<Long> getXuidFor(String gamertag)
-- UUID createJavaPlayerId(long xuid)
-- FloodgatePlayer addPlayer(FloodgatePlayer player)
-- boolean sendForm(UUID uuid, Form form)
-- Z sendForm(UUID uuid, FormBuilder<***> formBuilder)
-- Z sendForm(UUID uuid, Form<*> form)
-- Z sendForm(UUID uuid, FormBuilder<**> formBuilder)
-- Collection<FloodgatePlayer> getPlayers()
-- CompletableFuture<String> getGamertagFor(long xuid)
-
-### Class: org.geysermc.floodgate.api.UnsafeFloodgateApi
-Type: Class
-Implements: org.geysermc.floodgate.api.unsafe.Unsafe
-
-Methods:
-- void sendPacket(UUID bedrockPlayer, int packetId, byte[] packetData)
-
-## Package: org.geysermc.floodgate.api.event
-
-### Class: org.geysermc.floodgate.api.event.FloodgateEventBus
-Type: Interface
-Implements: org.geysermc.event.bus.EventBus
-
-No public methods found
-
-### Class: org.geysermc.floodgate.api.event.FloodgateSubscriber
-Type: Interface
-Implements: org.geysermc.event.subscribe.Subscriber
-
-No public methods found
-
-## Package: org.geysermc.floodgate.api.event.skin
-
-### Class: org.geysermc.floodgate.api.event.skin.SkinApplyEvent
-Type: Interface
-Implements: org.geysermc.event.Cancellable
-
-Methods:
-- SkinApplyEvent$SkinData currentSkin()
-- SkinApplyEvent$SkinData newSkin()
-- SkinApplyEvent newSkin(SkinApplyEvent$SkinData skinData)
-- FloodgatePlayer player()
-
-### Class: org.geysermc.floodgate.api.event.skin.SkinApplyEvent$SkinData
-Type: Interface
-
-Methods:
-- String signature()
-- String value()
-
-## Package: org.geysermc.floodgate.api.handshake
-
-### Class: org.geysermc.floodgate.api.handshake.HandshakeData
-Type: Interface
-
-Methods:
-- boolean shouldDisconnect()
-- void setDisconnectReason(String reason)
-- String getIp()
-- void setHostname(String hostname)
-- String getCorrectUsername()
-- boolean isFloodgatePlayer()
-- UUID getCorrectUniqueId()
-- void setIp(String address)
-- void setLinkedPlayer(LinkedPlayer player)
-- String getHostname()
-- LinkedPlayer getLinkedPlayer()
-- Channel getChannel()
-- UUID getJavaUniqueId()
-- String getJavaUsername()
-- String getDisconnectReason()
-- BedrockData getBedrockData()
-
-### Class: org.geysermc.floodgate.api.handshake.HandshakeHandler
-Type: Interface
-
-Methods:
-- void handle(HandshakeData data)
-
-### Class: org.geysermc.floodgate.api.handshake.HandshakeHandlers
-Type: Interface
-
-Methods:
-- void removeHandshakeHandler(int handshakeHandlerId)
-- V removeHandshakeHandler(Class<HandshakeHandler> handshakeHandler)
-- int addHandshakeHandler(HandshakeHandler handshakeHandler)
-
-## Package: org.geysermc.floodgate.api.inject
-
-### Class: org.geysermc.floodgate.api.inject.InjectorAddon
-Type: Interface
-
-Methods:
-- boolean shouldInject()
-- void onInject(Channel channel, boolean toServer)
-- void onChannelClosed(Channel channel)
-- void onRemoveInject(Channel channel)
-
-### Class: org.geysermc.floodgate.api.inject.PlatformInjector
-Type: Interface
-
-Methods:
-- void removeInjection() throws Exception
-- boolean addAddon(InjectorAddon addon)
-- boolean isInjected()
-- boolean canRemoveInjection()
-- void inject() throws Exception
-- TT removeAddon(Class<TT> addon)
-
-## Package: org.geysermc.floodgate.api.link
-
-### Class: org.geysermc.floodgate.api.link.LinkRequest
-Type: Interface
-
-Methods:
-- boolean isRequestedPlayer(FloodgatePlayer player)
-- long getRequestTime()
-- UUID getJavaUniqueId()
-- String getJavaUsername()
-- boolean isExpired(long linkTimeout)
-- String getLinkCode()
-- String getBedrockUsername()
-
-### Class: org.geysermc.floodgate.api.link.PlayerLink
-Type: Interface
-
-Methods:
-- String getName()
-- void stop()
-- CompletableFuture<Boolean> isLinkedPlayer(UUID playerId)
-- CompletableFuture<LinkedPlayer> getLinkedPlayer(UUID bedrockId)
-- void load()
-- CompletableFuture<Void> unlinkPlayer(UUID javaId)
-- boolean isEnabled()
-- CompletableFuture<Void> linkPlayer(UUID bedrockId, UUID javaId, String username)
-- boolean isAllowLinking()
-- boolean isEnabledAndAllowed()
-- long getVerifyLinkTimeout()
-- CompletableFuture<LinkRequestResult> verifyLinkRequest(UUID bedrockId, String javaUsername, String bedrockUsername, String code)
-- CompletableFuture<*> createLinkRequest(UUID javaId, String javaUsername, String bedrockUsername)
-
-### Class: org.geysermc.floodgate.api.link.LinkRequestResult
-Type: Enum
-Extends: java.lang.Enum
-
-Enum Constants:
-- UNKNOWN_ERROR
-- ALREADY_LINKED
-- REQUEST_EXPIRED
-- NO_LINK_REQUESTED
-- INVALID_CODE
-- LINK_COMPLETED
-
-Methods:
-- **static** LinkRequestResult valueOf(String name)
-- **static** LinkRequestResult[] values()
-
-## Package: org.geysermc.floodgate.api.logger
-
-### Class: org.geysermc.floodgate.api.logger.FloodgateLogger
-Type: Interface
-
-Methods:
-- boolean isDebug()
-- void warn(String message, Object[] args)
-- void trace(String message, Object[] args)
-- void debug(String message, Object[] args)
-- void error(String message, Object[] args)
-- void error(String message, Throwable throwable, Object[] args)
-- void translatedInfo(String message, Object[] args)
-- void info(String message, Object[] args)
-
-## Package: org.geysermc.floodgate.api.packet
-
-### Class: org.geysermc.floodgate.api.packet.PacketHandler
-Type: Interface
-
-Methods:
-- Object handle(ChannelHandlerContext ctx, Object packet, boolean serverbound)
-
-### Class: org.geysermc.floodgate.api.packet.PacketHandlers
-Type: Interface
-
-Methods:
-- void registerAll(PacketHandler handler)
-- void deregister(PacketHandler handler)
-- V register(PacketHandler handler, Class<*> packetClass, TriFunction<ChannelHandlerContext, Object, Boolean, Object> consumer)
-- V register(PacketHandler handler, Class<*> packetClass)
-
-## Package: org.geysermc.floodgate.api.player
-
-### Class: org.geysermc.floodgate.api.player.FloodgatePlayer
-Type: Interface
-
-Methods:
-- String getLanguageCode()
-- String getVersion()
-- boolean isFromProxy()
-- TT getProperty(PropertyKey key)
-- TT getProperty(String key)
-- DeviceOs getDeviceOs()
-- String getCorrectUsername()
-- UiProfile getUiProfile()
-- String getXuid()
-- UUID getCorrectUniqueId()
-- TT addProperty(PropertyKey key, Object value)
-- TT addProperty(String key, Object value)
-- boolean hasProperty(PropertyKey key)
-- boolean hasProperty(String key)
-- String getUsername()
-- boolean isLinked()
-- TT as(Class<TT> clazz)
-- boolean transfer(String address, int port)
-- LinkedPlayer getLinkedPlayer()
-- boolean sendForm(Form form)
-- Z sendForm(FormBuilder<***> formBuilder)
-- Z sendForm(Form<*> form)
-- Z sendForm(FormBuilder<**> formBuilder)
-- UUID getJavaUniqueId()
-- String getJavaUsername()
-- TT removeProperty(PropertyKey key)
-- TT removeProperty(String key)
-- InputMode getInputMode()
-
-### Class: org.geysermc.floodgate.api.player.PropertyKey
-Type: Class
-
-Constructors:
-- PropertyKey(String key, boolean changeable, boolean removable)
-
-Methods:
-- String getKey()
-- PropertyKey$Result isAddAllowed(Object obj)
-- boolean isChangeable()
-- boolean isRemovable()
-
-### Class: org.geysermc.floodgate.api.player.PropertyKey$Result
-Type: Enum
-Extends: java.lang.Enum
-
-Enum Constants:
-- NOT_EQUALS
-- INVALID_TAGS
-- NOT_ALLOWED
-- ALLOWED
-
-Methods:
-- **static** PropertyKey$Result valueOf(String name)
-- **static** PropertyKey$Result[] values()
-
-## Package: org.geysermc.floodgate.api.unsafe
-
-### Class: org.geysermc.floodgate.api.unsafe.Unsafe
-Type: Interface
-
-Methods:
-- void sendPacket(UUID bedrockPlayer, int packetId, byte[] packetData)
-- void sendPacket(FloodgatePlayer player, int packetId, byte[] packetData)
-
-## Package: org.geysermc.floodgate.api.util
-
-### Class: org.geysermc.floodgate.api.util.TriFunction
-Type: Interface
-
-Methods:
-- TR apply(T t, T u, ; v)
-- TriFunction<TT, TU, TV, TS> andThen(Function<-TR, +TS> after)
-
+# Floodgate API
+
+Floodgate allows Bedrock Edition players to join Java Edition servers through Geyser. The API lets you detect Bedrock players, query their device/platform info, send Bedrock-native forms, and manage account linking.
+
+## Checking if a Player is from Bedrock
+
+```java
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.geysermc.floodgate.api.FloodgateApi;
+
+public class BedrockDetector implements Listener {
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        FloodgateApi api = FloodgateApi.getInstance();
+
+        if (api.isFloodgatePlayer(player.getUniqueId())) {
+            player.sendMessage("Welcome, Bedrock player!");
+        }
+    }
+}
+```
+
+## Getting FloodgatePlayer Info
+
+```java
+import java.util.UUID;
+import org.bukkit.entity.Player;
+import org.geysermc.floodgate.api.FloodgateApi;
+import org.geysermc.floodgate.api.player.FloodgatePlayer;
+import org.geysermc.floodgate.util.DeviceOs;
+import org.geysermc.floodgate.util.InputMode;
+
+public void showPlayerInfo(Player player) {
+    FloodgateApi api = FloodgateApi.getInstance();
+    UUID uuid = player.getUniqueId();
+
+    if (!api.isFloodgatePlayer(uuid)) return;
+
+    FloodgatePlayer fp = api.getPlayer(uuid);
+
+    String bedrockUsername = fp.getUsername();        // raw Bedrock gamertag
+    String javaUsername = fp.getJavaUsername();       // processed name used on server (prefix, trimmed)
+    String xuid = fp.getXuid();                      // Xbox User ID
+    String version = fp.getVersion();                // Bedrock client version
+    String langCode = fp.getLanguageCode();          // e.g. "en_US"
+    DeviceOs deviceOs = fp.getDeviceOs();            // GOOGLE, IOS, UWP, XBOX, PS4, NX, etc.
+    InputMode inputMode = fp.getInputMode();         // KEYBOARD_MOUSE, TOUCH, CONTROLLER, VR
+    boolean fromProxy = fp.isFromProxy();            // connected through a proxy
+    boolean linked = fp.isLinked();                  // has a linked Java account
+}
+```
+
+## Sending Bedrock Forms
+
+Bedrock supports three form types via the Cumulus library. Forms can be sent through `FloodgateApi.sendForm(uuid, form)` or `FloodgatePlayer.sendForm(form)`.
+
+### SimpleForm (Buttons with Optional Images)
+
+```java
+import java.util.UUID;
+import org.geysermc.cumulus.form.SimpleForm;
+import org.geysermc.cumulus.util.FormImage;
+import org.geysermc.floodgate.api.FloodgateApi;
+
+public void sendSimpleForm(UUID uuid) {
+    SimpleForm form = SimpleForm.builder()
+        .title("Server Menu")
+        .content("Choose an option:")
+        .button("Survival")
+        .button("Creative")
+        .button("Store", FormImage.Type.URL, "https://example.com/store.png")
+        .button("Settings", FormImage.Type.PATH, "textures/ui/settings_glyph_color_2x.png")
+        .validResultHandler(response -> {
+            int buttonId = response.clickedButtonId();
+            // 0 = Survival, 1 = Creative, 2 = Store, 3 = Settings
+        })
+        .closedOrInvalidResultHandler(() -> {
+            // player closed the form or sent invalid data
+        })
+        .build();
+
+    FloodgateApi.getInstance().sendForm(uuid, form);
+}
+```
+
+### ModalForm (Two-Button Yes/No Dialog)
+
+```java
+import java.util.UUID;
+import org.geysermc.cumulus.form.ModalForm;
+import org.geysermc.floodgate.api.FloodgateApi;
+import org.geysermc.floodgate.api.player.FloodgatePlayer;
+
+public void sendModalForm(UUID uuid) {
+    ModalForm form = ModalForm.builder()
+        .title("Confirm Teleport")
+        .content("Teleport to spawn?")
+        .button1("Yes")
+        .button2("No")
+        .validResultHandler(response -> {
+            if (response.clickedFirst()) {
+                // player clicked "Yes" (button1)
+            } else {
+                // player clicked "No" (button2)
+            }
+        })
+        .build();
+
+    FloodgatePlayer fp = FloodgateApi.getInstance().getPlayer(uuid);
+    fp.sendForm(form);
+}
+```
+
+### CustomForm (Inputs, Dropdowns, Toggles, Sliders)
+
+```java
+import java.util.UUID;
+import org.geysermc.cumulus.form.CustomForm;
+import org.geysermc.floodgate.api.FloodgateApi;
+
+public void sendCustomForm(UUID uuid) {
+    CustomForm form = CustomForm.builder()
+        .title("Player Settings")
+        .dropdown("Game Mode", "Survival", "Creative", "Adventure")
+        .input("Nickname", "Enter nickname", "")
+        .toggle("Enable PvP", true)
+        .slider("Render Distance", 2, 32, 1, 12)
+        .label("This is informational text")
+        .validResultHandler(response -> {
+            int gameModeIndex = response.asDropdown();  // index of selected dropdown option
+            String nickname = response.asInput();       // text entered
+            boolean pvpEnabled = response.asToggle();   // toggle state
+            float renderDist = response.asSlider();     // slider value
+            response.next();                            // skip label
+        })
+        .closedOrInvalidResultHandler(() -> {
+            // form was closed or invalid
+        })
+        .build();
+
+    FloodgateApi.getInstance().sendForm(uuid, form);
+}
+```
+
+## Xbox Gamertag / XUID Lookups
+
+```java
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import org.geysermc.floodgate.api.FloodgateApi;
+
+public void lookupXuid(String gamertag) {
+    FloodgateApi api = FloodgateApi.getInstance();
+
+    CompletableFuture<Long> xuidFuture = api.getXuidFor(gamertag);
+    xuidFuture.thenAccept(xuid -> {
+        // xuid is the numeric Xbox User ID
+    });
+
+    CompletableFuture<String> gamertagFuture = api.getGamertagFor(12345L);
+    gamertagFuture.thenAccept(tag -> {
+        // tag is the gamertag string
+    });
+
+    CompletableFuture<UUID> uuidFuture = api.getUuidFor(gamertag);
+    uuidFuture.thenAccept(uuid -> {
+        // uuid is the Floodgate UUID for that gamertag
+    });
+}
+```
+
+## Transfer a Bedrock Player to Another Server
+
+```java
+import java.util.UUID;
+import org.geysermc.floodgate.api.FloodgateApi;
+import org.geysermc.floodgate.api.player.FloodgatePlayer;
+
+public void transferPlayer(UUID uuid) {
+    // Via API
+    FloodgateApi.getInstance().transferPlayer(uuid, "play.example.com", 19132);
+
+    // Via FloodgatePlayer
+    FloodgatePlayer fp = FloodgateApi.getInstance().getPlayer(uuid);
+    fp.transfer("play.example.com", 19132);
+}
+```
+
+## Listening to Skin Apply Events
+
+```java
+import org.geysermc.event.subscribe.Subscribe;
+import org.geysermc.floodgate.api.FloodgateApi;
+import org.geysermc.floodgate.api.event.skin.SkinApplyEvent;
+import org.geysermc.floodgate.api.player.FloodgatePlayer;
+
+public class SkinListener {
+    public void register() {
+        FloodgateApi.getInstance().getEventBus().subscribe(SkinApplyEvent.class, this::onSkinApply);
+    }
+
+    public void onSkinApply(SkinApplyEvent event) {
+        FloodgatePlayer player = event.player();
+        SkinApplyEvent.SkinData currentSkin = event.currentSkin();
+        SkinApplyEvent.SkinData newSkin = event.newSkin();
+
+        String skinValue = newSkin.value();
+        String skinSignature = newSkin.signature();
+
+        // Cancel to prevent the skin from being applied
+        // event.setCancelled(true);
+    }
+}
+```
+
+## Account Linking
+
+```java
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import org.geysermc.floodgate.api.FloodgateApi;
+import org.geysermc.floodgate.api.link.PlayerLink;
+import org.geysermc.floodgate.api.player.FloodgatePlayer;
+import org.geysermc.floodgate.util.LinkedPlayer;
+
+public void checkLinked(UUID uuid) {
+    FloodgateApi api = FloodgateApi.getInstance();
+    PlayerLink playerLink = api.getPlayerLink();
+
+    if (!playerLink.isEnabledAndAllowed()) return;
+
+    CompletableFuture<Boolean> linked = playerLink.isLinkedPlayer(uuid);
+    linked.thenAccept(isLinked -> {
+        if (isLinked) {
+            playerLink.getLinkedPlayer(uuid).thenAccept(linkedPlayer -> {
+                // linkedPlayer contains the linked Java account info
+            });
+        }
+    });
+
+    // Or via FloodgatePlayer directly
+    FloodgatePlayer fp = api.getPlayer(uuid);
+    if (fp != null && fp.isLinked()) {
+        LinkedPlayer lp = fp.getLinkedPlayer();
+        // lp has linked account info
+    }
+}
+```
+
+---
+
+## API Reference
+
+### org.geysermc.floodgate.api.FloodgateApi (Interface)
+- `static FloodgateApi getInstance()`
+- `boolean isFloodgatePlayer(UUID uuid)`
+- `boolean isFloodgateId(UUID uuid)`
+- `FloodgatePlayer getPlayer(UUID uuid)`
+- `Collection<FloodgatePlayer> getPlayers()`
+- `int getPlayerCount()`
+- `boolean sendForm(UUID uuid, org.geysermc.cumulus.form.Form form)`
+- `boolean sendForm(UUID uuid, org.geysermc.cumulus.form.util.FormBuilder<?,?,?> formBuilder)`
+- `boolean closeForm(UUID uuid)`
+- `boolean transferPlayer(UUID uuid, String address, int port)`
+- `CompletableFuture<Long> getXuidFor(String gamertag)`
+- `CompletableFuture<String> getGamertagFor(long xuid)`
+- `CompletableFuture<UUID> getUuidFor(String gamertag)`
+- `UUID createJavaPlayerId(long xuid)`
+- `String getPlayerPrefix()`
+- `FloodgateEventBus getEventBus()`
+- `PlayerLink getPlayerLink()`
+
+### org.geysermc.floodgate.api.player.FloodgatePlayer (Interface)
+- `String getUsername()` - raw Bedrock gamertag
+- `String getJavaUsername()` - processed server username (prefix, trimmed)
+- `UUID getJavaUniqueId()` - Floodgate-assigned UUID
+- `UUID getCorrectUniqueId()` - linked Java UUID if linked, otherwise Floodgate UUID
+- `String getCorrectUsername()` - linked Java name if linked, otherwise Java username
+- `String getXuid()` - Xbox User ID
+- `String getVersion()` - Bedrock client version
+- `DeviceOs getDeviceOs()`
+- `String getLanguageCode()`
+- `UiProfile getUiProfile()`
+- `InputMode getInputMode()`
+- `boolean isFromProxy()`
+- `boolean isLinked()`
+- `LinkedPlayer getLinkedPlayer()`
+- `boolean sendForm(org.geysermc.cumulus.form.Form form)`
+- `boolean sendForm(org.geysermc.cumulus.form.util.FormBuilder<?,?,?> formBuilder)`
+- `boolean transfer(String address, int port)`
+- `<T extends FloodgatePlayer> T as(Class<T> clazz)`
+
+### org.geysermc.floodgate.util.DeviceOs (Enum)
+`UNKNOWN`, `GOOGLE`, `IOS`, `OSX`, `AMAZON`, `GEARVR`, `HOLOLENS`, `UWP`, `WIN32`, `DEDICATED`, `TVOS`, `PS4`, `NX`, `XBOX`, `WINDOWS_PHONE`
+
+### org.geysermc.floodgate.util.InputMode (Enum)
+`UNKNOWN`, `KEYBOARD_MOUSE`, `TOUCH`, `CONTROLLER`, `VR`
+
+### org.geysermc.floodgate.util.UiProfile (Enum)
+`CLASSIC`, `POCKET`
+
+### org.geysermc.cumulus.form.SimpleForm
+- `static SimpleForm.Builder builder()`
+- Builder: `title(String)`, `content(String)`, `button(String)`, `button(String, FormImage.Type, String)`, `validResultHandler(Consumer<SimpleFormResponse>)`, `closedResultHandler(Runnable)`, `closedOrInvalidResultHandler(Runnable)`
+
+### org.geysermc.cumulus.form.ModalForm
+- `static ModalForm.Builder builder()`
+- Builder: `title(String)`, `content(String)`, `button1(String)`, `button2(String)`, `validResultHandler(Consumer<ModalFormResponse>)`, `closedResultHandler(Runnable)`, `closedOrInvalidResultHandler(Runnable)`
+
+### org.geysermc.cumulus.form.CustomForm
+- `static CustomForm.Builder builder()`
+- Builder: `title(String)`, `dropdown(String, String...)`, `input(String, String, String)`, `toggle(String, boolean)`, `slider(String, float, float, float, float)`, `label(String)`, `stepSlider(String, String...)`, `validResultHandler(Consumer<CustomFormResponse>)`, `closedResultHandler(Runnable)`, `closedOrInvalidResultHandler(Runnable)`
+
+### org.geysermc.cumulus.response.SimpleFormResponse
+- `int clickedButtonId()`
+- `ButtonComponent clickedButton()`
+
+### org.geysermc.cumulus.response.ModalFormResponse
+- `int clickedButtonId()`
+- `String clickedButtonText()`
+- `boolean clickedFirst()` - true if button1 was clicked
+
+### org.geysermc.cumulus.response.CustomFormResponse
+- `<T> T next()` - returns next component value (in order added to builder)
+- `int asDropdown()` - index of selected dropdown option
+- `String asInput()` - text entered
+- `boolean asToggle()` - toggle state
+- `float asSlider()` - slider value
+- `int asStepSlider()` - index of selected step
+
+### org.geysermc.cumulus.util.FormImage.Type (Enum)
+`URL`, `PATH`
+
+### org.geysermc.floodgate.api.event.skin.SkinApplyEvent (Interface)
+- `FloodgatePlayer player()`
+- `SkinApplyEvent.SkinData currentSkin()`
+- `SkinApplyEvent.SkinData newSkin()`
+- `SkinApplyEvent newSkin(SkinApplyEvent.SkinData skinData)`
+- Extends `org.geysermc.event.Cancellable`: `boolean isCancelled()`, `void setCancelled(boolean cancelled)`
+
+### org.geysermc.floodgate.api.event.skin.SkinApplyEvent.SkinData (Interface)
+- `String value()`
+- `String signature()`
+
+### org.geysermc.floodgate.api.link.PlayerLink (Interface)
+- `boolean isEnabled()`
+- `boolean isAllowLinking()`
+- `boolean isEnabledAndAllowed()`
+- `CompletableFuture<Boolean> isLinkedPlayer(UUID playerId)`
+- `CompletableFuture<LinkedPlayer> getLinkedPlayer(UUID bedrockId)`
+- `CompletableFuture<Void> linkPlayer(UUID bedrockId, UUID javaId, String username)`
+- `CompletableFuture<Void> unlinkPlayer(UUID javaId)`
+- `long getVerifyLinkTimeout()`
+
+### org.geysermc.floodgate.api.handshake.HandshakeHandlers (Interface)
+- `int addHandshakeHandler(HandshakeHandler handler)`
+- `void removeHandshakeHandler(int handlerId)`
+
+### org.geysermc.floodgate.api.handshake.HandshakeData (Interface)
+- `boolean isFloodgatePlayer()`
+- `BedrockData getBedrockData()`
+- `String getIp()`, `void setIp(String)`
+- `String getHostname()`, `void setHostname(String)`
+- `UUID getCorrectUniqueId()`, `UUID getJavaUniqueId()`
+- `String getCorrectUsername()`, `String getJavaUsername()`
+- `LinkedPlayer getLinkedPlayer()`, `void setLinkedPlayer(LinkedPlayer)`
+- `boolean shouldDisconnect()`, `void setDisconnectReason(String)`

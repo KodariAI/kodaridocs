@@ -1,837 +1,539 @@
-# simple-voice-chat-api API Reference
-
-**Version:** 2.5.31
-
-## Package: de.maxhenkel.voicechat.api
-The main Simple Voice Chat API package.
-
-### Class: de.maxhenkel.voicechat.api.VoicechatApi
-Type: Interface
-
-Methods:
-- AudioConverter getAudioConverter()
-- OpusDecoder createDecoder() - Creates a new opus decoder
-- OpusEncoder createEncoder() - Creates a new opus encoder
-- OpusEncoder createEncoder(OpusEncoderMode mode) - Creates a new opus encoder
-- Mp3Decoder createMp3Decoder(InputStream inputStream) - NOTE: This is not available for Bukkit! It will always return null
-- Mp3Encoder createMp3Encoder(AudioFormat format, int bitrate, int quality, OutputStream outputStream) - NOTE: This is not available for Bukkit! It will always return null
-- Position createPosition(double x, double y, double z) - Creates a new position object
-- Entity fromEntity(Object entity) - Creates an entity object from an actual entity
-- ServerLevel fromServerLevel(Object level) - Creates a level object from an actual level
-- ServerPlayer fromServerPlayer(Object player) - Creates a player object from an actual player
-- double getVoiceChatDistance() - NOTE: Voice chat plugins can change this
-- VolumeCategory.Builder volumeCategoryBuilder() - Don't forget to register your category with registerVolumeCategory or registerClientVolumeCategory
-
-### Class: de.maxhenkel.voicechat.api.VoicechatClientApi
-Type: Interface
-
-Methods:
-- EntityAudioChannel createEntityAudioChannel(UUID uuid) - Deprecated: use createEntityAudioChannel(UUID, Entity)
-- EntityAudioChannel createEntityAudioChannel(UUID uuid, Entity entity) - Creates a client side entity audio channel
-- StaticAudioChannel createStaticAudioChannel(UUID uuid) - Creates a client side static audio channel
-- LocationalAudioChannel createLocationalAudioChannel(UUID uuid, Position position) - Creates a client side locational audio channel
-- boolean isMuted()
-- boolean isDisabled()
-- boolean isDisconnected()
-- boolean isInGroup()
-- Group getGroup()
-- ConfigAccessor getClientConfig()
-- void registerClientVolumeCategory(VolumeCategory category) - Registers a volume category just for this client
-- void unregisterClientVolumeCategory(VolumeCategory category) - Unregisters a category on this client
-- void unregisterClientVolumeCategory(String categoryId) - Unregisters a category on this client
-
-### Class: de.maxhenkel.voicechat.api.VoicechatServerApi
-Type: Interface
-
-Methods:
-- EntityAudioChannel createEntityAudioChannel(UUID uuid, Entity entity) - Creates a sound channel for the specified entity
-- StaticAudioChannel createStaticAudioChannel(UUID uuid, ServerLevel level, VoicechatConnection connection) - Creates a static audio channel
-- LocationalAudioChannel createLocationalAudioChannel(UUID uuid, ServerLevel level, Position position) - Creates a sound channel at the provided location
-- Group createGroup(String name, String password) - Deprecated: use groupBuilder() instead
-- Group createGroup(String name, String password, boolean persistent) - Deprecated: use groupBuilder() instead
-- Group.Builder groupBuilder()
-- void removeGroup(UUID groupId) - Removes a persistent group
-- Group getGroup(UUID groupId) - Gets a group by its ID
-- List<Group> getGroups()
-- VoicechatConnection getConnectionOf(UUID playerUuid) - Gets the connection of the player with this UUID
-- VoicechatConnection getConnectionOf(ServerPlayer player) - Gets the connection of the player
-- AudioPlayer createAudioPlayer(AudioChannel channel, OpusEncoder encoder, short[] audio) - Creates a new audio player
-- AudioPlayer createAudioPlayer(AudioChannel channel, OpusEncoder encoder, Supplier<short[]> audioSupplier) - Creates a new audio player
-- AudioSender createAudioSender(VoicechatConnection connection) - Creates a new audio sender
-- ConfigAccessor getServerConfig()
-- double getBroadcastRange() - The distance at which audio packets are broadcast
-- Collection<ServerPlayer> getPlayersInRange(ServerLevel level, Position position, double range) - A convenience method to get all players in the range of a specific location
-- Collection<ServerPlayer> getPlayersInRange(ServerLevel level, Position position, double range, Predicate<ServerPlayer> filter) - A convenience method to get all players in the range of a specific location
-- void sendEntitySoundPacketTo(VoicechatConnection connection, EntitySoundPacket packet) - Sends the sound packet to the provided connection
-- void sendLocationalSoundPacketTo(VoicechatConnection connection, LocationalSoundPacket packet) - Sends the sound packet to the provided connection
-- void sendStaticSoundPacketTo(VoicechatConnection connection, StaticSoundPacket packet) - Sends the sound packet to the provided connection
-- void registerVolumeCategory(VolumeCategory category) - Registers a volume category
-- void unregisterVolumeCategory(VolumeCategory category) - Unregisters a category for all connected players
-- void unregisterVolumeCategory(String categoryId) - Unregisters a category for all connected players
-- Collection<VolumeCategory> getVolumeCategories()
-- void registerAudioListener(AudioListener listener) - Registers a new AudioListener
-- void unregisterAudioListener(AudioListener listener) - Unregisters an AudioListener
-- void unregisterAudioListener(UUID listenerId) - Unregisters an AudioListener
-- void registerAudioSender(AudioSender sender) - NOTE: Only one instance of this can exist per player
-- void unregisterAudioSender(AudioSender sender) - Unregisters an audio sender
-- PlayerAudioListener.Builder playerAudioListenerBuilder()
-- UUID getSecret(UUID groupId) - Deprecated
-
-### Class: de.maxhenkel.voicechat.api.VoicechatConnection
-Type: Interface
-Description: Note: It is not guaranteed that the state of this connection object is up to date
-
-Methods:
-- Group getGroup() - Note: This only returns the group the player was in when fetching this connection object
-- boolean isInGroup() - Note: This only returns if the player was in a group when fetching this connection object
-- void setGroup(Group group) - Joins this player to the provided group
-- boolean isDisabled() - Note: This only returns if the player has the voice chat disabled when fetching this connection object
-- void setDisabled(boolean disabled) - Sets the players disabled state
-- ServerPlayer getPlayer()
-- boolean isConnected() - This might not represent the actual state of the voice chat connection, since other voice chat plugins can fake having a player connected
-- void setConnected(boolean connected) - The players disconnected state will reset if its actual disconnected state changes or if the player reconnects
-- boolean isInstalled()
-
-### Class: de.maxhenkel.voicechat.api.VoicechatPlugin
-Type: Interface
-
-Methods:
-- String getPluginId()
-- void initialize(VoicechatApi api) - Called after loading the plugin
-- void registerEvents(EventRegistration registration) - Register your events here - Only here!
-
-### Class: de.maxhenkel.voicechat.api.VoicechatSocket
-Type: Interface
-Description: A socket used for server side voice chat traffic
-
-Methods:
-- void open(int port, String bindAddress) throws Exception
-- RawUdpPacket read() throws Exception
-- void send(byte[] data, SocketAddress address) throws Exception
-- int getLocalPort()
-- void close()
-- boolean isClosed()
-
-### Class: de.maxhenkel.voicechat.api.ClientVoicechatSocket
-Type: Interface
-Description: A socket used for client side voice chat traffic
-
-Methods:
-- void open() throws Exception
-- RawUdpPacket read() throws Exception
-- void send(byte[] data, SocketAddress address) throws Exception
-- void close()
-- boolean isClosed()
-
-### Class: de.maxhenkel.voicechat.api.Group
-Type: Interface
-Description: Groups can be created using VoicechatServerApi.groupBuilder()
-
-Methods:
-- String getName()
-- boolean hasPassword()
-- UUID getId()
-- boolean isPersistent()
-- Group.Type getType()
-- boolean isHidden()
-
-### Class: de.maxhenkel.voicechat.api.Group.Builder
-Type: Interface
-
-Methods:
-- Group.Builder setName(String name) - NOTE: The name might be stripped of special characters and whitespace
-- Group.Builder setPassword(String password)
-- Group.Builder setPersistent(boolean persistent)
-- Group.Builder setType(Group.Type type)
-- Group.Builder setHidden(boolean hidden)
-- Group.Builder setId(UUID id) - Sets the ID of the group
-- Group build()
-
-### Class: de.maxhenkel.voicechat.api.Group.Type
-Type: Interface
-
-Methods:
-- **static** Group.Type NORMAL - Players in a group can hear nearby players that are not in a group
-- **static** Group.Type OPEN - Players in a group can hear nearby players and nearby players can hear players in the group
-- **static** Group.Type ISOLATED - Players in a group can only hear other players in the group
-
-### Class: de.maxhenkel.voicechat.api.RawUdpPacket
-Type: Interface
-
-Methods:
-- byte[] getData()
-- SocketAddress getSocketAddress()
-- long getTimestamp()
-
-### Class: de.maxhenkel.voicechat.api.VolumeCategory
-Type: Interface
-Description: A custom volume category for the "adjust volumes screen"
-
-Methods:
-- String getId()
-- String getName()
-- String getDescription()
-- int[][] getIcon()
-
-### Class: de.maxhenkel.voicechat.api.VolumeCategory.Builder
-Type: Interface
-
-Methods:
-- VolumeCategory.Builder setId(String id) - This ID has to be between 1 and 16 characters and can only contain lowercase a-z and _
-- VolumeCategory.Builder setName(String name)
-- VolumeCategory.Builder setDescription(String description)
-- VolumeCategory.Builder setIcon(int[][] icon) - The array has to be 16x16
-- VolumeCategory build()
-
-### Class: de.maxhenkel.voicechat.api.Position
-Type: Interface
-
-Methods:
-- double getX()
-- double getY()
-- double getZ()
-
-### Class: de.maxhenkel.voicechat.api.Entity
-Type: Interface
-
-Methods:
-- Object getEntity()
-- UUID getUuid()
-- Position getPosition()
-
-### Class: de.maxhenkel.voicechat.api.ServerLevel
-Type: Interface
-
-Methods:
-- Object getServerLevel()
-
-### Class: de.maxhenkel.voicechat.api.ServerPlayer
-Type: Interface
-
-Methods:
-- Object getPlayer()
-- ServerLevel getServerLevel()
-
-### Class: de.maxhenkel.voicechat.api.Player
-Type: Interface
-
-Methods:
-- Object getPlayer()
-
-### Class: de.maxhenkel.voicechat.api.BukkitVoicechatService
-Type: Interface
-
-Methods:
-- void registerPlugin(VoicechatPlugin plugin) - Registers the voice chat plugin on bukkit based servers
-
-### Class: de.maxhenkel.voicechat.api.ForgeVoicechatPlugin
-Type: Annotation Interface
-
-## Package: de.maxhenkel.voicechat.api.audio
-Everything related to audio conversion and manipulation.
-
-### Class: de.maxhenkel.voicechat.api.audio.AudioConverter
-Type: Interface
-Description: A utility class to convert audio between different representations
-
-Methods:
-- short[] bytesToShorts(byte[] bytes)
-- byte[] shortsToBytes(short[] shorts)
-- float[] bytesToFloats(byte[] bytes)
-- byte[] floatsToBytes(float[] floats)
-- float[] shortsToFloats(short[] shorts)
-- short[] floatsToShorts(float[] floats)
-
-## Package: de.maxhenkel.voicechat.api.audiochannel
-Everything related to audio channels and serverside audio.
-
-### Class: de.maxhenkel.voicechat.api.audiochannel.AudioChannel
-Type: Interface
-
-Methods:
-- UUID getId()
-- void send(byte[] opusData) - Sends the audio data to this audio channel
-- void send(MicrophonePacket packet) - Forwards the provided microphone packet to this audio channel
-- void flush() - Call this if you are finished sending data
-- void setFilter(Predicate<ServerPlayer> filter) - Applies a filter to the audio channel
-- void setCategory(String category) - Make sure you registered your category before using it
-- String getCategory()
-- boolean isClosed()
-
-### Class: de.maxhenkel.voicechat.api.audiochannel.EntityAudioChannel
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.audiochannel.AudioChannel
-Description: An audio channel that is bound to an entity
-
-Methods:
-- void updateEntity(Entity entity) - Sets a new entity where this channel is attached to
-- boolean isWhispering()
-- void setWhispering(boolean whispering)
-- float getDistance()
-- void setDistance(float distance)
-- Entity getEntity()
-
-### Class: de.maxhenkel.voicechat.api.audiochannel.StaticAudioChannel
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.audiochannel.AudioChannel
-
-### Class: de.maxhenkel.voicechat.api.audiochannel.LocationalAudioChannel
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.audiochannel.AudioChannel
-
-Methods:
-- Position getLocation()
-- void updateLocation(Position location) - Updates the location of the audio
-- float getDistance()
-- void setDistance(float distance)
-
-### Class: de.maxhenkel.voicechat.api.audiochannel.AudioPlayer
-Type: Interface
-Description: Streams audio data from the server to clients
-
-Methods:
-- void startPlaying() - Starts playing/streaming the audio
-- void stopPlaying() - Stops playing/streaming the audio
-- boolean isStarted()
-- boolean isStopped()
-- boolean isPlaying()
-- void setOnStopped(Runnable onStopped)
-
-### Class: de.maxhenkel.voicechat.api.audiochannel.ClientAudioChannel
-Type: Interface
-
-Methods:
-- UUID getId()
-- void play(short[] rawAudio) - Plays this audio data on this audio channel
-- void setCategory(String category) - Make sure you registered your category before using it
-- String getCategory()
-
-### Class: de.maxhenkel.voicechat.api.audiochannel.ClientEntityAudioChannel
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.audiochannel.ClientAudioChannel
-
-Methods:
-- void setWhispering(boolean whispering)
-- boolean isWhispering()
-- void setDistance(float distance)
-- float getDistance()
-- UUID getEntityId()
-
-### Class: de.maxhenkel.voicechat.api.audiochannel.ClientStaticAudioChannel
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.audiochannel.ClientAudioChannel
-
-### Class: de.maxhenkel.voicechat.api.audiochannel.ClientLocationalAudioChannel
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.audiochannel.ClientAudioChannel
-
-Methods:
-- void setLocation(Position location) - Updates the location of the audio channel
-- Position getLocation()
-- void setDistance(float distance)
-- float getDistance()
-
-## Package: de.maxhenkel.voicechat.api.audiolistener
-Utilities for listening to all audio a player would theoretically receive.
-
-### Class: de.maxhenkel.voicechat.api.audiolistener.AudioListener
-Type: Interface
-
-Methods:
-- UUID getListenerId()
-
-### Class: de.maxhenkel.voicechat.api.audiolistener.PlayerAudioListener
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.audiolistener.AudioListener
-
-Methods:
-- UUID getPlayerUuid()
-
-### Class: de.maxhenkel.voicechat.api.audiolistener.PlayerAudioListener.Builder
-Type: Interface
-
-Methods:
-- PlayerAudioListener.Builder setPlayer(ServerPlayer player) - Note: It is required to either set a player with this method or with setPlayer(UUID)
-- PlayerAudioListener.Builder setPlayer(UUID playerUuid) - Note: It is required to either set a player with this method or with setPlayer(ServerPlayer)
-- PlayerAudioListener.Builder setPacketListener(Consumer<SoundPacket> listener) - Note: It is required to set a listener
-- PlayerAudioListener build()
-
-## Package: de.maxhenkel.voicechat.api.audiosender
-Utilities for simulating players sending audio without the mod.
-
-### Class: de.maxhenkel.voicechat.api.audiosender.AudioSender
-Type: Interface
-
-Methods:
-- boolean canSend()
-- void send(byte[] opusData) - Acts as if the player has sent a microphone packet
-- AudioSender sequenceNumber(long sequenceNumber) - Sets the sequence number of the packet
-- void reset() - Resets the sequence number and indicates to clients that the current audio stream is paused/stopped
-- AudioSender whispering(boolean whispering)
-- boolean isWhispering()
-
-## Package: de.maxhenkel.voicechat.api.config
-Everything configuration related.
-
-### Class: de.maxhenkel.voicechat.api.config.ConfigAccessor
-Type: Interface
-Description: An interface to access a config
-
-Methods:
-- Object getValue(String key) - Gets the raw value of the given key
-- boolean hasKey(String key) - Checks if the config has the given key
-- String getString(String key, String defaultValue) - Gets the string value of the given key
-- int getInt(String key, int defaultValue) - Gets the integer value of the given key
-- double getDouble(String key, double defaultValue) - Gets the double value of the given key
-- boolean getBoolean(String key, boolean defaultValue) - Gets the boolean value of the given key
-
-## Package: de.maxhenkel.voicechat.api.events
-All registerable events.
-
-### Class: de.maxhenkel.voicechat.api.events.EventRegistration
-Type: Interface
-
-Methods:
-- <T extends Event> void registerEvent(Class<T> eventClass, Consumer<T> listener) - Registers an event
-- <T extends Event> void registerEvent(Class<T> eventClass, Consumer<T> listener, int priority) - Registers an event
-
-### Class: de.maxhenkel.voicechat.api.events.Event
-Type: Interface
-
-Methods:
-- boolean isCancellable()
-- boolean isCancelled()
-- void cancel() - Cancels this event
-
-### Class: de.maxhenkel.voicechat.api.events.ServerEvent
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.events.Event
-
-Methods:
-- VoicechatServerApi getVoicechat()
-
-### Class: de.maxhenkel.voicechat.api.events.ClientEvent
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.events.Event
-
-Methods:
-- VoicechatClientApi getVoicechat()
-
-### Class: de.maxhenkel.voicechat.api.events.VoicechatServerStartingEvent
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.events.ServerEvent
-
-Methods:
-- VoicechatSocket getSocketImplementation()
-- void setSocketImplementation(VoicechatSocket socket) - Sets a custom implementation of the socket used for voice chat traffic
-
-### Class: de.maxhenkel.voicechat.api.events.VoicechatServerStartedEvent
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.events.ServerEvent
-
-### Class: de.maxhenkel.voicechat.api.events.VoicechatServerStoppedEvent
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.events.ServerEvent
-
-### Class: de.maxhenkel.voicechat.api.events.PlayerConnectedEvent
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.events.ServerEvent
-
-Methods:
-- VoicechatConnection getConnection()
-
-### Class: de.maxhenkel.voicechat.api.events.PlayerDisconnectedEvent
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.events.ServerEvent
-
-Methods:
-- UUID getPlayerUuid()
-
-### Class: de.maxhenkel.voicechat.api.events.PlayerStateChangedEvent
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.events.ServerEvent
-Description: Called when a player changes its state
-
-Methods:
-- VoicechatConnection getConnection()
-- UUID getPlayerUuid()
-- boolean isDisabled()
-- boolean isDisconnected()
-
-### Class: de.maxhenkel.voicechat.api.events.MicrophonePacketEvent
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.events.ServerEvent
-Description: This event is emitted when a microphone packet arrives at the server
-
-Methods:
-- VoicechatConnection getSenderConnection()
-- MicrophonePacket getPacket()
-
-### Class: de.maxhenkel.voicechat.api.events.PacketEvent
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.events.ServerEvent
-
-Methods:
-- T getPacket()
-- VoicechatConnection getSenderConnection()
-- VoicechatConnection getReceiverConnection()
-
-### Class: de.maxhenkel.voicechat.api.events.SoundPacketEvent
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.events.PacketEvent
-
-Methods:
-- String getSource() - Where the packet originated from
-- **static** String SOURCE_PROXIMITY
-- **static** String SOURCE_GROUP
-- **static** String SOURCE_SPECTATOR
-- **static** String SOURCE_PLUGIN
-
-### Class: de.maxhenkel.voicechat.api.events.EntitySoundPacketEvent
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.events.SoundPacketEvent
-Description: This event is emitted when an entity sound packet is about to get sent to a client
-
-### Class: de.maxhenkel.voicechat.api.events.LocationalSoundPacketEvent
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.events.SoundPacketEvent
-Description: This event is emitted when a locational sound packet is about to get sent to a client
-
-### Class: de.maxhenkel.voicechat.api.events.StaticSoundPacketEvent
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.events.SoundPacketEvent
-Description: This event is emitted when a static sound packet is about to get sent to a client
-
-### Class: de.maxhenkel.voicechat.api.events.GroupEvent
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.events.ServerEvent
-
-Methods:
-- Group getGroup()
-- VoicechatConnection getConnection()
-
-### Class: de.maxhenkel.voicechat.api.events.CreateGroupEvent
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.events.ServerEvent
-
-Methods:
-- Group getGroup()
-- VoicechatConnection getConnection()
-
-### Class: de.maxhenkel.voicechat.api.events.RemoveGroupEvent
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.events.ServerEvent
-Description: This event is only cancellable if the group is persistent
-
-Methods:
-- Group getGroup()
-- VoicechatConnection getConnection() - Deprecated
-
-### Class: de.maxhenkel.voicechat.api.events.JoinGroupEvent
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.events.GroupEvent
-
-Methods:
-- Group getGroup()
-- VoicechatConnection getConnection()
-
-### Class: de.maxhenkel.voicechat.api.events.LeaveGroupEvent
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.events.GroupEvent
-
-Methods:
-- Group getGroup()
-- VoicechatConnection getConnection()
-
-### Class: de.maxhenkel.voicechat.api.events.VoiceHostEvent
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.events.ServerEvent
-
-Methods:
-- String getVoiceHost()
-- void setVoiceHost(String host) - Overwrites voice chats voice host - This is sent to the client and used by it to connect to the server
-
-### Class: de.maxhenkel.voicechat.api.events.ClientVoicechatInitializationEvent
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.events.ClientEvent
-
-Methods:
-- ClientVoicechatSocket getSocketImplementation()
-- void setSocketImplementation(ClientVoicechatSocket socket) - Sets a custom implementation of the socket used for client side voice chat traffic
-
-### Class: de.maxhenkel.voicechat.api.events.ClientVoicechatConnectionEvent
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.events.ClientEvent
-Description: This event is emitted on the client when the voice chat connects/disconnects
-
-Methods:
-- boolean isConnected()
-
-### Class: de.maxhenkel.voicechat.api.events.VoicechatDisableEvent
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.events.ClientEvent
-Description: This event is emitted on the client when the voice chat is getting enabled/disabled
-
-Methods:
-- boolean isDisabled()
-
-### Class: de.maxhenkel.voicechat.api.events.MicrophoneMuteEvent
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.events.ClientEvent
-Description: This event is emitted on the client when the state of the microphone changes
-
-Methods:
-- boolean isDisabled()
-
-### Class: de.maxhenkel.voicechat.api.events.ClientSoundEvent
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.events.ClientEvent
-Description: This event is emitted before the client encodes the audio and sends it to the server
-
-Methods:
-- short[] getRawAudio() - The unencoded audio data
-- void setRawAudio(short[] rawAudio) - Overrides the actual audio data that's sent to the server
-- boolean isWhispering()
-
-### Class: de.maxhenkel.voicechat.api.events.MergeClientSoundEvent
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.events.ClientEvent
-Description: This event is emitted before the ClientSoundEvent is getting called
-
-Methods:
-- void mergeAudio(short[] audio) - Merges the audio into the audio that is captured from the microphone
-
-### Class: de.maxhenkel.voicechat.api.events.ClientReceiveSoundEvent
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.events.ClientEvent
-Description: This event is emitted before the sound is played on the client
-
-Methods:
-- UUID getId()
-- short[] getRawAudio() - The unencoded audio data
-- void setRawAudio(short[] rawAudio) - Overrides the actual audio data that is played
-
-### Class: de.maxhenkel.voicechat.api.events.ClientReceiveSoundEvent.EntitySound
-Type: Interface
-
-Methods:
-- UUID getEntityId()
-- boolean isWhispering()
-- float getDistance()
-
-### Class: de.maxhenkel.voicechat.api.events.ClientReceiveSoundEvent.LocationalSound
-Type: Interface
-
-Methods:
-- Position getPosition()
-- float getDistance()
-
-### Class: de.maxhenkel.voicechat.api.events.ClientReceiveSoundEvent.StaticSound
-Type: Interface
-
-### Class: de.maxhenkel.voicechat.api.events.OpenALSoundEvent
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.events.ClientEvent
-Description: This event is emitted for every audio chunk for every audio channel
-
-Methods:
-- Position getPosition() - Returns the position of the sound
-- UUID getChannelId() - This returns null for non audio channel sounds, like microphone testing
-- int getSource()
-- String getCategory()
-
-### Class: de.maxhenkel.voicechat.api.events.OpenALSoundEvent.Pre
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.events.OpenALSoundEvent
-Description: This event is emitted before any OpenAL calls were made by the voice chat
-
-### Class: de.maxhenkel.voicechat.api.events.OpenALSoundEvent.Post
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.events.OpenALSoundEvent
-Description: This event is emitted after all OpenAL calls by the voice chat and the audio is added to the buffer queue
-
-### Class: de.maxhenkel.voicechat.api.events.CreateOpenALContextEvent
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.events.ClientEvent
-Description: This event is emitted when the voice chats OpenAL context is created
-
-Methods:
-- long getContext()
-- long getDevice()
-
-### Class: de.maxhenkel.voicechat.api.events.DestroyOpenALContextEvent
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.events.ClientEvent
-Description: This event is emitted when the voice chats OpenAL context is destroyed
-
-Methods:
-- long getContext()
-- long getDevice()
-
-### Class: de.maxhenkel.voicechat.api.events.RegisterVolumeCategoryEvent
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.events.VolumeCategoryEvent
-
-### Class: de.maxhenkel.voicechat.api.events.UnregisterVolumeCategoryEvent
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.events.VolumeCategoryEvent
-
-### Class: de.maxhenkel.voicechat.api.events.VolumeCategoryEvent
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.events.ServerEvent
-
-Methods:
-- VolumeCategory getVolumeCategory()
-
-## Package: de.maxhenkel.voicechat.api.mp3
-Wrappers for mp3 encoding and decoding.
-
-### Class: de.maxhenkel.voicechat.api.mp3.Mp3Decoder
-Type: Interface
-Description: You can obtain an instance of this class by calling VoicechatApi.createMp3Decoder(java.io.InputStream)
-
-Methods:
-- short[] decode() throws IOException - Decodes the MP3 file and returns the decoded audio data as PCM samples
-- AudioFormat getAudioFormat() throws IOException - Decodes the MP3 file if decode() has not been called before
-- int getBitrate() throws IOException - Decodes the MP3 file if decode() has not been called before
-- void close() throws IOException
-
-### Class: de.maxhenkel.voicechat.api.mp3.Mp3Encoder
-Type: Interface
-Description: You can obtain an instance of this class by calling VoicechatApi.createMp3Encoder(javax.sound.sampled.AudioFormat, int, int, java.io.OutputStream)
-
-Methods:
-- void encode(short[] samples) throws IOException - Encodes the given PCM samples and writes it to the provided output stream
-- void close() throws IOException - Closes the encoder and flushes the output stream
-
-## Package: de.maxhenkel.voicechat.api.opus
-Wrappers for the Opus codec.
-
-### Class: de.maxhenkel.voicechat.api.opus.OpusDecoder
-Type: Interface
-Description: Instances can be obtained by calling VoicechatApi.createDecoder()
-
-Methods:
-- short[] decode(byte[] opus) - Decodes opus encoded audio data to 16 bit PCM audio
-- void resetState() - Resets the decoders state
-- void close() - Closes the decoder. Not doing this would result in a memory leak
-- boolean isClosed()
-
-### Class: de.maxhenkel.voicechat.api.opus.OpusEncoder
-Type: Interface
-Description: Instances can be obtained by calling VoicechatApi.createEncoder()
-
-Methods:
-- byte[] encode(short[] rawAudio) - Encodes 16 bit PCM audio with opus
-- void resetState() - Resets the encoders state
-- void close() - Closes the encoder
-- boolean isClosed()
-
-### Class: de.maxhenkel.voicechat.api.opus.OpusEncoderMode
-Type: Enum Class
-Description: The different Opus encoder modes
-
-Methods:
-- **static** OpusEncoderMode[] values() - Returns an array containing the constants of this enum class, in the order they are declared
-- **static** OpusEncoderMode valueOf(String name) - Returns the enum constant of this class with the specified name
-
-Constants:
-- AUDIO
-- VOIP
-- RESTRICTED_LOWDELAY
-
-## Package: de.maxhenkel.voicechat.api.packets
-All voice chat UDP packets.
-
-### Class: de.maxhenkel.voicechat.api.packets.Packet
-Type: Interface
-
-### Class: de.maxhenkel.voicechat.api.packets.ConvertablePacket
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.packets.Packet
-
-Methods:
-- EntitySoundPacket toEntitySoundPacket(UUID entityUuid, boolean whispering) - Deprecated: use entitySoundPacketBuilder()
-- LocationalSoundPacket toLocationalSoundPacket(Position position) - Deprecated: use locationalSoundPacketBuilder()
-- StaticSoundPacket toStaticSoundPacket() - Deprecated: use staticSoundPacketBuilder()
-- EntitySoundPacket.Builder entitySoundPacketBuilder() - NOTE: Make sure to set channelId(UUID) to avoid conflicts with other channels
-- LocationalSoundPacket.Builder locationalSoundPacketBuilder() - NOTE: Make sure to set channelId(UUID) to avoid conflicts with other channels
-- StaticSoundPacket.Builder staticSoundPacketBuilder() - NOTE: Make sure to set channelId(UUID) to avoid conflicts with other channels
-
-### Class: de.maxhenkel.voicechat.api.packets.MicrophonePacket
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.packets.ConvertablePacket
-
-Methods:
-- byte[] getOpusEncodedData()
-- void setOpusEncodedData(byte[] data) - Allows you to modify or replace the opus encoded audio data
-- boolean isWhispering()
-
-### Class: de.maxhenkel.voicechat.api.packets.SoundPacket
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.packets.Packet
-
-Methods:
-- UUID getChannelId()
-- UUID getSender()
-- byte[] getOpusEncodedData()
-- long getSequenceNumber()
-- String getCategory()
-
-### Class: de.maxhenkel.voicechat.api.packets.SoundPacket.Builder
-Type: Interface
-Description: A builder to build a sound packet
-
-Methods:
-- T channelId(UUID channelId) - NOTE: Make sure to set this to a unique value to avoid conflicts with other channels
-- T opusEncodedData(byte[] data)
-- T category(String category) - Make sure you registered your category before using it
-- P build() - Builds the packet
-
-### Class: de.maxhenkel.voicechat.api.packets.EntitySoundPacket
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.packets.SoundPacket
-Description: The receiver of this event will hear the sound from the specified entity
-
-Methods:
-- UUID getEntityUuid()
-- boolean isWhispering()
-- float getDistance()
-
-### Class: de.maxhenkel.voicechat.api.packets.EntitySoundPacket.Builder
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.packets.SoundPacket.Builder
-Description: A builder to build an entity sound packet
-
-Methods:
-- EntitySoundPacket.Builder entityUuid(UUID entityUuid) - This is required to be set!
-- EntitySoundPacket.Builder whispering(boolean whispering)
-- EntitySoundPacket.Builder distance(float distance)
-
-### Class: de.maxhenkel.voicechat.api.packets.LocationalSoundPacket
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.packets.SoundPacket
-Description: The receiver of this event will hear the sound from the specified location
-
-Methods:
-- Position getPosition()
-- float getDistance()
-
-### Class: de.maxhenkel.voicechat.api.packets.LocationalSoundPacket.Builder
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.packets.SoundPacket.Builder
-Description: A builder to build a locational sound packet
-
-Methods:
-- LocationalSoundPacket.Builder position(Position position) - This is required to be set!
-- LocationalSoundPacket.Builder distance(float distance)
-
-### Class: de.maxhenkel.voicechat.api.packets.StaticSoundPacket
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.packets.SoundPacket
-Description: The receiver of this event will hear the sound non-directional
-
-### Class: de.maxhenkel.voicechat.api.packets.StaticSoundPacket.Builder
-Type: Interface
-Extends: de.maxhenkel.voicechat.api.packets.SoundPacket.Builder
-Description: A builder to build a static sound packet
+# Simple Voice Chat API
+
+Proximity voice chat mod for Minecraft with a server-side plugin API. Allows plugins to create audio channels, play audio, intercept voice packets, manage groups, and simulate player microphone input. Works on Bukkit/Spigot/Paper. Audio format is 48kHz 16-bit mono PCM (short[]), encoded/decoded with Opus via the API.
+
+## Code Examples
+
+### Register a VoicechatPlugin (Bukkit)
+
+Your plugin.yml must declare `depend: [ voicechat ]`.
+
+```java
+import de.maxhenkel.voicechat.api.BukkitVoicechatService;
+import org.bukkit.plugin.java.JavaPlugin;
+
+public class MyPlugin extends JavaPlugin {
+    @Override
+    public void onEnable() {
+        BukkitVoicechatService service = getServer().getServicesManager().load(BukkitVoicechatService.class);
+        if (service != null) {
+            service.registerPlugin(new MyVoicechatPlugin());
+        }
+    }
+}
+```
+
+### Implement VoicechatPlugin
+
+Events can ONLY be registered inside `registerEvents`. Calling `EventRegistration.registerEvent` outside this method will not work.
+
+```java
+import de.maxhenkel.voicechat.api.VoicechatApi;
+import de.maxhenkel.voicechat.api.VoicechatPlugin;
+import de.maxhenkel.voicechat.api.VoicechatServerApi;
+import de.maxhenkel.voicechat.api.events.EventRegistration;
+import de.maxhenkel.voicechat.api.events.VoicechatServerStartedEvent;
+import de.maxhenkel.voicechat.api.events.MicrophonePacketEvent;
+import de.maxhenkel.voicechat.api.events.PlayerConnectedEvent;
+
+public class MyVoicechatPlugin implements VoicechatPlugin {
+
+    private VoicechatApi api;
+
+    @Override
+    public String getPluginId() {
+        return "my_plugin"; // must be unique
+    }
+
+    @Override
+    public void initialize(VoicechatApi api) {
+        this.api = api;
+    }
+
+    @Override
+    public void registerEvents(EventRegistration registration) {
+        registration.registerEvent(VoicechatServerStartedEvent.class, this::onServerStarted);
+        registration.registerEvent(MicrophonePacketEvent.class, this::onMicPacket);
+        registration.registerEvent(PlayerConnectedEvent.class, this::onPlayerConnected);
+        // optional priority (higher = runs first, default 0):
+        // registration.registerEvent(SomeEvent.class, this::handler, 100);
+    }
+
+    private void onServerStarted(VoicechatServerStartedEvent event) {
+        VoicechatServerApi serverApi = event.getVoicechat();
+        // serverApi is the main entry point for server-side operations
+    }
+
+    private void onMicPacket(MicrophonePacketEvent event) {
+        // Intercept/modify microphone packets from players
+        byte[] opusData = event.getPacket().getOpusEncodedData();
+    }
+
+    private void onPlayerConnected(PlayerConnectedEvent event) {
+        VoicechatServerApi serverApi = event.getVoicechat();
+        // event.getConnection() gives the VoicechatConnection
+    }
+}
+```
+
+### Check if a Player Has Voice Chat Connected
+
+```java
+import de.maxhenkel.voicechat.api.VoicechatConnection;
+import de.maxhenkel.voicechat.api.VoicechatServerApi;
+import java.util.UUID;
+
+// serverApi obtained from any ServerEvent via event.getVoicechat()
+VoicechatConnection connection = serverApi.getConnectionOf(playerUuid);
+if (connection != null && connection.isConnected()) {
+    // player has voice chat connected
+}
+// connection.isInstalled() - true if player has the mod installed
+// connection.isDisabled() - true if player disabled voice chat
+```
+
+### Create a Locational Audio Channel (sound at a position)
+
+```java
+import de.maxhenkel.voicechat.api.VoicechatServerApi;
+import de.maxhenkel.voicechat.api.Position;
+import de.maxhenkel.voicechat.api.ServerLevel;
+import de.maxhenkel.voicechat.api.audiochannel.LocationalAudioChannel;
+import java.util.UUID;
+
+// serverApi from a ServerEvent; world is org.bukkit.World; x,y,z are doubles
+ServerLevel level = serverApi.fromServerLevel(world);
+Position pos = serverApi.createPosition(x, y, z);
+UUID channelId = UUID.randomUUID();
+
+LocationalAudioChannel channel = serverApi.createLocationalAudioChannel(channelId, level, pos);
+if (channel != null) {
+    channel.setDistance(48F); // audible range in blocks
+    // channel.setCategory("my_category"); // optional custom volume category
+}
+```
+
+### Create an Entity Audio Channel (sound follows an entity)
+
+```java
+import de.maxhenkel.voicechat.api.VoicechatServerApi;
+import de.maxhenkel.voicechat.api.Entity;
+import de.maxhenkel.voicechat.api.audiochannel.EntityAudioChannel;
+import java.util.UUID;
+
+// bukkitEntity is org.bukkit.entity.Entity
+Entity entity = serverApi.fromEntity(bukkitEntity);
+UUID channelId = UUID.randomUUID();
+
+EntityAudioChannel channel = serverApi.createEntityAudioChannel(channelId, entity);
+if (channel != null) {
+    channel.setDistance(64F);
+    channel.setWhispering(false);
+}
+```
+
+### Create a Static Audio Channel (non-positional, sent to a specific player)
+
+```java
+import de.maxhenkel.voicechat.api.VoicechatServerApi;
+import de.maxhenkel.voicechat.api.VoicechatConnection;
+import de.maxhenkel.voicechat.api.ServerLevel;
+import de.maxhenkel.voicechat.api.audiochannel.StaticAudioChannel;
+import java.util.UUID;
+
+ServerLevel level = serverApi.fromServerLevel(world);
+VoicechatConnection connection = serverApi.getConnectionOf(playerUuid);
+UUID channelId = UUID.randomUUID();
+
+StaticAudioChannel channel = serverApi.createStaticAudioChannel(channelId, level, connection);
+// Audio is heard non-directionally by the target player
+```
+
+### Play Audio Through a Channel (AudioPlayer)
+
+Audio must be 48kHz 16-bit mono PCM (short[]). The API handles Opus encoding.
+
+```java
+import de.maxhenkel.voicechat.api.VoicechatServerApi;
+import de.maxhenkel.voicechat.api.audiochannel.AudioChannel;
+import de.maxhenkel.voicechat.api.audiochannel.AudioPlayer;
+import de.maxhenkel.voicechat.api.opus.OpusEncoder;
+
+// channel is any AudioChannel (Locational, Entity, or Static)
+// audio is short[] of 48kHz 16-bit mono PCM samples
+OpusEncoder encoder = serverApi.createEncoder();
+AudioPlayer player = serverApi.createAudioPlayer(channel, encoder, audio);
+
+player.setOnStopped(() -> {
+    encoder.close(); // always close encoder when done
+});
+
+player.startPlaying();
+// player.stopPlaying(); // stop early if needed
+// player.isPlaying(); // check state
+```
+
+For streaming/dynamic audio, use the Supplier variant:
+
+```java
+import java.util.function.Supplier;
+
+Supplier<short[]> audioSupplier = () -> {
+    // return next chunk of audio, or null to stop
+    return getNextAudioChunk();
+};
+AudioPlayer player = serverApi.createAudioPlayer(channel, encoder, audioSupplier);
+player.startPlaying();
+```
+
+### Send Raw Opus Data Directly to a Channel
+
+```java
+// For pre-encoded opus data, send directly to the channel
+channel.send(opusEncodedBytes);
+channel.flush(); // call when finished sending
+```
+
+### AudioSender (Simulate Player Microphone Input)
+
+Only one AudioSender can exist per player at a time.
+
+```java
+import de.maxhenkel.voicechat.api.VoicechatServerApi;
+import de.maxhenkel.voicechat.api.VoicechatConnection;
+import de.maxhenkel.voicechat.api.audiosender.AudioSender;
+
+VoicechatConnection connection = serverApi.getConnectionOf(playerUuid);
+AudioSender sender = serverApi.createAudioSender(connection);
+serverApi.registerAudioSender(sender);
+
+// Send opus-encoded audio as if the player spoke
+sender.whispering(false);
+if (sender.canSend()) {
+    sender.send(opusEncodedData);
+}
+
+sender.reset(); // signals end of audio stream to clients
+serverApi.unregisterAudioSender(sender);
+```
+
+### Manage Groups
+
+```java
+import de.maxhenkel.voicechat.api.VoicechatServerApi;
+import de.maxhenkel.voicechat.api.Group;
+import de.maxhenkel.voicechat.api.VoicechatConnection;
+
+// Create a group
+Group group = serverApi.groupBuilder()
+    .setName("Party Chat")
+    .setPassword("secret")        // null for no password
+    .setPersistent(true)           // survives server restart
+    .setType(Group.Type.ISOLATED)  // NORMAL, OPEN, or ISOLATED
+    .setHidden(false)
+    .build();
+
+// Add a player to the group
+VoicechatConnection conn = serverApi.getConnectionOf(playerUuid);
+if (conn != null) {
+    conn.setGroup(group);
+}
+
+// Remove group
+serverApi.removeGroup(group.getId());
+
+// Group.Type.NORMAL   - group members hear nearby non-group players too
+// Group.Type.OPEN     - nearby players can hear group members and vice versa
+// Group.Type.ISOLATED - group members only hear each other
+```
+
+### Register a Volume Category
+
+```java
+import de.maxhenkel.voicechat.api.VoicechatServerApi;
+import de.maxhenkel.voicechat.api.VolumeCategory;
+import de.maxhenkel.voicechat.api.events.VoicechatServerStartedEvent;
+
+private void onServerStarted(VoicechatServerStartedEvent event) {
+    VoicechatServerApi api = event.getVoicechat();
+    VolumeCategory category = api.volumeCategoryBuilder()
+        .setId("my_sounds")           // 1-16 chars, lowercase a-z and _ only
+        .setName("My Custom Sounds")
+        .setDescription("Volume for custom plugin sounds")
+        // .setIcon(int[][] icon)      // optional 16x16 icon
+        .build();
+    api.registerVolumeCategory(category);
+}
+// Then use: channel.setCategory("my_sounds");
+```
+
+### Encode and Decode Opus Audio
+
+```java
+import de.maxhenkel.voicechat.api.VoicechatApi;
+import de.maxhenkel.voicechat.api.opus.OpusEncoder;
+import de.maxhenkel.voicechat.api.opus.OpusDecoder;
+import de.maxhenkel.voicechat.api.opus.OpusEncoderMode;
+
+// api obtained from initialize() or from VoicechatServerApi (which extends VoicechatApi)
+OpusEncoder encoder = api.createEncoder();
+// or: OpusEncoder encoder = api.createEncoder(OpusEncoderMode.AUDIO);
+// modes: VOIP, AUDIO, RESTRICTED_LOWDELAY
+
+byte[] opusData = encoder.encode(pcmShortArray);
+encoder.close(); // MUST close to avoid memory leak
+
+OpusDecoder decoder = api.createDecoder();
+short[] pcm = decoder.decode(opusData);
+decoder.close(); // MUST close to avoid memory leak
+```
+
+### Filter Who Hears an Audio Channel
+
+```java
+import de.maxhenkel.voicechat.api.ServerPlayer;
+import java.util.function.Predicate;
+
+// Only let players within 100 blocks hear the channel
+channel.setFilter(serverPlayer -> {
+    // serverPlayer.getPlayer() returns the platform player object (org.bukkit.entity.Player on Bukkit)
+    return true; // return false to exclude this player
+});
+```
+
+### Get Players in Range
+
+```java
+import de.maxhenkel.voicechat.api.ServerPlayer;
+import de.maxhenkel.voicechat.api.ServerLevel;
+import de.maxhenkel.voicechat.api.Position;
+import java.util.Collection;
+
+ServerLevel level = serverApi.fromServerLevel(world);
+Position pos = serverApi.createPosition(x, y, z);
+Collection<ServerPlayer> nearby = serverApi.getPlayersInRange(level, pos, 50.0);
+// Each ServerPlayer.getPlayer() returns the platform-specific player object
+```
+
+### Listen to All Audio a Player Receives
+
+```java
+import de.maxhenkel.voicechat.api.audiolistener.PlayerAudioListener;
+import de.maxhenkel.voicechat.api.packets.SoundPacket;
+
+PlayerAudioListener listener = serverApi.playerAudioListenerBuilder()
+    .setPlayer(playerUuid)
+    .setPacketListener(soundPacket -> {
+        byte[] opusData = soundPacket.getOpusEncodedData();
+        UUID sender = soundPacket.getSender();
+    })
+    .build();
+serverApi.registerAudioListener(listener);
+// serverApi.unregisterAudioListener(listener);
+```
+
+## Key Events
+
+All events extend `de.maxhenkel.voicechat.api.events.Event`. Server events provide `getVoicechat()` returning `VoicechatServerApi`.
+
+| Event Class | When Fired |
+|---|---|
+| `VoicechatServerStartedEvent` | Voice chat server fully started. Best place to initialize channels and categories. |
+| `VoicechatServerStartingEvent` | Before voice chat server starts. Can set custom socket implementation. |
+| `VoicechatServerStoppedEvent` | Voice chat server stopped. |
+| `PlayerConnectedEvent` | Player connects to voice chat. Provides `VoicechatConnection`. |
+| `PlayerDisconnectedEvent` | Player disconnects. Provides player UUID only. |
+| `PlayerStateChangedEvent` | Player enables/disables voice chat or connects/disconnects. |
+| `MicrophonePacketEvent` | Microphone packet arrives at server. Can read/modify opus data. |
+| `EntitySoundPacketEvent` | Entity sound packet about to be sent to a client. Cancellable. |
+| `LocationalSoundPacketEvent` | Locational sound packet about to be sent. Cancellable. |
+| `StaticSoundPacketEvent` | Static sound packet about to be sent. Cancellable. |
+| `CreateGroupEvent` | Player creates a group. Cancellable. |
+| `JoinGroupEvent` | Player joins a group. Cancellable. |
+| `LeaveGroupEvent` | Player leaves a group. |
+| `RemoveGroupEvent` | Group is removed. Cancellable only if persistent. |
+
+SoundPacketEvent subtypes provide `getSource()` returning one of: `SOURCE_PROXIMITY`, `SOURCE_GROUP`, `SOURCE_SPECTATOR`, `SOURCE_PLUGIN`.
+
+## API Reference
+
+### de.maxhenkel.voicechat.api.VoicechatPlugin (Interface)
+- `String getPluginId()` - unique plugin ID
+- `void initialize(VoicechatApi api)` - called after loading
+- `void registerEvents(EventRegistration registration)` - register events here ONLY
+
+### de.maxhenkel.voicechat.api.BukkitVoicechatService (Interface)
+- `void registerPlugin(VoicechatPlugin plugin)` - register on Bukkit servers
+
+### de.maxhenkel.voicechat.api.VoicechatApi (Interface)
+- `OpusEncoder createEncoder()` / `createEncoder(OpusEncoderMode mode)`
+- `OpusDecoder createDecoder()`
+- `AudioConverter getAudioConverter()`
+- `Position createPosition(double x, double y, double z)`
+- `Entity fromEntity(Object entity)` - wraps platform entity
+- `ServerLevel fromServerLevel(Object level)` - wraps platform world
+- `ServerPlayer fromServerPlayer(Object player)` - wraps platform player
+- `VolumeCategory.Builder volumeCategoryBuilder()`
+- `double getVoiceChatDistance()`
+
+### de.maxhenkel.voicechat.api.VoicechatServerApi (Interface, extends VoicechatApi)
+- `EntityAudioChannel createEntityAudioChannel(UUID channelId, Entity entity)`
+- `LocationalAudioChannel createLocationalAudioChannel(UUID channelId, ServerLevel level, Position position)`
+- `StaticAudioChannel createStaticAudioChannel(UUID channelId, ServerLevel level, VoicechatConnection connection)`
+- `AudioPlayer createAudioPlayer(AudioChannel channel, OpusEncoder encoder, short[] audio)`
+- `AudioPlayer createAudioPlayer(AudioChannel channel, OpusEncoder encoder, Supplier<short[]> audioSupplier)`
+- `AudioSender createAudioSender(VoicechatConnection connection)`
+- `void registerAudioSender(AudioSender sender)` - one per player
+- `void unregisterAudioSender(AudioSender sender)`
+- `VoicechatConnection getConnectionOf(UUID playerUuid)`
+- `VoicechatConnection getConnectionOf(ServerPlayer player)`
+- `Group.Builder groupBuilder()`
+- `void removeGroup(UUID groupId)`
+- `Group getGroup(UUID groupId)`
+- `List<Group> getGroups()`
+- `Collection<ServerPlayer> getPlayersInRange(ServerLevel level, Position position, double range)`
+- `Collection<ServerPlayer> getPlayersInRange(ServerLevel level, Position position, double range, Predicate<ServerPlayer> filter)`
+- `void registerVolumeCategory(VolumeCategory category)`
+- `void unregisterVolumeCategory(String categoryId)`
+- `Collection<VolumeCategory> getVolumeCategories()`
+- `void registerAudioListener(AudioListener listener)`
+- `void unregisterAudioListener(AudioListener listener)` / `unregisterAudioListener(UUID listenerId)`
+- `PlayerAudioListener.Builder playerAudioListenerBuilder()`
+- `void sendEntitySoundPacketTo(VoicechatConnection connection, EntitySoundPacket packet)`
+- `void sendLocationalSoundPacketTo(VoicechatConnection connection, LocationalSoundPacket packet)`
+- `void sendStaticSoundPacketTo(VoicechatConnection connection, StaticSoundPacket packet)`
+- `double getBroadcastRange()`
+- `ConfigAccessor getServerConfig()`
+
+### de.maxhenkel.voicechat.api.VoicechatConnection (Interface)
+- `ServerPlayer getPlayer()`
+- `boolean isConnected()` - may be faked by other plugins
+- `boolean isInstalled()`
+- `boolean isDisabled()`
+- `boolean isInGroup()`
+- `Group getGroup()` - state at time of fetch
+- `void setGroup(Group group)` - joins player to group
+- `void setConnected(boolean connected)`
+- `void setDisabled(boolean disabled)`
+
+### de.maxhenkel.voicechat.api.audiochannel.AudioChannel (Interface)
+- `UUID getId()`
+- `void send(byte[] opusData)`
+- `void send(MicrophonePacket packet)`
+- `void flush()` - call when done sending
+- `void setFilter(Predicate<ServerPlayer> filter)`
+- `void setCategory(String category)`
+- `boolean isClosed()`
+
+### de.maxhenkel.voicechat.api.audiochannel.EntityAudioChannel (extends AudioChannel)
+- `void setDistance(float distance)`
+- `void setWhispering(boolean whispering)`
+- `void updateEntity(Entity entity)`
+
+### de.maxhenkel.voicechat.api.audiochannel.LocationalAudioChannel (extends AudioChannel)
+- `void setDistance(float distance)`
+- `void updateLocation(Position location)`
+
+### de.maxhenkel.voicechat.api.audiochannel.AudioPlayer (Interface)
+- `void startPlaying()`
+- `void stopPlaying()`
+- `boolean isPlaying()`
+- `boolean isStarted()`
+- `boolean isStopped()`
+- `void setOnStopped(Runnable onStopped)`
+
+### de.maxhenkel.voicechat.api.audiosender.AudioSender (Interface)
+- `boolean canSend()`
+- `void send(byte[] opusData)` - acts as player microphone input
+- `AudioSender whispering(boolean whispering)`
+- `AudioSender sequenceNumber(long sequenceNumber)`
+- `void reset()` - signals end of stream
+
+### de.maxhenkel.voicechat.api.Group (Interface)
+- `String getName()`
+- `UUID getId()`
+- `boolean hasPassword()`
+- `boolean isPersistent()`
+- `boolean isHidden()`
+- `Group.Type getType()` - NORMAL, OPEN, or ISOLATED
+
+### de.maxhenkel.voicechat.api.Group.Builder (Interface)
+- `Builder setName(String name)`
+- `Builder setPassword(String password)`
+- `Builder setPersistent(boolean persistent)`
+- `Builder setType(Group.Type type)`
+- `Builder setHidden(boolean hidden)`
+- `Builder setId(UUID id)`
+- `Group build()`
+
+### de.maxhenkel.voicechat.api.opus.OpusEncoder (Interface)
+- `byte[] encode(short[] rawAudio)` - encodes 48kHz 16-bit mono PCM to opus
+- `void resetState()`
+- `void close()` - MUST call to avoid memory leak
+- `boolean isClosed()`
+
+### de.maxhenkel.voicechat.api.opus.OpusDecoder (Interface)
+- `short[] decode(byte[] opus)` - decodes opus to 48kHz 16-bit mono PCM
+- `void resetState()`
+- `void close()` - MUST call to avoid memory leak
+- `boolean isClosed()`
+
+### de.maxhenkel.voicechat.api.audio.AudioConverter (Interface)
+- `short[] bytesToShorts(byte[] bytes)`
+- `byte[] shortsToBytes(short[] shorts)`
+- `float[] shortsToFloats(short[] shorts)`
+- `short[] floatsToShorts(float[] floats)`
+
+### de.maxhenkel.voicechat.api.audiolistener.PlayerAudioListener.Builder (Interface)
+- `Builder setPlayer(ServerPlayer player)` or `Builder setPlayer(UUID playerUuid)`
+- `Builder setPacketListener(Consumer<SoundPacket> listener)` - required
+- `PlayerAudioListener build()`
+
+### de.maxhenkel.voicechat.api.VolumeCategory.Builder (Interface)
+- `Builder setId(String id)` - 1-16 chars, lowercase a-z and _ only
+- `Builder setName(String name)`
+- `Builder setDescription(String description)`
+- `Builder setIcon(int[][] icon)` - 16x16 array
+- `VolumeCategory build()`
+
+### de.maxhenkel.voicechat.api.events.EventRegistration (Interface)
+- `<T extends Event> void registerEvent(Class<T> eventClass, Consumer<T> listener)`
+- `<T extends Event> void registerEvent(Class<T> eventClass, Consumer<T> listener, int priority)`
+
+### de.maxhenkel.voicechat.api.packets.MicrophonePacket (Interface, extends ConvertablePacket)
+- `byte[] getOpusEncodedData()`
+- `void setOpusEncodedData(byte[] data)`
+- `boolean isWhispering()`
+- `EntitySoundPacket.Builder entitySoundPacketBuilder()`
+- `LocationalSoundPacket.Builder locationalSoundPacketBuilder()`
+- `StaticSoundPacket.Builder staticSoundPacketBuilder()`
+
+### de.maxhenkel.voicechat.api.packets.SoundPacket (Interface)
+- `UUID getChannelId()`
+- `UUID getSender()`
+- `byte[] getOpusEncodedData()`
+- `long getSequenceNumber()`
+- `String getCategory()`
+
+### de.maxhenkel.voicechat.api.Position (Interface)
+- `double getX()` / `double getY()` / `double getZ()`
+
+### de.maxhenkel.voicechat.api.ServerPlayer (Interface)
+- `Object getPlayer()` - returns platform player (org.bukkit.entity.Player on Bukkit)
+- `ServerLevel getServerLevel()`
+
+### de.maxhenkel.voicechat.api.ServerLevel (Interface)
+- `Object getServerLevel()` - returns platform world (org.bukkit.World on Bukkit)
+
+### de.maxhenkel.voicechat.api.Entity (Interface)
+- `Object getEntity()` - returns platform entity
+- `UUID getUuid()`
+- `Position getPosition()`
+
+### de.maxhenkel.voicechat.api.config.ConfigAccessor (Interface)
+- `Object getValue(String key)`
+- `boolean hasKey(String key)`
+- `String getString(String key, String defaultValue)`
+- `int getInt(String key, int defaultValue)`
+- `double getDouble(String key, double defaultValue)`
+- `boolean getBoolean(String key, boolean defaultValue)`

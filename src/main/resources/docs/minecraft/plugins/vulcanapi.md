@@ -1,289 +1,341 @@
-# VulcanAPI API Reference
+# Vulcan Anti-Cheat API
 
-## Package: me.frep.vulcan.api
+Developer API for Vulcan, a packet-level Minecraft anticheat. Requires `enable-api: true` in Vulcan's config.
 
-### Class: me.frep.vulcan.api.VulcanAPI
-Type: Interface
+## Getting the API Instance
 
-Methods:
-- void flag(Player, String, String, String)
-- Map getBroadcastPunishments()
-- Map getAlertIntervals()
-- IPlayerData getPlayerData(Player)
-- Map getRandomRotationIntervals()
-- void executeBanWave()
-- Map getMinimumViolationsToNotify()
-- double getTps()
-- Map getHotbarShuffleIntervals()
-- String getVulcanVersion()
-- Map getRandomRotation()
-- List getChecks(Player)
-- Set getChecks()
-- Check getCheck(Player, String, char)
-- int getSensitivity(Player)
-- Map getMinimumTps()
-- void toggleAlerts(Player)
-- Map getMaximumPings()
-- Map getEnabledChecks()
-- boolean isFrozen(Player)
-- int getTransactionPing(Player)
-- int getPlayerViolations(Player)
-- void toggleVerbose(Player)
-- double getKurtosis(Player)
-- int getTotalViolations(Player)
-- Map getPunishmentCommands()
-- String getServerVersion()
-- Map getBufferDecays()
-- int getPing(Player)
-- Map getHotbarShuffle()
-- int getJoinTicks(Player)
-- int getMovementViolations(Player)
-- boolean hasAlertsEnabled(Player)
-- int getTicks()
-- boolean isCheckEnabled(String)
-- Map getMaxViolations()
-- Map getMaxBuffers()
-- String getClientVersion(Player)
-- Map getHotbarShuffleMinimums()
-- void setFrozen(Player, boolean)
-- double getCps(Player)
-- Map getPunishableChecks()
-- Map getBufferMultiples()
-- Map getCheckData()
-- Map getRandomRotationMinimums()
-- int getCombatViolations(Player)
+```java
+import me.frep.vulcan.api.VulcanAPI;
 
-## Package: me.frep.vulcan.api.check
+VulcanAPI vulcan = VulcanAPI.Factory.getApi();
+```
 
-### Class: me.frep.vulcan.api.check.Check
-Type: Interface
+## Listen for Flag Events (Player Triggered a Check)
 
-Methods:
-- double getMaxBuffer()
-- char getDisplayType()
-- String getName()
-- double getBuffer()
-- void setBuffer(double)
-- double getBufferMultiple()
-- String getCategory()
-- int getAlertInterval()
-- String getDescription()
-- int getMaxVl()
-- int getMinimumVlToNotify()
-- boolean isExperimental()
-- String getDisplayName()
-- char getType()
-- String getComplexType()
-- int getVl()
-- void setVl(int)
-- boolean isPunishable()
-- double getBufferDecay()
+```java
+import me.frep.vulcan.api.VulcanAPI;
+import me.frep.vulcan.api.check.Check;
+import me.frep.vulcan.api.event.VulcanFlagEvent;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
-### Class: me.frep.vulcan.api.check.ICheckData
-Type: Interface
+public class VulcanFlagListener implements Listener {
 
-Methods:
-- double getMaxBuffer()
-- boolean isRandomRotation()
-- List getPunishmentCommands()
-- double getBufferMultiple()
-- boolean isBroadcastPunishment()
-- int getMinimumVlToShuffleHotbar()
-- int getAlertInterval()
-- int getMinimumVlToRandomlyRotate()
-- int getMinimumVlToNotify()
-- int getMaxViolations()
-- double getMinimumTps()
-- boolean isEnabled()
-- int getRandomRotationInterval()
-- boolean isHotbarShuffle()
-- int getMaxPing()
-- boolean isPunishable()
-- double getBufferDecay()
+    @EventHandler
+    public void onFlag(VulcanFlagEvent event) {
+        Player player = event.getPlayer();
+        Check check = event.getCheck();
+        String info = event.getInfo();
 
-## Package: me.frep.vulcan.api.data
+        String msg = player.getName() + " flagged " + check.getName()
+                + " (type " + check.getType() + ") VL: " + check.getVl()
+                + "/" + check.getMaxVl() + " - " + info;
+        player.getServer().getLogger().info(msg);
 
-### Class: me.frep.vulcan.api.data.IPlayerData
-Type: Interface
+        // Cancel to prevent Vulcan from processing this flag further
+        // event.setCancelled(true);
+    }
+}
+```
 
-Methods:
-- long getJoinTime()
-- int getTotalViolations()
-- int getScaffoldViolations()
-- int getAutoClickerViolations()
-- String getClientBrand()
-- int getTimerViolations()
-- int getJoinTicks()
-- int getMovementViolations()
-- long getLastClientBrandAlert()
-- int getPlayerViolations()
-- int getCombatViolations()
+## Listen for Punishment Events
 
-## Package: me.frep.vulcan.api.event
+```java
+import me.frep.vulcan.api.check.Check;
+import me.frep.vulcan.api.event.VulcanPunishEvent;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
-### Class: me.frep.vulcan.api.event.VulcanDisableAlertsEvent
-Type: Class
-Extends: org.bukkit.event.Event
-Implements: org.bukkit.event.Cancellable
+public class VulcanPunishListener implements Listener {
 
-Methods:
-- Player getPlayer()
-- boolean isCancelled()
-- void setCancelled(boolean)
-- long getTimestamp()
-- HandlerList getHandlers()
-- HandlerList getHandlerList()
+    @EventHandler
+    public void onPunish(VulcanPunishEvent event) {
+        Player player = event.getPlayer();
+        Check check = event.getCheck();
 
-### Class: me.frep.vulcan.api.event.VulcanDiscordWebhookPunishEvent
-Type: Class
-Extends: org.bukkit.event.Event
-Implements: org.bukkit.event.Cancellable
+        // Cancel to prevent the punishment from executing
+        // event.setCancelled(true);
+    }
+}
+```
 
-Methods:
-- Player getPlayer()
-- boolean isCancelled()
-- long getTimestamp()
-- void setCancelled(boolean)
-- HandlerList getHandlers()
-- HandlerList getHandlerList()
+## Query Player Data and Violations
 
-### Class: me.frep.vulcan.api.event.VulcanEnableAlertsEvent
-Type: Class
-Extends: org.bukkit.event.Event
-Implements: org.bukkit.event.Cancellable
+```java
+import me.frep.vulcan.api.VulcanAPI;
+import me.frep.vulcan.api.data.IPlayerData;
+import org.bukkit.entity.Player;
 
-Methods:
-- Player getPlayer()
-- boolean isCancelled()
-- void setCancelled(boolean)
-- long getTimestamp()
-- HandlerList getHandlers()
-- HandlerList getHandlerList()
+public class VulcanPlayerInfo {
 
-### Class: me.frep.vulcan.api.event.VulcanFlagEvent
-Type: Class
-Extends: org.bukkit.event.Event
-Implements: org.bukkit.event.Cancellable
+    public void printPlayerInfo(Player player) {
+        VulcanAPI vulcan = VulcanAPI.Factory.getApi();
 
-Methods:
-- Player getPlayer()
-- boolean isCancelled()
-- Check getCheck()
-- String getInfo()
-- long getTimestamp()
-- void setCancelled(boolean)
-- HandlerList getHandlers()
-- HandlerList getHandlerList()
+        int totalVl = vulcan.getTotalViolations(player);
+        int combatVl = vulcan.getCombatViolations(player);
+        int movementVl = vulcan.getMovementViolations(player);
+        int ping = vulcan.getPing(player);
+        int transactionPing = vulcan.getTransactionPing(player);
+        double cps = vulcan.getCps(player);
+        String clientVersion = vulcan.getClientVersion(player);
+        boolean frozen = vulcan.isFrozen(player);
 
-### Class: me.frep.vulcan.api.event.VulcanGhostBlockEvent
-Type: Class
-Extends: org.bukkit.event.Event
-Implements: org.bukkit.event.Cancellable
+        IPlayerData data = vulcan.getPlayerData(player);
+        int scaffoldVl = data.getScaffoldViolations();
+        int timerVl = data.getTimerViolations();
+        int autoClickerVl = data.getAutoClickerViolations();
+        String clientBrand = data.getClientBrand();
+        long joinTime = data.getJoinTime();
+    }
+}
+```
 
-Methods:
-- Player getPlayer()
-- boolean isCancelled()
-- long getTimestamp()
-- void setCancelled(boolean)
-- HandlerList getHandlers()
-- HandlerList getHandlerList()
+## Query and Manipulate Checks
 
-### Class: me.frep.vulcan.api.event.VulcanJudgementDayEndEvent
-Type: Class
-Extends: org.bukkit.event.Event
-Implements: org.bukkit.event.Cancellable
+```java
+import me.frep.vulcan.api.VulcanAPI;
+import me.frep.vulcan.api.check.Check;
+import org.bukkit.entity.Player;
 
-Methods:
-- boolean isCancelled()
-- void setCancelled(boolean)
-- HandlerList getHandlers()
-- HandlerList getHandlerList()
+import java.util.List;
+import java.util.Set;
 
-### Class: me.frep.vulcan.api.event.VulcanJudgementDayStartEvent
-Type: Class
-Extends: org.bukkit.event.Event
-Implements: org.bukkit.event.Cancellable
+public class VulcanCheckQuery {
 
-Methods:
-- boolean isCancelled()
-- void setCancelled(boolean)
-- HandlerList getHandlers()
-- HandlerList getHandlerList()
+    public void inspectChecks(Player player) {
+        VulcanAPI vulcan = VulcanAPI.Factory.getApi();
 
-### Class: me.frep.vulcan.api.event.VulcanPostFlagEvent
-Type: Class
-Extends: org.bukkit.event.Event
-Implements: org.bukkit.event.Cancellable
+        // Get all registered check names
+        Set<String> allChecks = vulcan.getChecks();
 
-Methods:
-- Player getPlayer()
-- boolean isCancelled()
-- Check getCheck()
-- String getInfo()
-- long getTimestamp()
-- void setCancelled(boolean)
-- HandlerList getHandlers()
-- HandlerList getHandlerList()
+        // Get all checks for a specific player
+        List<Check> playerChecks = vulcan.getChecks(player);
 
-### Class: me.frep.vulcan.api.event.VulcanPunishEvent
-Type: Class
-Extends: org.bukkit.event.Event
-Implements: org.bukkit.event.Cancellable
+        // Get a specific check by name and type char (e.g., "Speed" type 'A')
+        Check speedA = vulcan.getCheck(player, "Speed", 'A');
+        if (speedA != null) {
+            int vl = speedA.getVl();
+            speedA.setVl(0); // Reset violations
+            double buffer = speedA.getBuffer();
+            speedA.setBuffer(0.0); // Reset buffer
+        }
 
-Methods:
-- Player getPlayer()
-- boolean isCancelled()
-- Check getCheck()
-- void setCancelled(boolean)
-- HandlerList getHandlers()
-- HandlerList getHandlerList()
+        // Check if a check is enabled globally
+        boolean enabled = vulcan.isCheckEnabled("Speed A");
+    }
+}
+```
 
-### Class: me.frep.vulcan.api.event.VulcanPunishmentLogCreateEvent
-Type: Class
-Extends: org.bukkit.event.Event
-Implements: org.bukkit.event.Cancellable
+## Freeze / Unfreeze a Player
 
-Methods:
-- Player getPlayer()
-- boolean isCancelled()
-- void setCancelled(boolean)
-- HandlerList getHandlers()
-- HandlerList getHandlerList()
+```java
+import me.frep.vulcan.api.VulcanAPI;
+import org.bukkit.entity.Player;
 
-### Class: me.frep.vulcan.api.event.VulcanRegisterPlayerEvent
-Type: Class
-Extends: org.bukkit.event.Event
-Implements: org.bukkit.event.Cancellable
+public class VulcanFreeze {
 
-Methods:
-- Player getPlayer()
-- boolean isCancelled()
-- void setCancelled(boolean)
-- HandlerList getHandlers()
-- HandlerList getHandlerList()
+    public void toggleFreeze(Player player) {
+        VulcanAPI vulcan = VulcanAPI.Factory.getApi();
 
-### Class: me.frep.vulcan.api.event.VulcanSetbackEvent
-Type: Class
-Extends: org.bukkit.event.Event
-Implements: org.bukkit.event.Cancellable
+        vulcan.setFrozen(player, true);   // Freeze
+        vulcan.setFrozen(player, false);  // Unfreeze
+        boolean frozen = vulcan.isFrozen(player);
+    }
+}
+```
 
-Methods:
-- Player getPlayer()
-- boolean isCancelled()
-- Check getCheck()
-- long getTimestamp()
-- void setCancelled(boolean)
-- HandlerList getHandlers()
-- HandlerList getHandlerList()
+## Toggle Alerts and Verbose
 
-### Class: me.frep.vulcan.api.event.VulcanViolationResetEvent
-Type: Class
-Extends: org.bukkit.event.Event
-Implements: org.bukkit.event.Cancellable
+```java
+import me.frep.vulcan.api.VulcanAPI;
+import org.bukkit.entity.Player;
 
-Methods:
-- boolean isCancelled()
-- void setCancelled(boolean)
-- HandlerList getHandlers()
-- HandlerList getHandlerList()
+public class VulcanAlerts {
 
+    public void manageAlerts(Player staffMember) {
+        VulcanAPI vulcan = VulcanAPI.Factory.getApi();
+
+        vulcan.toggleAlerts(staffMember);
+        boolean hasAlerts = vulcan.hasAlertsEnabled(staffMember);
+
+        vulcan.toggleVerbose(staffMember);
+    }
+}
+```
+
+## Trigger a Flag Programmatically
+
+```java
+import me.frep.vulcan.api.VulcanAPI;
+import org.bukkit.entity.Player;
+
+public class VulcanCustomFlag {
+
+    public void flagPlayer(Player player) {
+        VulcanAPI vulcan = VulcanAPI.Factory.getApi();
+        // flag(player, checkName, checkType, info)
+        vulcan.flag(player, "CustomCheck", "A", "Triggered by external plugin");
+    }
+}
+```
+
+## Server Info and Ban Wave
+
+```java
+import me.frep.vulcan.api.VulcanAPI;
+
+public class VulcanServerInfo {
+
+    public void printInfo() {
+        VulcanAPI vulcan = VulcanAPI.Factory.getApi();
+
+        String vulcanVersion = vulcan.getVulcanVersion();
+        String serverVersion = vulcan.getServerVersion();
+        double tps = vulcan.getTps();
+        int ticks = vulcan.getTicks();
+
+        // Execute all pending ban wave punishments
+        vulcan.executeBanWave();
+    }
+}
+```
+
+## Listen for Setback Events
+
+```java
+import me.frep.vulcan.api.check.Check;
+import me.frep.vulcan.api.event.VulcanSetbackEvent;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+
+public class VulcanSetbackListener implements Listener {
+
+    @EventHandler
+    public void onSetback(VulcanSetbackEvent event) {
+        Player player = event.getPlayer();
+        Check check = event.getCheck();
+        // Cancel to prevent the setback (teleport-back)
+        // event.setCancelled(true);
+    }
+}
+```
+
+## API Reference
+
+### Interface `me.frep.vulcan.api.VulcanAPI`
+- `static VulcanAPI Factory.getApi()` -- obtain the API instance
+- `void flag(Player, String checkName, String checkType, String info)` -- trigger a flag
+- `void executeBanWave()` -- execute pending ban wave
+- `IPlayerData getPlayerData(Player)` -- get player data
+- `List<Check> getChecks(Player)` -- checks for a player
+- `Set<String> getChecks()` -- all registered check names
+- `Check getCheck(Player, String name, char type)` -- specific check
+- `boolean isCheckEnabled(String)` -- check enabled globally
+- `int getTotalViolations(Player)` -- total VL
+- `int getPlayerViolations(Player)` -- player VL
+- `int getCombatViolations(Player)` -- combat VL
+- `int getMovementViolations(Player)` -- movement VL
+- `double getCps(Player)` -- clicks per second
+- `int getPing(Player)` -- player ping
+- `int getTransactionPing(Player)` -- transaction ping
+- `int getSensitivity(Player)` -- mouse sensitivity
+- `double getKurtosis(Player)` -- rotation kurtosis
+- `String getClientVersion(Player)` -- client version string
+- `int getJoinTicks(Player)` -- ticks since join
+- `boolean isFrozen(Player)` -- freeze state
+- `void setFrozen(Player, boolean)` -- set freeze state
+- `void toggleAlerts(Player)` -- toggle alert notifications
+- `boolean hasAlertsEnabled(Player)` -- check alert state
+- `void toggleVerbose(Player)` -- toggle verbose mode
+- `double getTps()` -- server TPS
+- `int getTicks()` -- server tick count
+- `String getVulcanVersion()` -- Vulcan version
+- `String getServerVersion()` -- server version
+- `Map getMaxViolations()` -- max VL per check
+- `Map getPunishmentCommands()` -- punishment commands per check
+- `Map getPunishableChecks()` -- punishable check map
+- `Map getEnabledChecks()` -- enabled check map
+- `Map getCheckData()` -- all check data
+- `Map getMaxBuffers()` -- max buffers per check
+- `Map getBufferDecays()` -- buffer decay per check
+- `Map getBufferMultiples()` -- buffer multiples per check
+- `Map getAlertIntervals()` -- alert intervals per check
+- `Map getMinimumViolationsToNotify()` -- min VL to notify per check
+- `Map getMinimumTps()` -- min TPS per check
+- `Map getMaximumPings()` -- max ping per check
+- `Map getBroadcastPunishments()` -- broadcast punishment map
+- `Map getRandomRotation()` -- random rotation map
+- `Map getRandomRotationIntervals()` -- random rotation intervals
+- `Map getRandomRotationMinimums()` -- random rotation minimums
+- `Map getHotbarShuffle()` -- hotbar shuffle map
+- `Map getHotbarShuffleIntervals()` -- hotbar shuffle intervals
+- `Map getHotbarShuffleMinimums()` -- hotbar shuffle minimums
+
+### Interface `me.frep.vulcan.api.check.Check`
+- `String getName()` -- check name (e.g. "Speed")
+- `char getType()` -- type char (e.g. 'A')
+- `String getComplexType()` -- full type string
+- `String getDisplayName()` -- display name
+- `char getDisplayType()` -- display type char
+- `String getCategory()` -- category (Combat, Movement, Player)
+- `String getDescription()` -- description
+- `int getVl()` / `void setVl(int)` -- violation level
+- `double getBuffer()` / `void setBuffer(double)` -- buffer value
+- `double getMaxBuffer()` -- max buffer
+- `double getBufferDecay()` -- buffer decay rate
+- `double getBufferMultiple()` -- buffer multiple
+- `int getMaxVl()` -- max violations before punishment
+- `int getAlertInterval()` -- alert interval
+- `int getMinimumVlToNotify()` -- min VL before alerts
+- `boolean isPunishable()` -- whether check can punish
+- `boolean isExperimental()` -- whether check is experimental
+
+### Interface `me.frep.vulcan.api.check.ICheckData`
+- `boolean isEnabled()` -- check enabled
+- `boolean isPunishable()` -- check punishable
+- `int getMaxViolations()` -- max VL
+- `List<String> getPunishmentCommands()` -- commands on punish
+- `boolean isBroadcastPunishment()` -- broadcast on punish
+- `double getMinimumTps()` -- min TPS to activate
+- `int getMaxPing()` -- max ping to activate
+- `int getAlertInterval()` -- alert interval
+- `int getMinimumVlToNotify()` -- min VL to alert
+- `double getMaxBuffer()` / `getBufferDecay()` / `getBufferMultiple()` -- buffer settings
+- `boolean isRandomRotation()` -- random rotation enabled
+- `int getRandomRotationInterval()` / `getMinimumVlToRandomlyRotate()` -- rotation settings
+- `boolean isHotbarShuffle()` -- hotbar shuffle enabled
+- `int getMinimumVlToShuffleHotbar()` -- min VL for hotbar shuffle
+
+### Interface `me.frep.vulcan.api.data.IPlayerData`
+- `long getJoinTime()` -- join timestamp
+- `int getJoinTicks()` -- ticks since join
+- `int getTotalViolations()` -- total VL
+- `int getPlayerViolations()` -- player VL
+- `int getCombatViolations()` -- combat VL
+- `int getMovementViolations()` -- movement VL
+- `int getScaffoldViolations()` -- scaffold VL
+- `int getTimerViolations()` -- timer VL
+- `int getAutoClickerViolations()` -- autoclicker VL
+- `String getClientBrand()` -- client brand string
+- `long getLastClientBrandAlert()` -- last brand alert timestamp
+
+### Event Classes (all in `me.frep.vulcan.api.event`, extend `Event`, implement `Cancellable`)
+
+| Event | Key Methods |
+|---|---|
+| `VulcanFlagEvent` | `getPlayer()`, `getCheck()`, `getInfo()`, `getTimestamp()` |
+| `VulcanPostFlagEvent` | `getPlayer()`, `getCheck()`, `getInfo()`, `getTimestamp()` |
+| `VulcanPunishEvent` | `getPlayer()`, `getCheck()` |
+| `VulcanSetbackEvent` | `getPlayer()`, `getCheck()`, `getTimestamp()` |
+| `VulcanGhostBlockEvent` | `getPlayer()`, `getTimestamp()` |
+| `VulcanEnableAlertsEvent` | `getPlayer()`, `getTimestamp()` |
+| `VulcanDisableAlertsEvent` | `getPlayer()`, `getTimestamp()` |
+| `VulcanRegisterPlayerEvent` | `getPlayer()` |
+| `VulcanPunishmentLogCreateEvent` | `getPlayer()` |
+| `VulcanDiscordWebhookPunishEvent` | `getPlayer()`, `getTimestamp()` |
+| `VulcanJudgementDayStartEvent` | *(no player)* |
+| `VulcanJudgementDayEndEvent` | *(no player)* |
+| `VulcanViolationResetEvent` | *(no player)* |

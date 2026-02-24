@@ -1,1203 +1,847 @@
-# Slimefun-6719984-Dev-io-github-thebusybiscuit-slimefun4-api API Reference
-
-**Package Filter:** `io.github.thebusybiscuit.slimefun4.api`
-
-## Package: io.github.thebusybiscuit.slimefun4.api
-
-### Class: io.github.thebusybiscuit.slimefun4.api.SlimefunAddon
-Type: Interface
-
-Methods:
-- String getBugTrackerURL()
-- JavaPlugin getJavaPlugin()
-- boolean hasDependency(String dependency)
-- String getName()
-- String getPluginVersion()
-- Logger getLogger()
-- String getWikiURL()
-
-### Class: io.github.thebusybiscuit.slimefun4.api.ErrorReport
-Type: Class
-
-Constructors:
-- ErrorReport(T throwable, T addon, ; printer)
-- ErrorReport(T throwable, T l, ; item)
-- ErrorReport(T throwable, T item)
-
-Methods:
-- TT getThrown()
-- **static** V tryCatch(Function<Exception, ErrorReport<Exception>> function, Runnable runnable)
-- **static** int count()
-- File getFile()
-
-### Class: io.github.thebusybiscuit.slimefun4.api.MinecraftVersion
-Type: Enum
-Extends: java.lang.Enum
-
-Enum Constants:
-- MINECRAFT_1_16
-- MINECRAFT_1_17
-- MINECRAFT_1_18
-- MINECRAFT_1_19
-- MINECRAFT_1_20
-- MINECRAFT_1_20_5
-- MINECRAFT_1_21
-- UNKNOWN
-- UNIT_TEST
-
-Methods:
-- boolean isAtLeast(MinecraftVersion version)
-- boolean isAtLeast(int majorVersion, int minorVersion)
-- String getName()
-- **static** MinecraftVersion valueOf(String name)
-- **static** MinecraftVersion[] values()
-- boolean isVirtual()
-- boolean isMinecraftVersion(int minecraftVersion)
-- boolean isMinecraftVersion(int minecraftVersion, int patchVersion)
-- boolean isBefore(MinecraftVersion version)
-- boolean isBefore(int majorVersion, int minorVersion)
-
-### Class: io.github.thebusybiscuit.slimefun4.api.SlimefunBranch
-Type: Enum
-Extends: java.lang.Enum
-
-Enum Constants:
-- DEVELOPMENT
-- STABLE
-- UNOFFICIAL
-- UNKNOWN
-
-Methods:
-- String getName()
-- **static** SlimefunBranch valueOf(String name)
-- **static** SlimefunBranch[] values()
-- boolean isOfficial()
-
-## Package: io.github.thebusybiscuit.slimefun4.api.events
-
-### Class: io.github.thebusybiscuit.slimefun4.api.events.AncientAltarCraftEvent
-Type: Class
-Extends: org.bukkit.event.player.PlayerEvent
-Implements: org.bukkit.event.Cancellable
-
-Constructors:
-- AncientAltarCraftEvent(ItemStack output, Block block, Player player)
-
-Methods:
-- boolean isCancelled()
-- HandlerList getHandlers()
-- void setCancelled(boolean cancel)
-- **static** HandlerList getHandlerList()
-- ItemStack getItem()
-- Block getAltarBlock()
-- void setItem(ItemStack output)
-
-### Class: io.github.thebusybiscuit.slimefun4.api.events.AndroidFarmEvent
-Type: Class
-Extends: org.bukkit.event.Event
-Implements: org.bukkit.event.Cancellable
-
-Constructors:
-- AndroidFarmEvent(Block block, AndroidInstance android, boolean isAdvanced, ItemStack drop)
-
-Methods:
-- boolean isCancelled()
-- Block getBlock()
-- boolean isAdvanced()
-- HandlerList getHandlers()
-- void setCancelled(boolean cancel)
-- **static** HandlerList getHandlerList()
-- void setDrop(ItemStack drop)
-- ItemStack getDrop()
-- AndroidInstance getAndroid()
-
-### Class: io.github.thebusybiscuit.slimefun4.api.events.AndroidMineEvent
-Type: Class
-Extends: org.bukkit.event.Event
-Implements: org.bukkit.event.Cancellable
-
-Constructors:
-- AndroidMineEvent(Block block, AndroidInstance android)
-
-Methods:
-- boolean isCancelled()
-- Block getBlock()
-- HandlerList getHandlers()
-- void setCancelled(boolean cancel)
-- **static** HandlerList getHandlerList()
-- AndroidInstance getAndroid()
-
-### Class: io.github.thebusybiscuit.slimefun4.api.events.AsyncAutoEnchanterProcessEvent
-Type: Class
-Extends: org.bukkit.event.Event
-Implements: org.bukkit.event.Cancellable
-
-Constructors:
-- AsyncAutoEnchanterProcessEvent(ItemStack item, ItemStack enchantedBook, BlockMenu menu)
-
-Methods:
-- boolean isCancelled()
-- ItemStack getEnchantedBook()
-- void setCancelled(boolean cancel)
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- BlockMenu getMenu()
-- ItemStack getItem()
-
-### Class: io.github.thebusybiscuit.slimefun4.api.events.AsyncMachineOperationFinishEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Constructors:
-- AsyncMachineOperationFinishEvent(BlockPosition position, MachineProcessor<TT> machineProcessor, T machineOperation)
-
-Methods:
-- MachineProcessor<*> getProcessor()
-- BlockPosition getPosition()
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- MachineOperation getOperation()
-
-### Class: io.github.thebusybiscuit.slimefun4.api.events.AsyncProfileLoadEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Constructors:
-- AsyncProfileLoadEvent(PlayerProfile uniqueId)
-
-Methods:
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- PlayerProfile getProfile()
-- void setProfile(PlayerProfile profile)
-- UUID getPlayerUUID()
-
-### Class: io.github.thebusybiscuit.slimefun4.api.events.AutoDisenchantEvent
-Type: Class
-Extends: org.bukkit.event.Event
-Implements: org.bukkit.event.Cancellable
-
-Constructors:
-- AutoDisenchantEvent(ItemStack item)
-- AutoDisenchantEvent(ItemStack item, Block block)
-
-Methods:
-- boolean isCancelled()
-- Block getBlock()
-- HandlerList getHandlers()
-- void setCancelled(boolean cancel)
-- **static** HandlerList getHandlerList()
-- ItemStack getItem()
-
-### Class: io.github.thebusybiscuit.slimefun4.api.events.AutoEnchantEvent
-Type: Class
-Extends: org.bukkit.event.Event
-Implements: org.bukkit.event.Cancellable
-
-Constructors:
-- AutoEnchantEvent(ItemStack item)
-- AutoEnchantEvent(ItemStack item, Block block)
-
-Methods:
-- boolean isCancelled()
-- Block getBlock()
-- HandlerList getHandlers()
-- void setCancelled(boolean cancel)
-- **static** HandlerList getHandlerList()
-- ItemStack getItem()
-
-### Class: io.github.thebusybiscuit.slimefun4.api.events.BlockPlacerPlaceEvent
-Type: Class
-Extends: org.bukkit.event.block.BlockEvent
-Implements: org.bukkit.event.Cancellable
-
-Constructors:
-- BlockPlacerPlaceEvent(Block blockPlacer, ItemStack placedItem, Block cancelled)
-
-Methods:
-- void setImmutable()
-- boolean isCancelled()
-- HandlerList getHandlers()
-- void setCancelled(boolean cancel)
-- **static** HandlerList getHandlerList()
-- void setItemStack(ItemStack item)
-- ItemStack getItemStack()
-- Block getBlockPlacer()
-
-### Class: io.github.thebusybiscuit.slimefun4.api.events.ClimbingPickLaunchEvent
-Type: Class
-Extends: org.bukkit.event.player.PlayerEvent
-Implements: org.bukkit.event.Cancellable
-
-Constructors:
-- ClimbingPickLaunchEvent(Player player, Vector velocity, ClimbingPick pick, ItemStack itemStack, Block block)
-
-Methods:
-- boolean isCancelled()
-- Block getBlock()
-- Vector getVelocity()
-- ClimbingPick getPick()
-- HandlerList getHandlers()
-- void setCancelled(boolean cancel)
-- **static** HandlerList getHandlerList()
-- void setVelocity(Vector velocity)
-- ItemStack getItemStack()
-
-### Class: io.github.thebusybiscuit.slimefun4.api.events.CoolerFeedPlayerEvent
-Type: Class
-Extends: org.bukkit.event.player.PlayerEvent
-Implements: org.bukkit.event.Cancellable
-
-Constructors:
-- CoolerFeedPlayerEvent(Player player, Cooler cooler, ItemStack coolerItem, ItemStack consumedItem)
-
-Methods:
-- boolean isCancelled()
-- HandlerList getHandlers()
-- void setCancelled(boolean cancel)
-- ItemStack getCoolerItem()
-- **static** HandlerList getHandlerList()
-- ItemStack getConsumedItem()
-- Cooler getCooler()
-- void setConsumedItem(ItemStack item)
-
-### Class: io.github.thebusybiscuit.slimefun4.api.events.ExplosiveToolBreakBlocksEvent
-Type: Class
-Extends: org.bukkit.event.player.PlayerEvent
-Implements: org.bukkit.event.Cancellable
-
-Constructors:
-- ExplosiveToolBreakBlocksEvent(Player player, Block mainBlock, List<Block> additionalBlocks, ItemStack itemInHand, ExplosiveTool explosiveTool)
-
-Methods:
-- boolean isCancelled()
-- ExplosiveTool getExplosiveTool()
-- HandlerList getHandlers()
-- void setCancelled(boolean cancel)
-- **static** HandlerList getHandlerList()
-- List<Block> getAdditionalBlocks()
-- Block getPrimaryBlock()
-- ItemStack getItemInHand()
-
-### Class: io.github.thebusybiscuit.slimefun4.api.events.GEOResourceGenerationEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Constructors:
-- GEOResourceGenerationEvent(World world, Biome biome, int x, int z, GEOResource resource, int value)
-
-Methods:
-- int getValue()
-- GEOResource getResource()
-- World getWorld()
-- int getChunkZ()
-- HandlerList getHandlers()
-- int getChunkX()
-- **static** HandlerList getHandlerList()
-- void setValue(int value)
-- World$Environment getEnvironment()
-- Biome getBiome()
-
-### Class: io.github.thebusybiscuit.slimefun4.api.events.MultiBlockCraftEvent
-Type: Class
-Extends: org.bukkit.event.player.PlayerEvent
-Implements: org.bukkit.event.Cancellable
-
-Constructors:
-- MultiBlockCraftEvent(Player p, MultiBlockMachine machine, ItemStack[] input, ItemStack output)
-- MultiBlockCraftEvent(Player p, MultiBlockMachine machine, ItemStack input, ItemStack output)
-
-Methods:
-- boolean isCancelled()
-- HandlerList getHandlers()
-- void setCancelled(boolean cancel)
-- **static** HandlerList getHandlerList()
-- ItemStack[] getInput()
-- ItemStack setOutput(ItemStack output)
-- ItemStack getOutput()
-- MultiBlockMachine getMachine()
-
-### Class: io.github.thebusybiscuit.slimefun4.api.events.MultiBlockInteractEvent
-Type: Class
-Extends: org.bukkit.event.player.PlayerEvent
-Implements: org.bukkit.event.Cancellable
-
-Constructors:
-- MultiBlockInteractEvent(Player p, MultiBlock multiBlock, Block clickedBlock, BlockFace clickedFace)
-
-Methods:
-- BlockFace getClickedFace()
-- boolean isCancelled()
-- HandlerList getHandlers()
-- void setCancelled(boolean cancel)
-- **static** HandlerList getHandlerList()
-- MultiBlock getMultiBlock()
-- Block getClickedBlock()
-
-### Class: io.github.thebusybiscuit.slimefun4.api.events.PlayerLanguageChangeEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Constructors:
-- PlayerLanguageChangeEvent(Player player, Language from, Language to)
-
-Methods:
-- Player getPlayer()
-- Language getNewLanguage()
-- Language getPreviousLanguage()
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-
-### Class: io.github.thebusybiscuit.slimefun4.api.events.PlayerPreResearchEvent
-Type: Class
-Extends: org.bukkit.event.Event
-Implements: org.bukkit.event.Cancellable
-
-Constructors:
-- PlayerPreResearchEvent(Player player, Research research, SlimefunItem slimefunItem)
-
-Methods:
-- boolean isCancelled()
-- Player getPlayer()
-- void setCancelled(boolean cancelled)
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- SlimefunItem getSlimefunItem()
-- Research getResearch()
-
-### Class: io.github.thebusybiscuit.slimefun4.api.events.PlayerRightClickEvent
-Type: Class
-Extends: org.bukkit.event.player.PlayerEvent
-
-Constructors:
-- PlayerRightClickEvent(PlayerInteractEvent slimefunItem)
-
-Methods:
-- void cancel()
-- Event$Result useBlock()
-- EquipmentSlot getHand()
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- Optional<SlimefunItem> getSlimefunItem()
-- ItemStack getItem()
-- BlockFace getClickedFace()
-- Event$Result useItem()
-- PlayerInteractEvent getInteractEvent()
-- Optional<SlimefunItem> getSlimefunBlock()
-- void setUseBlock(Event$Result result)
-- void setUseItem(Event$Result result)
-- Optional<Block> getClickedBlock()
-
-### Class: io.github.thebusybiscuit.slimefun4.api.events.ReactorExplodeEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Constructors:
-- ReactorExplodeEvent(Location location, Reactor reactor)
-
-Methods:
-- Location getLocation()
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- Reactor getReactor()
-
-### Class: io.github.thebusybiscuit.slimefun4.api.events.ResearchUnlockEvent
-Type: Class
-Extends: org.bukkit.event.Event
-Implements: org.bukkit.event.Cancellable
-
-Constructors:
-- ResearchUnlockEvent(Player player, Research research)
-
-Methods:
-- boolean isCancelled()
-- Player getPlayer()
-- HandlerList getHandlers()
-- void setCancelled(boolean cancel)
-- **static** HandlerList getHandlerList()
-- Research getResearch()
-
-### Class: io.github.thebusybiscuit.slimefun4.api.events.SlimefunBlockBreakEvent
-Type: Class
-Extends: org.bukkit.event.Event
-Implements: org.bukkit.event.Cancellable
-
-Constructors:
-- SlimefunBlockBreakEvent(Player player, ItemStack heldItem, Block blockBroken, SlimefunItem slimefunItem)
-
-Methods:
-- boolean isCancelled()
-- Player getPlayer()
-- HandlerList getHandlers()
-- void setCancelled(boolean cancelled)
-- **static** HandlerList getHandlerList()
-- ItemStack getHeldItem()
-- SlimefunItem getSlimefunItem()
-- Block getBlockBroken()
-
-### Class: io.github.thebusybiscuit.slimefun4.api.events.SlimefunBlockPlaceEvent
-Type: Class
-Extends: org.bukkit.event.Event
-Implements: org.bukkit.event.Cancellable
-
-Constructors:
-- SlimefunBlockPlaceEvent(Player player, ItemStack placedItem, Block blockPlaced, SlimefunItem slimefunItem)
-
-Methods:
-- boolean isCancelled()
-- Player getPlayer()
-- HandlerList getHandlers()
-- void setCancelled(boolean cancelled)
-- **static** HandlerList getHandlerList()
-- SlimefunItem getSlimefunItem()
-- Block getBlockPlaced()
-- ItemStack getItemStack()
-
-### Class: io.github.thebusybiscuit.slimefun4.api.events.SlimefunGuideOpenEvent
-Type: Class
-Extends: org.bukkit.event.Event
-Implements: org.bukkit.event.Cancellable
-
-Constructors:
-- SlimefunGuideOpenEvent(Player player, ItemStack guide, SlimefunGuideMode layout)
-
-Methods:
-- boolean isCancelled()
-- Player getPlayer()
-- HandlerList getHandlers()
-- void setCancelled(boolean cancel)
-- **static** HandlerList getHandlerList()
-- SlimefunGuideMode getGuideLayout()
-- void setGuideLayout(SlimefunGuideMode layout)
-- ItemStack getGuide()
-
-### Class: io.github.thebusybiscuit.slimefun4.api.events.SlimefunItemRegistryFinalizedEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-
-### Class: io.github.thebusybiscuit.slimefun4.api.events.SlimefunItemSpawnEvent
-Type: Class
-Extends: org.bukkit.event.Event
-Implements: org.bukkit.event.Cancellable
-
-Constructors:
-- SlimefunItemSpawnEvent(Player player, Location location, ItemStack itemStack, ItemSpawnReason itemSpawnReason)
-- SlimefunItemSpawnEvent(Location location, ItemStack itemStack, ItemSpawnReason itemSpawnReason)
-
-Methods:
-- boolean isCancelled()
-- Location getLocation()
-- Optional<Player> getPlayer()
-- void setLocation(Location location)
-- HandlerList getHandlers()
-- void setCancelled(boolean cancelled)
-- **static** HandlerList getHandlerList()
-- ItemSpawnReason getItemSpawnReason()
-- void setItemStack(ItemStack itemStack)
-- ItemStack getItemStack()
-
-### Class: io.github.thebusybiscuit.slimefun4.api.events.TalismanActivateEvent
-Type: Class
-Extends: org.bukkit.event.player.PlayerEvent
-Implements: org.bukkit.event.Cancellable
-
-Constructors:
-- TalismanActivateEvent(Player preventConsumption, Talisman talisman, ItemStack talismanItemStack)
-
-Methods:
-- Talisman getTalisman()
-- ItemStack getTalismanItem()
-- boolean isCancelled()
-- void setPreventConsumption(boolean preventConsumption)
-- HandlerList getHandlers()
-- void setCancelled(boolean cancel)
-- **static** HandlerList getHandlerList()
-- boolean preventsConsumption()
-
-### Class: io.github.thebusybiscuit.slimefun4.api.events.WaypointCreateEvent
-Type: Class
-Extends: org.bukkit.event.player.PlayerEvent
-Implements: org.bukkit.event.Cancellable
-
-Constructors:
-- WaypointCreateEvent(Player player, String name, Location location)
-
-Methods:
-- boolean isDeathpoint()
-- void setName(String name)
-- boolean isCancelled()
-- Location getLocation()
-- String getName()
-- void setLocation(Location loc)
-- HandlerList getHandlers()
-- void setCancelled(boolean cancel)
-- **static** HandlerList getHandlerList()
-
-## Package: io.github.thebusybiscuit.slimefun4.api.exceptions
-
-### Class: io.github.thebusybiscuit.slimefun4.api.exceptions.BiomeMapException
-Type: Class
-Extends: java.lang.Exception
-
-Constructors:
-- BiomeMapException(NamespacedKey key, String message)
-- BiomeMapException(NamespacedKey key, Throwable cause)
-
-No public methods found
-
-### Class: io.github.thebusybiscuit.slimefun4.api.exceptions.IdConflictException
-Type: Class
-Extends: java.lang.RuntimeException
-
-Constructors:
-- IdConflictException(SlimefunItem item1, SlimefunItem item2)
-
-No public methods found
-
-### Class: io.github.thebusybiscuit.slimefun4.api.exceptions.IncompatibleItemHandlerException
-Type: Class
-Extends: java.lang.RuntimeException
-
-Constructors:
-- IncompatibleItemHandlerException(String message, SlimefunItem item, ItemHandler handler)
-
-No public methods found
-
-### Class: io.github.thebusybiscuit.slimefun4.api.exceptions.MissingDependencyException
-Type: Class
-Extends: java.lang.RuntimeException
-
-Constructors:
-- MissingDependencyException(SlimefunAddon addon, String dependency)
-
-No public methods found
-
-### Class: io.github.thebusybiscuit.slimefun4.api.exceptions.PrematureCodeException
-Type: Class
-Extends: java.lang.RuntimeException
-
-Constructors:
-- PrematureCodeException(String message)
-
-No public methods found
-
-### Class: io.github.thebusybiscuit.slimefun4.api.exceptions.TagMisconfigurationException
-Type: Class
-Extends: java.lang.Exception
-
-Constructors:
-- TagMisconfigurationException(NamespacedKey key, String message)
-- TagMisconfigurationException(NamespacedKey key, Throwable cause)
-
-No public methods found
-
-### Class: io.github.thebusybiscuit.slimefun4.api.exceptions.UnregisteredItemException
-Type: Class
-Extends: java.lang.RuntimeException
-
-Constructors:
-- UnregisteredItemException(SlimefunItem item)
-
-No public methods found
-
-### Class: io.github.thebusybiscuit.slimefun4.api.exceptions.WrongItemStackException
-Type: Class
-Extends: java.lang.RuntimeException
-
-Constructors:
-- WrongItemStackException(String message)
-
-No public methods found
-
-## Package: io.github.thebusybiscuit.slimefun4.api.geo
-
-### Class: io.github.thebusybiscuit.slimefun4.api.geo.GEOResource
-Type: Interface
-Implements: org.bukkit.Keyed
-
-Methods:
-- boolean isObtainableFromGEOMiner()
-- String getName()
-- String getName(Player p)
-- ItemStack getItem()
-- int getMaxDeviation()
-- int getDefaultSupply(World$Environment, Biome)
-- void register()
-
-### Class: io.github.thebusybiscuit.slimefun4.api.geo.ResourceManager
-Type: Class
-
-Constructors:
-- ResourceManager(Slimefun config)
-
-Methods:
-- void setSupplies(GEOResource resource, World world, int x, int z, int value)
-- OptionalInt getSupplies(GEOResource resource, World world, int x, int z)
-- void scan(Player p, Block block, int page)
-- V getSuppliesAsync(GEOResource resource, Chunk chunk, IAsyncReadCallback<Integer> callback)
-
-## Package: io.github.thebusybiscuit.slimefun4.api.gps
-
-### Class: io.github.thebusybiscuit.slimefun4.api.gps.GPSNetwork
-Type: Class
-
-Constructors:
-- GPSNetwork(Slimefun resourceManager)
-
-Methods:
-- Set<Location> getTransmitters(UUID uuid)
-- int getNetworkComplexity(UUID uuid)
-- void createWaypoint(Player p, Location l)
-- void openTransmitterControlPanel(Player p)
-- int countTransmitters(UUID uuid)
-- TeleportationManager getTeleportationManager()
-- void updateTransmitter(Location l, UUID uuid, boolean online)
-- ResourceManager getResourceManager()
-- void addWaypoint(Player p, String name, Location l)
-- void openWaypointControlPanel(Player p)
-- ItemStack getIcon(String name, World$Environment environment)
-
-### Class: io.github.thebusybiscuit.slimefun4.api.gps.TeleportationManager
-Type: Class
-
-Methods:
-- int getTeleportationTime(int complexity, Location source, Location destination)
-- void openTeleporterGUI(Player p, UUID ownerUUID, Block b)
-- void openTeleporterGUI(Player p, UUID ownerUUID, Block b, int complexity)
-- void teleport(UUID uuid, int complexity, Location source, Location destination, boolean resistance)
-
-### Class: io.github.thebusybiscuit.slimefun4.api.gps.Waypoint
-Type: Class
-
-Constructors:
-- Waypoint(PlayerProfile profile, String id, Location loc, String name)
-- Waypoint(UUID ownerId, String id, Location location, String name)
-
-Methods:
-- boolean isDeathpoint()
-- Location getLocation()
-- String getName()
-- int hashCode()
-- boolean equals(Object obj)
-- UUID getOwnerId()
-- String getId()
-- PlayerProfile getOwner()
-- ItemStack getIcon()
-
-## Package: io.github.thebusybiscuit.slimefun4.api.items
-
-### Class: io.github.thebusybiscuit.slimefun4.api.items.ItemHandler
-Type: Interface
-
-Methods:
-- Class<ItemHandler> getIdentifier()
-- Optional<IncompatibleItemHandlerException> validate(SlimefunItem item)
-
-### Class: io.github.thebusybiscuit.slimefun4.api.items.HashedArmorpiece
-Type: Class
-
-Methods:
-- Optional<SlimefunArmorPiece> getItem()
-- void update(ItemStack stack, SlimefunItem item)
-- String toString()
-- boolean hasDiverged(ItemStack stack)
-
-### Class: io.github.thebusybiscuit.slimefun4.api.items.ItemGroup
-Type: Class
-Implements: org.bukkit.Keyed
-
-Constructors:
-- ItemGroup(NamespacedKey key, ItemStack item)
-- ItemGroup(NamespacedKey key, ItemStack item, int tier)
-
-Methods:
-- void add(SlimefunItem item)
-- NamespacedKey getKey()
-- void setCrossAddonItemGroup(boolean crossAddonItemGroup)
-- boolean isAccessible(Player p)
-- ItemStack getItem(Player p)
-- SlimefunAddon getAddon()
-- boolean isVisible(Player p)
-- String getUnlocalizedName()
-- void remove(SlimefunItem item)
-- boolean isHidden(Player p)
-- List<SlimefunItem> getItems()
-- boolean contains(SlimefunItem item)
-- void setTier(int tier)
-- boolean isCrossAddonItemGroup()
-- String getDisplayName(Player p)
-- int hashCode()
-- boolean equals(Object obj)
-- String toString()
-- boolean isRegistered()
-- int getTier()
-- void register(SlimefunAddon addon)
-
-### Class: io.github.thebusybiscuit.slimefun4.api.items.ItemSetting
-Type: Class
-
-Constructors:
-- ItemSetting(SlimefunItem item, String key, T defaultValue)
-
-Methods:
-- TT getValue()
-- String getKey()
-- void reload()
-- Z validateInput(T input)
-- int hashCode()
-- boolean equals(Object obj)
-- V update(T newValue)
-- String toString()
-- Z isType(Class<*> c)
-- TT getDefaultValue()
-
-### Class: io.github.thebusybiscuit.slimefun4.api.items.ItemSpawnReason
-Type: Enum
-Extends: java.lang.Enum
-
-Enum Constants:
-- ANCIENT_PEDESTAL_PLACE_ITEM
-- BROKEN_SPAWNER_DROP
-- CARGO_OVERFLOW
-- MULTIBLOCK_MACHINE_OVERFLOW
-- CHRISTMAS_PRESENT_OPENED
-- EASTER_EGG_OPENED
-- GOLD_PAN_USE
-- MISC
-
-Methods:
-- **static** ItemSpawnReason valueOf(String name)
-- **static** ItemSpawnReason[] values()
-
-### Class: io.github.thebusybiscuit.slimefun4.api.items.ItemState
-Type: Enum
-Extends: java.lang.Enum
-
-Enum Constants:
-- UNREGISTERED
-- ENABLED
-- DISABLED
-- VANILLA_FALLBACK
-
-Methods:
-- **static** ItemState valueOf(String name)
-- **static** ItemState[] values()
-
-### Class: io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
-Type: Class
-Implements: io.github.thebusybiscuit.slimefun4.core.attributes.Placeable
-
-Constructors:
-- SlimefunItem(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe)
-- SlimefunItem(ItemGroup itemGroup, SlimefunItemStack itemStackTemplate, RecipeType recipeType, ItemStack[] recipe, ItemStack recipeOutput)
-
-Methods:
-- void setRecipe(ItemStack[] recipe)
-- void sendDeprecationWarning(Player player)
-- Z callItemHandler(Class<TT> c, Consumer<TT> callable)
-- ItemStack getItem()
-- ItemGroup getItemGroup()
-- boolean isTicking()
-- RecipeType getRecipeType()
-- void enable()
-- void setHidden(boolean hidden)
-- boolean isEnchantable()
-- void setRecipeType(RecipeType type)
-- boolean isDisabled()
-- **static** SlimefunItem getByItem(ItemStack item)
-- void preRegister()
-- void info(String message)
-- void addOfficialWikipage(String page)
-- void setItemGroup(ItemGroup itemGroup)
-- Collection<ItemHandler> getHandlers()
-- Set<ItemSetting<*>> getItemSettings()
-- void addItemHandler(ItemHandler[] handlers)
-- SlimefunItem setUseableInWorkbench(boolean useable)
-- SlimefunAddon getAddon()
-- void addWikiPage(String page)
-- void warn(String message)
-- String getItemName()
-- Optional<String> getWikipage()
-- **static** SlimefunItem getById(String id)
-- void setResearch(Research research)
-- ItemStack getRecipeOutput()
-- boolean loadDataByDefault()
-- boolean isDisenchantable()
-- boolean isUseableInWorkbench()
-- boolean hasResearch()
-- String getId()
-- void error(String message, Throwable throwable)
-- V addItemSetting(ItemSetting<*> settings)
-- **static** Optional<SlimefunItem> getOptionalById(String id)
-- void load()
-- int hashCode()
-- ItemStack[] getRecipe()
-- Optional<ItemSetting<TT>> getItemSetting(String key, Class<TT> c)
-- BlockTicker getBlockTicker()
-- boolean isDisabledIn(World world)
-- void setRecipeOutput(ItemStack output)
-- boolean canUse(Player p, boolean sendMessage)
-- boolean isHidden()
-- ItemState getState()
-- void disable()
-- boolean equals(Object obj)
-- boolean isItem(ItemStack item)
-- Collection<ItemStack> getDrops()
-- Collection<ItemStack> getDrops(Player p)
-- String toString()
-- void postRegister()
-- Research getResearch()
-- **static** Optional<SlimefunItem> getOptionalByItem(ItemStack item)
-- void register(SlimefunAddon addon)
-
-### Class: io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack
-Type: Class
-Extends: org.bukkit.inventory.ItemStack
-
-Constructors:
-- SlimefunItemStack(String id, ItemStack locked)
-- SlimefunItemStack(String id, ItemStack item, Consumer<ItemMeta> consumer)
-- SlimefunItemStack(String id, Material type, Consumer<ItemMeta> consumer)
-- SlimefunItemStack(String id, Material type, String name, Consumer<ItemMeta> consumer)
-- SlimefunItemStack(String id, ItemStack item, String name, String[] lore)
-- SlimefunItemStack(String id, Material type, String name, String[] lore)
-- SlimefunItemStack(String id, Material type, Color color, String name, String[] lore)
-- SlimefunItemStack(String id, Color color, PotionEffect effect, String name, String[] lore)
-- SlimefunItemStack(SlimefunItemStack item, int amount)
-- SlimefunItemStack(String id, String texture, String name, String[] lore)
-- SlimefunItemStack(String id, HeadTexture head, String name, String[] lore)
-- SlimefunItemStack(String id, String texture, String name, Consumer<ItemMeta> consumer)
-- SlimefunItemStack(String id, String texture, Consumer<ItemMeta> consumer)
-
-Methods:
-- boolean setItemMeta(ItemMeta meta)
-- ItemMetaSnapshot getItemMetaSnapshot()
-- SlimefunItem getItem()
-- TT getItem(Class<TT> type)
-- void setType(Material type)
-- Optional<String> getSkullTexture()
-- String getItemId()
-- String getDisplayName()
-- int hashCode()
-- boolean equals(Object obj)
-- ItemStack clone()
-- Object clone() throws CloneNotSupportedException
-- void lock()
-- String toString()
-- void setAmount(int amount)
-
-## Package: io.github.thebusybiscuit.slimefun4.api.items.groups
-
-### Class: io.github.thebusybiscuit.slimefun4.api.items.groups.FlexItemGroup
-Type: Abstract Class
-Extends: io.github.thebusybiscuit.slimefun4.api.items.ItemGroup
-
-Methods:
-- void add(SlimefunItem item)
-- List<SlimefunItem> getItems()
-- boolean contains(SlimefunItem item)
-- boolean isVisible(Player p)
-- boolean isVisible(Player, PlayerProfile, SlimefunGuideMode)
-- void remove(SlimefunItem item)
-- void open(Player, PlayerProfile, SlimefunGuideMode)
-
-### Class: io.github.thebusybiscuit.slimefun4.api.items.groups.LockedItemGroup
-Type: Class
-Extends: io.github.thebusybiscuit.slimefun4.api.items.ItemGroup
-
-Constructors:
-- LockedItemGroup(NamespacedKey key, ItemStack item, NamespacedKey[] parents)
-- LockedItemGroup(NamespacedKey key, ItemStack item, int parents, NamespacedKey[] keys)
-
-Methods:
-- Set<ItemGroup> getParents()
-- void removeParent(ItemGroup group)
-- void addParent(ItemGroup group)
-- boolean hasUnlocked(Player p, PlayerProfile profile)
-- void register(SlimefunAddon addon)
-
-### Class: io.github.thebusybiscuit.slimefun4.api.items.groups.NestedItemGroup
-Type: Class
-Extends: io.github.thebusybiscuit.slimefun4.api.items.groups.FlexItemGroup
-
-Constructors:
-- NestedItemGroup(NamespacedKey key, ItemStack item)
-- NestedItemGroup(NamespacedKey key, ItemStack item, int subGroups)
-
-Methods:
-- void addSubGroup(SubItemGroup group)
-- boolean isVisible(Player p, PlayerProfile profile, SlimefunGuideMode mode)
-- void removeSubGroup(SubItemGroup group)
-- void open(Player p, PlayerProfile profile, SlimefunGuideMode mode)
-
-### Class: io.github.thebusybiscuit.slimefun4.api.items.groups.SeasonalItemGroup
-Type: Class
-Extends: io.github.thebusybiscuit.slimefun4.api.items.ItemGroup
-
-Constructors:
-- SeasonalItemGroup(NamespacedKey key, Month month, int tier, ItemStack item)
-
-Methods:
-- boolean isAccessible(Player p)
-- Month getMonth()
-
-### Class: io.github.thebusybiscuit.slimefun4.api.items.groups.SubItemGroup
-Type: Class
-Extends: io.github.thebusybiscuit.slimefun4.api.items.ItemGroup
-
-Constructors:
-- SubItemGroup(NamespacedKey key, NestedItemGroup parent, ItemStack item)
-- SubItemGroup(NamespacedKey key, NestedItemGroup parentItemGroup, ItemStack item, int tier)
-
-Methods:
-- NestedItemGroup getParent()
-- boolean isAccessible(Player p)
-- boolean isVisibleInNested(Player p)
-- boolean isVisible(Player p)
-- void register(SlimefunAddon addon)
-
-## Package: io.github.thebusybiscuit.slimefun4.api.items.settings
-
-### Class: io.github.thebusybiscuit.slimefun4.api.items.settings.DoubleRangeSetting
-Type: Class
-Extends: io.github.thebusybiscuit.slimefun4.api.items.ItemSetting
-
-Constructors:
-- DoubleRangeSetting(SlimefunItem item, String key, double min, double defaultValue, double max)
-
-Methods:
-- boolean validateInput(Double input)
-- boolean validateInput(Object)
-- double getMinimum()
-- double getMaximum()
-
-### Class: io.github.thebusybiscuit.slimefun4.api.items.settings.EnumSetting
-Type: Class
-Extends: io.github.thebusybiscuit.slimefun4.api.items.ItemSetting
-
-Constructors:
-- EnumSetting(SlimefunItem item, String key, Class<TT> enumClass, T defaultValue)
-
-Methods:
-- TT getAsEnumConstant()
-- boolean validateInput(String input)
-- boolean validateInput(Object)
-- [TT getAllowedValues()
-
-### Class: io.github.thebusybiscuit.slimefun4.api.items.settings.IntRangeSetting
-Type: Class
-Extends: io.github.thebusybiscuit.slimefun4.api.items.ItemSetting
-
-Constructors:
-- IntRangeSetting(SlimefunItem item, String key, int min, int defaultValue, int max)
-
-Methods:
-- boolean validateInput(Integer input)
-- boolean validateInput(Object)
-- int getMinimum()
-- int getMaximum()
-
-### Class: io.github.thebusybiscuit.slimefun4.api.items.settings.MaterialTagSetting
-Type: Class
-Extends: io.github.thebusybiscuit.slimefun4.api.items.ItemSetting
-
-Constructors:
-- MaterialTagSetting(SlimefunItem item, String key, Tag<Material> defaultTag)
-
-Methods:
-- Z validateInput(List<String> input)
-- boolean validateInput(Object)
-- Tag<Material> getDefaultTag()
-
-## Package: io.github.thebusybiscuit.slimefun4.api.network
-
-### Class: io.github.thebusybiscuit.slimefun4.api.network.Network
-Type: Abstract Class
-
-Methods:
-- boolean connectsTo(Location l)
-- int getSize()
-- void onClassificationChange(Location, NetworkComponent, NetworkComponent)
-- void markDirty(Location l)
-- NetworkComponent classifyLocation(Location)
-- int getRange()
-- void display()
-- void tick()
-- Location getRegulator()
-
-### Class: io.github.thebusybiscuit.slimefun4.api.network.NetworkComponent
-Type: Enum
-Extends: java.lang.Enum
-
-Enum Constants:
-- CONNECTOR
-- REGULATOR
-- TERMINUS
-
-Methods:
-- **static** NetworkComponent valueOf(String name)
-- **static** NetworkComponent[] values()
-
-## Package: io.github.thebusybiscuit.slimefun4.api.player
-
-### Class: io.github.thebusybiscuit.slimefun4.api.player.PlayerBackpack
-Type: Class
-Extends: city.norain.slimefun4.holder.SlimefunInventoryHolder
-
-Constructors:
-- PlayerBackpack(OfflinePlayer owner, UUID uuid, String name, int id, int size, ItemStack[] contents)
-
-Methods:
-- void setName(String name)
-- **static** Optional<String> getOwnerUUID(ItemMeta meta)
-- String getName()
-- **static** void setItemDisplayInfo(ItemStack item, PlayerBackpack bp)
-- **static** Optional<String> getBackpackUUID(ItemMeta meta)
-- int getId()
-- **static** boolean isOwnerOnline(ItemMeta meta)
-- **static** void bindItem(ItemStack item, PlayerBackpack bp)
-- boolean isInvalid()
-- OfflinePlayer getOwner()
-- **static** V getAsync(ItemStack item, Consumer<PlayerBackpack> callback, boolean runCbOnMainThread)
-- **static** OptionalInt getBackpackID(ItemMeta meta)
-- UUID getUniqueId()
-- int getSize()
-- void setSize(int size)
-- void markInvalid()
-- Inventory getInventory()
-- **static** void setItemPdc(ItemStack item, String bpUuid, String ownerUuid)
-- void open(Player p)
-
-### Class: io.github.thebusybiscuit.slimefun4.api.player.PlayerProfile
-Type: Class
-
-Constructors:
-- PlayerProfile(OfflinePlayer p, int backpackNum)
-- PlayerProfile(OfflinePlayer owner, int backpackNum, Set<Research> researches)
-
-Methods:
-- **static** boolean request(OfflinePlayer p)
-- Player getPlayer()
-- void markDirty()
-- int nextBackpackNum()
-- void save()
-- OfflinePlayer getOwner()
-- List<Waypoint> getWaypoints()
-- **static** Iterator<PlayerProfile> iterator()
-- void removeWaypoint(Waypoint waypoint)
-- String getTitle()
-- Set<Research> getResearches()
-- boolean isDirty()
-- UUID getUUID()
-- int hashCode()
-- **static** Optional<PlayerProfile> find(OfflinePlayer p)
-- **static** Z get(OfflinePlayer p, Consumer<PlayerProfile> callback)
-- void sendStats(CommandSender sender)
-- boolean hasUnlocked(Research research)
-- boolean hasUnlockedEverything()
-- HashedArmorpiece[] getArmor()
-- boolean hasFullProtectionAgainst(ProtectionType type)
-- void addWaypoint(Waypoint waypoint)
-- void setResearched(Research research, boolean unlock)
-- void saveAsync()
-- **static** Z fromUUID(UUID uuid, Consumer<PlayerProfile> callback)
-- GuideHistory getGuideHistory()
-- void setBackpackCount(int count)
-- void markForDeletion()
-- boolean equals(Object obj)
-- boolean isMarkedForDeletion()
-- int getBackpackCount()
-- String toString()
-
-### Class: io.github.thebusybiscuit.slimefun4.api.player.StatusEffect
-Type: Class
-Implements: org.bukkit.Keyed
-
-Constructors:
-- StatusEffect(NamespacedKey key)
-
-Methods:
-- void add(Player p, int duration, TimeUnit unit)
-- void add(Player p, int level, int duration, TimeUnit unit)
-- OptionalInt getLevel(Player p)
-- NamespacedKey getKey()
-- void clear(Player p)
-- boolean isPresent(Player p)
-- void addPermanent(Player p, int level)
-
-## Package: io.github.thebusybiscuit.slimefun4.api.recipes
-
-### Class: io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType
-Type: Class
-Implements: org.bukkit.Keyed
-
-Constructors:
-- RecipeType(ItemStack item, String machine)
-- RecipeType(NamespacedKey key, SlimefunItemStack slimefunItem, String[] lore)
-- RecipeType(NamespacedKey key, ItemStack machine, BiConsumer<ItemStack, ItemStack> registerConsumer, String item)
-- RecipeType(NamespacedKey key, ItemStack machine, BiConsumer<ItemStack, ItemStack> registerConsumer, BiConsumer<ItemStack, ItemStack> unregisterConsumer, String item)
-- RecipeType(NamespacedKey key, ItemStack item)
-- RecipeType(MinecraftRecipe<*> item)
-
-Methods:
-- **static** List<ItemStack> getRecipeInputList(MultiBlockMachine machine)
-- NamespacedKey getKey()
-- **static** List<ItemStack> getRecipeInputs(MultiBlockMachine machine)
-- **static** ItemStack getRecipeOutput(MultiBlockMachine machine, ItemStack input)
-- int hashCode()
-- **static** ItemStack getRecipeOutputList(MultiBlockMachine machine, ItemStack[] input)
-- boolean equals(Object obj)
-- void unregister(ItemStack[] recipe, ItemStack result)
-- ItemStack getItem(Player p)
-- SlimefunItem getMachine()
-- ItemStack toItem()
-- void register(ItemStack[] recipe, ItemStack result)
-
-## Package: io.github.thebusybiscuit.slimefun4.api.researches
-
-### Class: io.github.thebusybiscuit.slimefun4.api.researches.PlayerResearchTask
-Type: Class
-Implements: java.util.function.Consumer
-
-Methods:
-- void accept(PlayerProfile profile)
-- void accept(Object)
-
-### Class: io.github.thebusybiscuit.slimefun4.api.researches.Research
-Type: Class
-Implements: org.bukkit.Keyed
-
-Constructors:
-- Research(NamespacedKey key, int id, String name, int levelCost, double currencyCost)
-- Research(NamespacedKey key, int id, String name, int levelCost)
-
-Methods:
-- NamespacedKey getKey()
-- double getCurrencyCost()
-- void unlock(Player p, boolean instant)
-- V unlock(Player p, boolean isInstant, Consumer<Player> callback)
-- String getName(Player p)
-- **static** Optional<Research> getResearchByID(Integer oldID)
-- void setCost(int cost)
-- int getID()
-- List<SlimefunItem> getAffectedItems()
-- String getUnlocalizedName()
-- void setLevelCost(int levelCost)
-- boolean hasEnabledItems()
-- void disable()
-- int getLevelCost()
-- boolean canUnlock(Player p)
-- boolean isEnabled()
-- String toString()
-- void unlockFromGuide(SlimefunGuideImplementation guide, Player player, PlayerProfile profile, SlimefunItem sfItem, ItemGroup itemGroup, int page)
-- int getCost()
-- **static** Optional<Research> getResearch(NamespacedKey key)
-- void setCurrencyCost(double currencyCost)
-- void register()
-- void addItems(SlimefunItem[] items)
-- Research addItems(ItemStack[] items)
+# Slimefun4 API Documentation
+
+Slimefun4 is a Spigot/Paper plugin that adds 500+ items, machines, and resources to Minecraft without mods. Addon developers extend it by implementing the `SlimefunAddon` interface and registering custom `SlimefunItem` instances.
+
+---
+
+## 1. Creating a Slimefun Addon (Main Class)
+
+Your plugin class must extend `JavaPlugin` and implement `SlimefunAddon`.
+
+```java
+package com.example.myaddon;
 
+import org.bukkit.plugin.java.JavaPlugin;
+import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
+
+public class MyAddon extends JavaPlugin implements SlimefunAddon {
+
+    private static MyAddon instance;
+
+    @Override
+    public void onEnable() {
+        instance = this;
+        // Register items here (see examples below)
+    }
+
+    @Override
+    public void onDisable() {
+        // Cleanup if needed
+    }
+
+    @Override
+    public JavaPlugin getJavaPlugin() {
+        return this;
+    }
+
+    @Override
+    public String getBugTrackerURL() {
+        return "https://github.com/YourName/MyAddon/issues";
+    }
+
+    public static MyAddon getInstance() {
+        return instance;
+    }
+}
+```
+
+---
+
+## 2. Creating and Registering a Basic SlimefunItem
+
+Every item needs: an `ItemGroup` (category), a `SlimefunItemStack` (appearance + ID), a `RecipeType`, and a recipe array.
+
+```java
+package com.example.myaddon;
+
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import io.github.thebusybiscuit.slimefun4.api.SlimefunAddon;
+import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+
+public class ItemSetup {
+
+    public static void registerItems(MyAddon addon) {
+        // 1. Create an ItemGroup (category in the Slimefun guide)
+        NamespacedKey groupKey = new NamespacedKey(addon, "my_addon_group");
+        CustomItemStack groupItem = new CustomItemStack(Material.DIAMOND, "&bMy Addon Items");
+        ItemGroup itemGroup = new ItemGroup(groupKey, groupItem);
+
+        // 2. Create the SlimefunItemStack (defines ID, material, name, lore)
+        SlimefunItemStack myItemStack = new SlimefunItemStack(
+            "MY_CUSTOM_SWORD",        // Unique ID (uppercase, underscores)
+            Material.DIAMOND_SWORD,
+            "&6Inferno Blade",
+            "",
+            "&7A sword forged in flames",
+            "&7Deals extra fire damage"
+        );
+
+        // 3. Define the 3x3 recipe (null = empty slot)
+        ItemStack[] recipe = {
+            null,                          new ItemStack(Material.BLAZE_ROD),  null,
+            null,                          new ItemStack(Material.BLAZE_ROD),  null,
+            new ItemStack(Material.STICK), null,                               null
+        };
+
+        // 4. Create and register the item
+        SlimefunItem myItem = new SlimefunItem(
+            itemGroup,
+            myItemStack,
+            RecipeType.ENHANCED_CRAFTING_TABLE,
+            recipe
+        );
+        myItem.register(addon);
+    }
+}
+```
+
+---
+
+## 3. Custom SlimefunItem Subclass with Right-Click Handlers
+
+Override `preRegister()` to attach `ItemUseHandler` (right-click while holding) and `BlockUseHandler` (right-click placed block).
+
+```java
+package com.example.myaddon.items;
+
+import org.bukkit.inventory.ItemStack;
+
+import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+import io.github.thebusybiscuit.slimefun4.core.handlers.BlockUseHandler;
+import io.github.thebusybiscuit.slimefun4.core.handlers.ItemUseHandler;
+
+public class HealingOrb extends SlimefunItem {
+
+    public HealingOrb(ItemGroup group, SlimefunItemStack item,
+                      RecipeType recipeType, ItemStack[] recipe) {
+        super(group, item, recipeType, recipe);
+    }
+
+    @Override
+    public void preRegister() {
+        // Triggered when player right-clicks while holding this item
+        ItemUseHandler itemUseHandler = e -> {
+            e.cancel(); // Prevent placing/default interaction
+            e.getPlayer().setHealth(Math.min(
+                e.getPlayer().getHealth() + 4.0,
+                e.getPlayer().getMaxHealth()
+            ));
+            e.getPlayer().sendMessage("&aYou feel restored!");
+        };
+        addItemHandler(itemUseHandler);
+
+        // Triggered when player right-clicks a placed block of this type
+        BlockUseHandler blockUseHandler = e -> {
+            e.cancel();
+            e.getPlayer().sendMessage("&eThis orb pulses with energy.");
+        };
+        addItemHandler(blockUseHandler);
+    }
+}
+```
+
+---
+
+## 4. Implementing Attributes (Radioactive, WitherProof)
+
+Implement attribute interfaces directly on your SlimefunItem subclass.
+
+```java
+package com.example.myaddon.items;
+
+import org.bukkit.block.Block;
+import org.bukkit.entity.Wither;
+import org.bukkit.inventory.ItemStack;
+
+import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+import io.github.thebusybiscuit.slimefun4.core.attributes.Radioactive;
+import io.github.thebusybiscuit.slimefun4.core.attributes.Radioactivity;
+import io.github.thebusybiscuit.slimefun4.core.attributes.WitherProof;
+
+public class ToxicBlock extends SlimefunItem implements Radioactive, WitherProof {
+
+    public ToxicBlock(ItemGroup group, SlimefunItemStack item,
+                      RecipeType recipeType, ItemStack[] recipe) {
+        super(group, item, recipeType, recipe);
+    }
+
+    @Override
+    public Radioactivity getRadioactivity() {
+        return Radioactivity.HIGH;
+    }
+
+    @Override
+    public void onAttack(Block block, Wither wither) {
+        // Called when a Wither tries to destroy this block
+        wither.damage(10.0);
+    }
+}
+```
+
+Use `LoreBuilder` to display attribute info in item lore:
+
+```java
+import io.github.thebusybiscuit.slimefun4.utils.LoreBuilder;
+import io.github.thebusybiscuit.slimefun4.core.attributes.Radioactivity;
+
+SlimefunItemStack toxicStack = new SlimefunItemStack(
+    "TOXIC_BLOCK",
+    Material.GREEN_CONCRETE,
+    "&2Toxic Block",
+    "",
+    LoreBuilder.radioactive(Radioactivity.HIGH),
+    LoreBuilder.HAZMAT_SUIT_REQUIRED
+);
+```
+
+---
+
+## 5. Ticking Machine with BlockTicker
+
+A `BlockTicker` makes a placed block execute code every Slimefun tick (~0.5s). Override `preRegister()` or `getBlockTicker()`.
+
+```java
+package com.example.myaddon.items;
+
+import org.bukkit.block.Block;
+import org.bukkit.inventory.ItemStack;
+
+import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
+import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
+
+public class AutoHealer extends SlimefunItem {
+
+    public AutoHealer(ItemGroup group, SlimefunItemStack item,
+                      RecipeType recipeType, ItemStack[] recipe) {
+        super(group, item, recipeType, recipe);
+    }
+
+    @Override
+    public void preRegister() {
+        addItemHandler(new BlockTicker() {
+            @Override
+            public boolean isSynchronized() {
+                // true = runs on main server thread (required for world/entity interaction)
+                // false = runs async (use for calculations only, no Bukkit API calls)
+                return true;
+            }
+
+            @Override
+            public void tick(Block b, SlimefunItem item, Config data) {
+                // Called every Slimefun tick for each placed instance of this block
+                b.getWorld().getNearbyEntities(b.getLocation(), 5, 5, 5).forEach(entity -> {
+                    if (entity instanceof org.bukkit.entity.Player player) {
+                        if (player.getHealth() < player.getMaxHealth()) {
+                            player.setHealth(Math.min(
+                                player.getHealth() + 1.0,
+                                player.getMaxHealth()
+                            ));
+                        }
+                    }
+                });
+            }
+        });
+    }
+}
+```
+
+---
+
+## 6. Machine with BlockMenuPreset (GUI Inventory)
+
+Machines with inventories use `BlockMenuPreset` for their GUI layout.
+
+```java
+package com.example.myaddon.items;
+
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+import io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack;
+import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
+import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
+import me.mrCookieSlime.Slimefun.api.inventory.BlockMenu;
+import me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset;
+import me.mrCookieSlime.Slimefun.api.item_transport.ItemTransportFlow;
+
+public class SimpleMachine extends SlimefunItem {
+
+    private static final int[] BACKGROUND_SLOTS = {0, 1, 2, 3, 5, 6, 7, 8};
+    private static final int INPUT_SLOT = 4;
+    private static final int OUTPUT_SLOT = 13;
+
+    public SimpleMachine(ItemGroup group, SlimefunItemStack item,
+                         RecipeType recipeType, ItemStack[] recipe) {
+        super(group, item, recipeType, recipe);
+
+        // Define the inventory layout
+        new BlockMenuPreset(getId(), "&6Simple Machine") {
+            @Override
+            public void init() {
+                drawBackground(new CustomItemStack(Material.BLACK_STAINED_GLASS_PANE, " "),
+                    BACKGROUND_SLOTS);
+            }
+
+            @Override
+            public boolean canOpen(Block b, Player p) {
+                // Permission check; return true to allow opening
+                return p.hasPermission("myaddon.machine.use");
+            }
+
+            @Override
+            public int[] getSlotsAccessedByItemTransport(ItemTransportFlow flow) {
+                if (flow == ItemTransportFlow.INSERT) {
+                    return new int[]{INPUT_SLOT};
+                } else {
+                    return new int[]{OUTPUT_SLOT};
+                }
+            }
+
+            @Override
+            public void newInstance(BlockMenu menu, Block b) {
+                // Called when a new block of this machine is placed
+            }
+        };
+    }
+
+    @Override
+    public void preRegister() {
+        addItemHandler(new BlockTicker() {
+            @Override
+            public boolean isSynchronized() {
+                return false;
+            }
+
+            @Override
+            public void tick(Block b, SlimefunItem item, Config data) {
+                BlockMenu menu = BlockStorage.getInventory(b);
+                if (menu == null) return;
+
+                ItemStack input = menu.getItemInSlot(INPUT_SLOT);
+                if (input == null || input.getType() == Material.AIR) return;
+
+                // Example: convert cobblestone to stone
+                if (input.getType() == Material.COBBLESTONE) {
+                    menu.consumeItem(INPUT_SLOT);
+                    menu.pushItem(new ItemStack(Material.STONE), OUTPUT_SLOT);
+                }
+            }
+        });
+    }
+}
+```
+
+Note: `BlockStorage` is imported from `me.mrCookieSlime.Slimefun.api.BlockStorage`.
+
+---
+
+## 7. Energy-Powered Machine (EnergyNetComponent)
+
+Implement `EnergyNetComponent` to connect a machine to the Slimefun energy network.
+
+```java
+package com.example.myaddon.items;
+
+import org.bukkit.block.Block;
+import org.bukkit.inventory.ItemStack;
+
+import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+import io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType;
+import io.github.thebusybiscuit.slimefun4.core.attributes.EnergyNetComponent;
+import io.github.thebusybiscuit.slimefun4.core.networks.energy.EnergyNetComponentType;
+import me.mrCookieSlime.CSCoreLibPlugin.Configuration.Config;
+import me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker;
+
+public class ElectricGrinder extends SlimefunItem implements EnergyNetComponent {
+
+    private static final int ENERGY_CONSUMPTION = 16; // Joules per tick
+
+    public ElectricGrinder(ItemGroup group, SlimefunItemStack item,
+                           RecipeType recipeType, ItemStack[] recipe) {
+        super(group, item, recipeType, recipe);
+    }
+
+    @Override
+    public EnergyNetComponentType getEnergyComponentType() {
+        return EnergyNetComponentType.CONSUMER;
+    }
+
+    @Override
+    public int getCapacity() {
+        return 128; // Max stored energy (Joules)
+    }
+
+    @Override
+    public void preRegister() {
+        addItemHandler(new BlockTicker() {
+            @Override
+            public boolean isSynchronized() {
+                return false;
+            }
+
+            @Override
+            public void tick(Block b, SlimefunItem item, Config data) {
+                int charge = getCharge(b.getLocation());
+                if (charge >= ENERGY_CONSUMPTION) {
+                    removeCharge(b.getLocation(), ENERGY_CONSUMPTION);
+                    // Perform machine work here
+                }
+            }
+        });
+    }
+}
+```
+
+`EnergyNetComponentType` values: `GENERATOR`, `CONSUMER`, `CAPACITOR`, `CONNECTOR`.
+
+---
+
+## 8. Researches
+
+Lock items behind a research that costs XP levels to unlock.
+
+```java
+package com.example.myaddon;
+
+import org.bukkit.NamespacedKey;
+
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import io.github.thebusybiscuit.slimefun4.api.researches.Research;
+
+public class ResearchSetup {
+
+    public static void register(MyAddon addon, SlimefunItem myItem) {
+        NamespacedKey key = new NamespacedKey(addon, "inferno_research");
+        // Parameters: key, unique integer ID, display name, XP level cost
+        Research research = new Research(key, 6001, "Inferno Mastery", 15);
+        research.addItems(myItem);
+        research.register();
+    }
+}
+```
+
+The integer ID must be globally unique across all addons. Pick a high number range to avoid collisions.
+
+---
+
+## 9. Custom Head Textures
+
+Use a Base64-encoded skin texture string instead of a Material.
+
+```java
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack;
+
+// Pass the Base64 texture as the second parameter
+SlimefunItemStack headItem = new SlimefunItemStack(
+    "CUSTOM_ORB",
+    "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3...",
+    "&dMagic Orb",
+    "",
+    "&7A mysterious glowing orb"
+);
+```
+
+Get Base64 texture values from minecraft-heads.com (copy the "Value" field).
+
+---
+
+## 10. GEO Resources
+
+Custom mineable resources that generate per-chunk based on biome/environment.
+
+```java
+package com.example.myaddon.geo;
+
+import org.bukkit.NamespacedKey;
+import org.bukkit.World.Environment;
+import org.bukkit.block.Biome;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
+
+import io.github.thebusybiscuit.slimefun4.api.geo.GEOResource;
+
+public class MythrilOre implements GEOResource {
+
+    private final NamespacedKey key;
+    private final ItemStack item;
+
+    public MythrilOre(Plugin plugin, ItemStack item) {
+        this.key = new NamespacedKey(plugin, "mythril_ore");
+        this.item = item;
+    }
+
+    @Override
+    public NamespacedKey getKey() {
+        return key;
+    }
+
+    @Override
+    public String getName() {
+        return "Mythril Ore";
+    }
+
+    @Override
+    public ItemStack getItem() {
+        return item.clone();
+    }
+
+    @Override
+    public boolean isObtainableFromGEOMiner() {
+        return true;
+    }
+
+    @Override
+    public int getDefaultSupply(Environment environment, Biome biome) {
+        if (environment == Environment.NORMAL) {
+            return biome == Biome.MOUNTAINS ? 12 : 4;
+        }
+        return 0;
+    }
+
+    @Override
+    public int getMaxDeviation() {
+        return 4;
+    }
+}
+```
+
+Register it alongside its SlimefunItem:
+
+```java
+SlimefunItemStack mythrilStack = new SlimefunItemStack("MYTHRIL_ORE", Material.IRON_ORE,
+    "&9Mythril Ore", "", "&7A rare ore found in mountains");
+SlimefunItem mythrilItem = new SlimefunItem(itemGroup, mythrilStack,
+    RecipeType.GEO_MINER, new ItemStack[9]);
+mythrilItem.register(addon);
+
+MythrilOre mythrilResource = new MythrilOre(addon, mythrilStack);
+mythrilResource.register();
+```
+
+---
+
+## 11. Checking Slimefun Items and Blocks
+
+```java
+import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
+import me.mrCookieSlime.Slimefun.api.BlockStorage;
+import org.bukkit.block.Block;
+import org.bukkit.inventory.ItemStack;
+
+// Check if an ItemStack is a Slimefun item
+SlimefunItem sfItem = SlimefunItem.getByItem(someItemStack);
+if (sfItem != null) {
+    String id = sfItem.getId(); // e.g. "MY_CUSTOM_SWORD"
+}
+
+// Look up a Slimefun item by its string ID
+SlimefunItem found = SlimefunItem.getById("MY_CUSTOM_SWORD");
+
+// Optional variants (return Optional<SlimefunItem>)
+SlimefunItem.getOptionalById("MY_CUSTOM_SWORD").ifPresent(item -> { /* ... */ });
+SlimefunItem.getOptionalByItem(someItemStack).ifPresent(item -> { /* ... */ });
+
+// Check if a placed block is a Slimefun block
+Block block = player.getTargetBlockExact(5);
+SlimefunItem blockItem = BlockStorage.check(block);
+if (blockItem != null) {
+    String blockId = blockItem.getId();
+}
+
+// Check if a block is a specific Slimefun item
+boolean isMyMachine = BlockStorage.check(block, "MY_MACHINE_ID");
+
+// Get/set custom data on a Slimefun block
+String value = BlockStorage.getLocationInfo(block.getLocation(), "myKey");
+BlockStorage.addBlockInfo(block, "myKey", "myValue");
+```
+
+---
+
+## 12. Listening to Slimefun Events
+
+```java
+package com.example.myaddon.listeners;
+
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+
+import io.github.thebusybiscuit.slimefun4.api.events.SlimefunBlockBreakEvent;
+import io.github.thebusybiscuit.slimefun4.api.events.SlimefunBlockPlaceEvent;
+import io.github.thebusybiscuit.slimefun4.api.events.PlayerRightClickEvent;
+import io.github.thebusybiscuit.slimefun4.api.events.SlimefunItemSpawnEvent;
+
+public class SlimefunListener implements Listener {
+
+    @EventHandler
+    public void onSlimefunBlockBreak(SlimefunBlockBreakEvent event) {
+        String itemId = event.getSlimefunItem().getId();
+        event.getPlayer().sendMessage("You broke: " + itemId);
+        // event.setCancelled(true); // to prevent breaking
+    }
+
+    @EventHandler
+    public void onSlimefunBlockPlace(SlimefunBlockPlaceEvent event) {
+        String itemId = event.getSlimefunItem().getId();
+        // event.setCancelled(true); // to prevent placing
+    }
+
+    @EventHandler
+    public void onSlimefunItemSpawn(SlimefunItemSpawnEvent event) {
+        // Fired when a Slimefun item entity spawns in the world
+        event.getItemSpawnReason(); // CARGO_OVERFLOW, GOLD_PAN_USE, etc.
+    }
+}
+```
+
+Register listeners in `onEnable()`:
+
+```java
+getServer().getPluginManager().registerEvents(new SlimefunListener(), this);
+```
+
+---
+
+## API Reference (Trimmed)
+
+### Core Items
+
+| Class | Package |
+|---|---|
+| `SlimefunItem` | `io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem` |
+| `SlimefunItemStack` | `io.github.thebusybiscuit.slimefun4.api.items.SlimefunItemStack` |
+| `ItemGroup` | `io.github.thebusybiscuit.slimefun4.api.items.ItemGroup` |
+| `RecipeType` | `io.github.thebusybiscuit.slimefun4.api.recipes.RecipeType` |
+| `ItemSetting<T>` | `io.github.thebusybiscuit.slimefun4.api.items.ItemSetting` |
+| `SlimefunAddon` (interface) | `io.github.thebusybiscuit.slimefun4.api.SlimefunAddon` |
+
+### SlimefunItem Key Methods
+
+- `void register(SlimefunAddon addon)` -- register with Slimefun
+- `void preRegister()` -- override to add handlers before registration
+- `void postRegister()` -- override for logic after registration
+- `void addItemHandler(ItemHandler... handlers)` -- attach event handlers
+- `static SlimefunItem getByItem(ItemStack item)` -- resolve ItemStack to SlimefunItem (or null)
+- `static SlimefunItem getById(String id)` -- lookup by string ID (or null)
+- `static Optional<SlimefunItem> getOptionalById(String id)`
+- `static Optional<SlimefunItem> getOptionalByItem(ItemStack item)`
+- `boolean isItem(ItemStack item)` -- check if ItemStack matches this item
+- `String getId()` -- get the unique item ID string
+- `ItemStack getItem()` -- get the ItemStack template
+- `ItemGroup getItemGroup()`
+- `RecipeType getRecipeType()`
+- `ItemStack[] getRecipe()`
+- `void setResearch(Research research)`
+- `boolean canUse(Player p, boolean sendMessage)`
+- `BlockTicker getBlockTicker()`
+- `boolean isTicking()`
+- `void addItemSetting(ItemSetting<?>... settings)`
+
+### SlimefunItemStack Constructors
+
+- `SlimefunItemStack(String id, Material type, String name, String... lore)`
+- `SlimefunItemStack(String id, Material type, String name, Consumer<ItemMeta> consumer)`
+- `SlimefunItemStack(String id, String base64Texture, String name, String... lore)` -- custom head
+- `SlimefunItemStack(String id, ItemStack item, String name, String... lore)`
+- `SlimefunItemStack(String id, Material type, Color color, String name, String... lore)` -- leather armor
+
+### ItemGroup
+
+- `ItemGroup(NamespacedKey key, ItemStack item)`
+- `ItemGroup(NamespacedKey key, ItemStack item, int tier)` -- tier controls ordering
+- `void register(SlimefunAddon addon)` -- auto-registered when items are added
+- `void add(SlimefunItem item)` / `void remove(SlimefunItem item)`
+- `List<SlimefunItem> getItems()`
+
+### ItemGroup Variants
+
+| Class | Package | Purpose |
+|---|---|---|
+| `NestedItemGroup` | `io.github.thebusybiscuit.slimefun4.api.items.groups.NestedItemGroup` | Parent group containing sub-groups |
+| `SubItemGroup` | `io.github.thebusybiscuit.slimefun4.api.items.groups.SubItemGroup` | Child of a NestedItemGroup |
+| `LockedItemGroup` | `io.github.thebusybiscuit.slimefun4.api.items.groups.LockedItemGroup` | Requires parent groups unlocked |
+| `SeasonalItemGroup` | `io.github.thebusybiscuit.slimefun4.api.items.groups.SeasonalItemGroup` | Visible only in a specific month |
+| `FlexItemGroup` | `io.github.thebusybiscuit.slimefun4.api.items.groups.FlexItemGroup` | Fully custom GUI (abstract) |
+
+### RecipeType Built-in Constants
+
+- `RecipeType.ENHANCED_CRAFTING_TABLE`
+- `RecipeType.MAGIC_WORKBENCH`
+- `RecipeType.ARMOR_FORGE`
+- `RecipeType.SMELTERY`
+- `RecipeType.COMPRESSOR`
+- `RecipeType.PRESSURE_CHAMBER`
+- `RecipeType.GRIND_STONE`
+- `RecipeType.ORE_CRUSHER`
+- `RecipeType.ORE_WASHER`
+- `RecipeType.JUICER`
+- `RecipeType.ANCIENT_ALTAR`
+- `RecipeType.GEO_MINER`
+- `RecipeType.NULL` -- no recipe (unobtainable / obtained by other means)
+
+### Research
+
+| Method | Description |
+|---|---|
+| `Research(NamespacedKey key, int id, String name, int levelCost)` | Constructor |
+| `void addItems(SlimefunItem... items)` | Attach items to this research |
+| `void register()` | Register with Slimefun |
+| `boolean canUnlock(Player p)` | Check if player has enough XP |
+| `void unlock(Player p, boolean instant)` | Unlock for a player |
+
+### BlockTicker (Abstract)
+
+Package: `me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker`
+
+| Method | Description |
+|---|---|
+| `abstract void tick(Block b, SlimefunItem item, Config data)` | Called every Slimefun tick per block |
+| `abstract boolean isSynchronized()` | true = main thread, false = async |
+| `void uniqueTick()` | Called once per tick (not per block) |
+
+### BlockStorage (Static Utilities)
+
+Package: `me.mrCookieSlime.Slimefun.api.BlockStorage`
+
+| Method | Description |
+|---|---|
+| `static SlimefunItem check(Block b)` | Get SlimefunItem at block, or null |
+| `static SlimefunItem check(Location l)` | Get SlimefunItem at location, or null |
+| `static boolean check(Block b, String sfId)` | Check if block is a specific SF item |
+| `static String checkID(Block b)` | Get SF item ID string at block, or null |
+| `static String getLocationInfo(Location l, String key)` | Read custom block data |
+| `static void addBlockInfo(Block b, String key, String value)` | Write custom block data |
+| `static void clearBlockInfo(Block b)` | Remove all SF data from block |
+| `static void store(Block b, String itemId)` | Mark block as a Slimefun block |
+| `static BlockMenu getInventory(Block b)` | Get the machine's inventory GUI |
+
+### BlockMenuPreset
+
+Package: `me.mrCookieSlime.Slimefun.api.inventory.BlockMenuPreset`
+
+| Method | Description |
+|---|---|
+| `BlockMenuPreset(String sfItemId, String title)` | Constructor (pass `getId()`) |
+| `abstract void init()` | Set up background slots, decorations |
+| `abstract boolean canOpen(Block b, Player p)` | Permission check |
+| `abstract int[] getSlotsAccessedByItemTransport(ItemTransportFlow flow)` | Cargo integration slots |
+| `void drawBackground(ItemStack item, int[] slots)` | Fill background slots |
+| `void newInstance(BlockMenu menu, Block b)` | Called when block is placed |
+
+### BlockMenu Key Methods
+
+Package: `me.mrCookieSlime.Slimefun.api.inventory.BlockMenu`
+
+- `ItemStack getItemInSlot(int slot)`
+- `void replaceExistingItem(int slot, ItemStack item)`
+- `void consumeItem(int slot)` / `void consumeItem(int slot, int amount)`
+- `ItemStack pushItem(ItemStack item, int... slots)` -- returns leftover or null
+- `void addMenuClickHandler(int slot, ChestMenu.MenuClickHandler handler)`
+- `void open(Player p)`
+- `Block getBlock()`
+- `Location getLocation()`
+
+### Attributes (Interfaces on SlimefunItem)
+
+| Interface | Package | Key Method |
+|---|---|---|
+| `EnergyNetComponent` | `io.github.thebusybiscuit.slimefun4.core.attributes.EnergyNetComponent` | `EnergyNetComponentType getEnergyComponentType()`, `int getCapacity()` |
+| `Radioactive` | `io.github.thebusybiscuit.slimefun4.core.attributes.Radioactive` | `Radioactivity getRadioactivity()` |
+| `WitherProof` | `io.github.thebusybiscuit.slimefun4.core.attributes.WitherProof` | `void onAttack(Block, Wither)` |
+| `Placeable` | `io.github.thebusybiscuit.slimefun4.core.attributes.Placeable` | Already on SlimefunItem |
+
+### EnergyNetComponent Methods
+
+- `EnergyNetComponentType getEnergyComponentType()` -- GENERATOR, CONSUMER, CAPACITOR, CONNECTOR
+- `int getCapacity()` -- max stored Joules
+- `int getCharge(Location l)` -- current stored Joules
+- `void setCharge(Location l, int charge)`
+- `void addCharge(Location l, int charge)`
+- `void removeCharge(Location l, int charge)`
+- `boolean isChargeable()` -- default: capacity > 0
+
+### EnergyNetComponentType Enum
+
+Package: `io.github.thebusybiscuit.slimefun4.core.networks.energy.EnergyNetComponentType`
+
+- `GENERATOR` -- produces energy
+- `CONSUMER` -- consumes energy
+- `CAPACITOR` -- stores and distributes energy
+- `CONNECTOR` -- passes energy through the network
+
+### Radioactivity Enum
+
+Package: `io.github.thebusybiscuit.slimefun4.core.attributes.Radioactivity`
+
+- `LOW`, `MODERATE`, `HIGH`, `VERY_HIGH`, `VERY_DEADLY`
+
+### GEOResource Interface
+
+Package: `io.github.thebusybiscuit.slimefun4.api.geo.GEOResource`
+
+- `NamespacedKey getKey()`
+- `String getName()`
+- `ItemStack getItem()`
+- `boolean isObtainableFromGEOMiner()`
+- `int getDefaultSupply(Environment, Biome)`
+- `int getMaxDeviation()`
+- `void register()`
+
+### Events (Bukkit-style, all Cancellable unless noted)
+
+| Event | Package | Key Methods |
+|---|---|---|
+| `SlimefunBlockBreakEvent` | `...api.events` | `getPlayer()`, `getSlimefunItem()`, `getBlockBroken()`, `getHeldItem()` |
+| `SlimefunBlockPlaceEvent` | `...api.events` | `getPlayer()`, `getSlimefunItem()`, `getBlockPlaced()`, `getItemStack()` |
+| `PlayerRightClickEvent` | `...api.events` | `getPlayer()`, `getSlimefunItem()`, `getSlimefunBlock()`, `getClickedBlock()`, `cancel()` |
+| `SlimefunItemSpawnEvent` | `...api.events` | `getLocation()`, `getItemStack()`, `getItemSpawnReason()` |
+| `ResearchUnlockEvent` | `...api.events` | `getPlayer()`, `getResearch()` |
+| `PlayerPreResearchEvent` | `...api.events` | `getPlayer()`, `getResearch()`, `getSlimefunItem()` |
+| `SlimefunGuideOpenEvent` | `...api.events` | `getPlayer()`, `getGuideLayout()` |
+| `SlimefunItemRegistryFinalizedEvent` | `...api.events` | (not cancellable) fired when all items are loaded |
+
+### Item Handlers (Functional Interfaces)
+
+| Handler | Package | When Triggered |
+|---|---|---|
+| `ItemUseHandler` | `io.github.thebusybiscuit.slimefun4.core.handlers.ItemUseHandler` | Player right-clicks while holding item |
+| `BlockUseHandler` | `io.github.thebusybiscuit.slimefun4.core.handlers.BlockUseHandler` | Player right-clicks a placed SF block |
+| `BlockTicker` | `me.mrCookieSlime.Slimefun.Objects.handlers.BlockTicker` | Every Slimefun tick for placed blocks |
+| `ItemHandler` (base) | `io.github.thebusybiscuit.slimefun4.api.items.ItemHandler` | Base interface for all handlers |
+
+### Utility Classes
+
+| Class | Package | Purpose |
+|---|---|---|
+| `CustomItemStack` | `io.github.thebusybiscuit.slimefun4.libraries.dough.items.CustomItemStack` | Quick ItemStack with name/lore |
+| `LoreBuilder` | `io.github.thebusybiscuit.slimefun4.utils.LoreBuilder` | Standard lore lines (power, radioactive, etc.) |
+| `SlimefunUtils` | `io.github.thebusybiscuit.slimefun4.utils.SlimefunUtils` | Item comparison and utility methods |
+| `Config` | `io.github.thebusybiscuit.slimefun4.libraries.dough.config.Config` | Simple YAML config wrapper |
+| `ItemTransportFlow` | `me.mrCookieSlime.Slimefun.api.item_transport.ItemTransportFlow` | Enum: `INSERT`, `WITHDRAW` |
+| `MinecraftVersion` | `io.github.thebusybiscuit.slimefun4.api.MinecraftVersion` | Version checking enum |

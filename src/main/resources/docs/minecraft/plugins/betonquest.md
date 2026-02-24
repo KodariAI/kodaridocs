@@ -1,1879 +1,740 @@
-# BetonQuest-org-betonquest-betonquest-api API Reference
-
-**Package Filter:** `org.betonquest.betonquest.api`
-
-## Package: org.betonquest.betonquest.api
-
-### Class: org.betonquest.betonquest.api.Objective$QREThrowing
-Type: Interface
-
-Methods:
-- void run() throws QuestRuntimeException
-
-### Class: org.betonquest.betonquest.api.Condition
-Type: Abstract Class
-Extends: org.betonquest.betonquest.api.ForceSyncHandler
-
-Methods:
-- boolean isStatic()
-- boolean isPersistent()
-
-### Class: org.betonquest.betonquest.api.ConversationOptionEvent
-Type: Class
-Extends: org.betonquest.betonquest.api.profiles.ProfileEvent
-
-Methods:
-- ResolvedOption getSelectedOption()
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- Conversation getConversation()
-- ResolvedOption getNextNPCOption()
-
-### Class: org.betonquest.betonquest.api.CountingObjective
-Type: Abstract Class
-Extends: org.betonquest.betonquest.api.Objective
-
-Methods:
-- String getProperty(String, Profile)
-- String getDefaultDataInstruction()
-- String getDefaultDataInstruction(Profile)
-- CountingObjective$CountingData getCountingData(Profile)
-
-### Class: org.betonquest.betonquest.api.CountingObjective$CountingData
-Type: Class
-Extends: org.betonquest.betonquest.api.Objective$ObjectiveData
-
-Methods:
-- CountingObjective$CountingData add()
-- CountingObjective$CountingData add(int)
-- int getTargetAmount()
-- int getPreviousAmountLeft()
-- CountingObjective$CountingData subtract()
-- CountingObjective$CountingData subtract(int)
-- CountingObjective$CountingData regress()
-- CountingObjective$CountingData regress(int)
-- int getDirectionFactor()
-- CountingObjective$CountingData progress()
-- CountingObjective$CountingData progress(int)
-- int getCompletedAmount()
-- String toString()
-- int getAmountLeft()
-- int getLastChange()
-- boolean isComplete()
-
-### Class: org.betonquest.betonquest.api.ForceSyncHandler
-Type: Abstract Class
-
-Methods:
-- Object handle(Profile) throws QuestRuntimeException
-
-### Class: org.betonquest.betonquest.api.LoadDataEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-
-### Class: org.betonquest.betonquest.api.MobKillNotifier
-Type: Class
-
-Methods:
-- **static** void addKill(Profile, Entity)
-
-### Class: org.betonquest.betonquest.api.MobKillNotifier$MobKilledEvent
-Type: Class
-Extends: org.betonquest.betonquest.api.profiles.ProfileEvent
-
-Methods:
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- Entity getEntity()
-
-### Class: org.betonquest.betonquest.api.Objective
-Type: Abstract Class
-
-Methods:
-- void startObjective(Profile, String, Objective$ObjectiveState)
-- boolean containsPlayer(Profile)
-- String getLabel()
-- String getProperty(String, Profile)
-- void completeObjective(Profile)
-- boolean checkConditions(Profile)
-- void newPlayer(Profile)
-- void start()
-- void start(Profile)
-- void cancelObjectiveForPlayer(Profile)
-- void createObjectiveForPlayer(Profile, String)
-- void stop()
-- void stop(Profile)
-- void resumeObjectiveForPlayer(Profile, String)
-- boolean isGlobal()
-- void setLabel(ObjectiveID)
-- void stopObjective(Profile, Objective$ObjectiveState)
-- String getDefaultDataInstruction()
-- String getDefaultDataInstruction(Profile)
-- void pauseObjectiveForPlayer(Profile)
-- void close()
-- String getData(Profile)
-- void completeObjectiveForPlayer(Profile)
-
-### Class: org.betonquest.betonquest.api.Objective$ObjectiveData
-Type: Class
-
-Methods:
-- String toString()
-
-### Class: org.betonquest.betonquest.api.Objective$ObjectiveState
-Type: Enum
-Extends: java.lang.Enum
-
-Methods:
-- **static** Objective$ObjectiveState valueOf(String)
-- **static** Objective$ObjectiveState[] values()
-
-### Class: org.betonquest.betonquest.api.Objective$QREHandler
-Type: Class
-
-Methods:
-- void handle(Objective$QREThrowing)
-
-### Class: org.betonquest.betonquest.api.PlayerConversationEndEvent
-Type: Class
-Extends: org.betonquest.betonquest.api.profiles.ProfileEvent
-
-Methods:
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- Conversation getConversation()
-
-### Class: org.betonquest.betonquest.api.PlayerConversationStartEvent
-Type: Class
-Extends: org.betonquest.betonquest.api.profiles.ProfileEvent
-Implements: org.bukkit.event.Cancellable
-
-Methods:
-- boolean isCancelled()
-- void setCancelled(boolean)
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- Conversation getConversation()
-
-### Class: org.betonquest.betonquest.api.PlayerJournalAddEvent
-Type: Class
-Extends: org.betonquest.betonquest.api.profiles.ProfileEvent
-
-Methods:
-- Journal getJournal()
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- Pointer getPointer()
-
-### Class: org.betonquest.betonquest.api.PlayerJournalDeleteEvent
-Type: Class
-Extends: org.betonquest.betonquest.api.profiles.ProfileEvent
-
-Methods:
-- Journal getJournal()
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- Pointer getPointer()
-
-### Class: org.betonquest.betonquest.api.PlayerObjectiveChangeEvent
-Type: Class
-Extends: org.betonquest.betonquest.api.profiles.ProfileEvent
-
-Methods:
-- Objective$ObjectiveState getPreviousState()
-- Objective$ObjectiveState getState()
-- HandlerList getHandlers()
-- Objective getObjective()
-- **static** HandlerList getHandlerList()
-- ObjectiveID getObjectiveID()
-
-### Class: org.betonquest.betonquest.api.PlayerTagAddEvent
-Type: Class
-Extends: org.betonquest.betonquest.api.profiles.ProfileEvent
-
-Methods:
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- String getTag()
-
-### Class: org.betonquest.betonquest.api.PlayerTagRemoveEvent
-Type: Class
-Extends: org.betonquest.betonquest.api.profiles.ProfileEvent
-
-Methods:
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- String getTag()
-
-### Class: org.betonquest.betonquest.api.PlayerUpdatePointEvent
-Type: Class
-Extends: org.betonquest.betonquest.api.profiles.ProfileEvent
-
-Methods:
-- int getNewCount()
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- String getCategory()
-
-### Class: org.betonquest.betonquest.api.QuestCompassTargetChangeEvent
-Type: Class
-Extends: org.betonquest.betonquest.api.profiles.ProfileEvent
-Implements: org.bukkit.event.Cancellable
-
-Methods:
-- boolean isCancelled()
-- Location getLocation()
-- void setCancelled(boolean)
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-
-### Class: org.betonquest.betonquest.api.QuestDataUpdateEvent
-Type: Class
-Extends: org.betonquest.betonquest.api.profiles.ProfileEvent
-
-Methods:
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- String getObjID()
-- String getData()
-
-### Class: org.betonquest.betonquest.api.QuestEvent
-Type: Abstract Class
-Extends: org.betonquest.betonquest.api.ForceSyncHandler
-
-Methods:
-- boolean fire(Profile) throws QuestRuntimeException
-
-### Class: org.betonquest.betonquest.api.Variable
-Type: Abstract Class
-
-Methods:
-- String getValue(Profile)
-- Instruction getInstruction()
-- String toString()
-- boolean isStaticness()
-
-## Package: org.betonquest.betonquest.api.bukkit.command
-
-### Class: org.betonquest.betonquest.api.bukkit.command.SilentCommandSender
-Type: Class
-Implements: org.bukkit.command.CommandSender
-
-Methods:
-- Server getServer()
-- Set getEffectivePermissions()
-- String getName()
-- void setOp(boolean)
-- boolean hasPermission(String)
-- boolean hasPermission(Permission)
-- Component name()
-- CommandSender$Spigot spigot()
-- void sendMessage(String)
-- void sendMessage(String[])
-- void sendMessage(UUID, String)
-- void sendMessage(UUID, String[])
-- boolean isOp()
-- void recalculatePermissions()
-- void removeAttachment(PermissionAttachment)
-- PermissionAttachment addAttachment(Plugin, String, boolean)
-- PermissionAttachment addAttachment(Plugin)
-- PermissionAttachment addAttachment(Plugin, String, boolean, int)
-- PermissionAttachment addAttachment(Plugin, int)
-- boolean isPermissionSet(String)
-- boolean isPermissionSet(Permission)
-
-### Class: org.betonquest.betonquest.api.bukkit.command.SilentConsoleCommandSender
-Type: Class
-Extends: org.betonquest.betonquest.api.bukkit.command.SilentCommandSender
-Implements: org.bukkit.command.ConsoleCommandSender
-
-Methods:
-- boolean beginConversation(Conversation)
-- void acceptConversationInput(String)
-- void sendRawMessage(String)
-- void sendRawMessage(UUID, String)
-- boolean isConversing()
-- void abandonConversation(Conversation)
-- void abandonConversation(Conversation, ConversationAbandonedEvent)
-
-## Package: org.betonquest.betonquest.api.bukkit.config.custom
-
-### Class: org.betonquest.betonquest.api.bukkit.config.custom.ConfigurationSectionDecorator
-Type: Class
-Implements: org.bukkit.configuration.ConfigurationSection
-
-Methods:
-- List getLongList(String)
-- Location getLocation(String)
-- Location getLocation(String, Location)
-- String getName()
-- Vector getVector(String)
-- Vector getVector(String, Vector)
-- List getShortList(String)
-- ConfigurationSection getConfigurationSection(String)
-- List getList(String)
-- List getList(String, List)
-- List getComments(String)
-- boolean isInt(String)
-- List getCharacterList(String)
-- ConfigurationSection createSection(String)
-- ConfigurationSection createSection(String, Map)
-- ConfigurationSection getDefaultSection()
-- Object getObject(String, Class)
-- Object getObject(String, Class, Object)
-- String getCurrentPath()
-- boolean isSet(String)
-- boolean isOfflinePlayer(String)
-- List getDoubleList(String)
-- OfflinePlayer getOfflinePlayer(String)
-- OfflinePlayer getOfflinePlayer(String, OfflinePlayer)
-- void addDefault(String, Object)
-- ConfigurationSerializable getSerializable(String, Class)
-- ConfigurationSerializable getSerializable(String, Class, ConfigurationSerializable)
-- int getInt(String)
-- int getInt(String, int)
-- boolean contains(String)
-- boolean contains(String, boolean)
-- List getIntegerList(String)
-- List getByteList(String)
-- List getStringList(String)
-- void setInlineComments(String, List)
-- List getInlineComments(String)
-- boolean isDouble(String)
-- List getBooleanList(String)
-- double getDouble(String)
-- double getDouble(String, double)
-- boolean isVector(String)
-- List getMapList(String)
-- boolean isList(String)
-- boolean isBoolean(String)
-- boolean isColor(String)
-- Object get(String)
-- Object get(String, Object)
-- boolean isString(String)
-- boolean getBoolean(String)
-- boolean getBoolean(String, boolean)
-- ItemStack getItemStack(String)
-- ItemStack getItemStack(String, ItemStack)
-- void setComments(String, List)
-- Configuration getRoot()
-- boolean isItemStack(String)
-- ConfigurationSection getParent()
-- boolean isLong(String)
-- void set(String, Object)
-- Map getValues(boolean)
-- Color getColor(String)
-- Color getColor(String, Color)
-- String getString(String)
-- String getString(String, String)
-- Set getKeys(boolean)
-- long getLong(String)
-- long getLong(String, long)
-- List getFloatList(String)
-- boolean isLocation(String)
-- boolean isConfigurationSection(String)
-- String toString()
-
-## Package: org.betonquest.betonquest.api.bukkit.config.custom.fallback
-
-### Class: org.betonquest.betonquest.api.bukkit.config.custom.fallback.FallbackConfiguration
-Type: Class
-Extends: org.betonquest.betonquest.api.bukkit.config.custom.fallback.FallbackConfigurationSection
-Implements: org.bukkit.configuration.Configuration
-
-Methods:
-- void addDefaults(Map)
-- void addDefaults(Configuration)
-- ConfigurationOptions options()
-- Configuration getDefaults()
-- void setDefaults(Configuration)
-
-### Class: org.betonquest.betonquest.api.bukkit.config.custom.fallback.FallbackConfigurationOptions
-Type: Class
-Extends: org.bukkit.configuration.ConfigurationOptions
-
-Methods:
-- boolean copyDefaults()
-- ConfigurationOptions copyDefaults(boolean)
-- char pathSeparator()
-- ConfigurationOptions pathSeparator(char)
-
-### Class: org.betonquest.betonquest.api.bukkit.config.custom.fallback.FallbackConfigurationSection
-Type: Class
-Implements: org.bukkit.configuration.ConfigurationSection
-
-Methods:
-- List getLongList(String)
-- Location getLocation(String)
-- Location getLocation(String, Location)
-- String getName()
-- Vector getVector(String)
-- Vector getVector(String, Vector)
-- List getShortList(String)
-- ConfigurationSection getConfigurationSection(String)
-- List getList(String)
-- List getList(String, List)
-- List getComments(String)
-- boolean isInt(String)
-- List getCharacterList(String)
-- ConfigurationSection createSection(String)
-- ConfigurationSection createSection(String, Map)
-- ConfigurationSection getDefaultSection()
-- Object getObject(String, Class)
-- Object getObject(String, Class, Object)
-- String getCurrentPath()
-- boolean isSet(String)
-- boolean isOfflinePlayer(String)
-- List getDoubleList(String)
-- OfflinePlayer getOfflinePlayer(String)
-- OfflinePlayer getOfflinePlayer(String, OfflinePlayer)
-- void addDefault(String, Object)
-- ConfigurationSerializable getSerializable(String, Class)
-- ConfigurationSerializable getSerializable(String, Class, ConfigurationSerializable)
-- int getInt(String)
-- int getInt(String, int)
-- boolean contains(String)
-- boolean contains(String, boolean)
-- List getIntegerList(String)
-- List getByteList(String)
-- List getStringList(String)
-- void setInlineComments(String, List)
-- List getInlineComments(String)
-- boolean isDouble(String)
-- List getBooleanList(String)
-- double getDouble(String)
-- double getDouble(String, double)
-- boolean isVector(String)
-- List getMapList(String)
-- boolean isList(String)
-- boolean isBoolean(String)
-- boolean isColor(String)
-- Object get(String)
-- Object get(String, Object)
-- boolean isString(String)
-- boolean getBoolean(String)
-- boolean getBoolean(String, boolean)
-- ItemStack getItemStack(String)
-- ItemStack getItemStack(String, ItemStack)
-- void setComments(String, List)
-- Configuration getRoot()
-- boolean isItemStack(String)
-- ConfigurationSection getParent()
-- boolean isLong(String)
-- void set(String, Object)
-- Map getValues(boolean)
-- Color getColor(String)
-- Color getColor(String, Color)
-- String getString(String)
-- String getString(String, String)
-- Set getKeys(boolean)
-- long getLong(String)
-- long getLong(String, long)
-- List getFloatList(String)
-- boolean isLocation(String)
-- boolean isConfigurationSection(String)
-- String toString()
-
-### Class: org.betonquest.betonquest.api.bukkit.config.custom.fallback.FallbackConfigurationSection$ConfigManager
-Type: Class
-
-No public methods found
-
-## Package: org.betonquest.betonquest.api.bukkit.config.custom.handle
-
-### Class: org.betonquest.betonquest.api.bukkit.config.custom.handle.ConfigurationModificationHandler
-Type: Interface
-Implements: org.betonquest.betonquest.api.bukkit.config.custom.handle.ConfigurationSectionModificationHandler
-
-Methods:
-- void addDefault(ConfigurationSection, String, Object)
-- void addDefaults(Configuration, Map)
-- void addDefaults(Configuration, Configuration)
-- void setDefaults(Configuration, Configuration)
-
-### Class: org.betonquest.betonquest.api.bukkit.config.custom.handle.ConfigurationSectionModificationHandler
-Type: Interface
-
-Methods:
-- void addDefault(ConfigurationSection, String, Object)
-- void set(ConfigurationSection, String, Object)
-- **static** String getAbsolutePath(ConfigurationSection, String)
-- void setComments(ConfigurationSection, String, List)
-- void setInlineComments(ConfigurationSection, String, List)
-- ConfigurationSection createSection(ConfigurationSection, String)
-- ConfigurationSection createSection(ConfigurationSection, String, Map)
-
-### Class: org.betonquest.betonquest.api.bukkit.config.custom.handle.HandleConfigurationOptions
-Type: Class
-Extends: org.bukkit.configuration.ConfigurationOptions
-
-Methods:
-- boolean copyDefaults()
-- ConfigurationOptions copyDefaults(boolean)
-- char pathSeparator()
-- ConfigurationOptions pathSeparator(char)
-
-### Class: org.betonquest.betonquest.api.bukkit.config.custom.handle.HandleModificationConfiguration
-Type: Class
-Extends: org.betonquest.betonquest.api.bukkit.config.custom.handle.HandleModificationConfigurationSection
-Implements: org.bukkit.configuration.Configuration
-
-Methods:
-- void addDefault(String, Object)
-- void addDefaults(Map)
-- void addDefaults(Configuration)
-- ConfigurationOptions options()
-- Configuration getDefaults()
-- void setDefaults(Configuration)
-
-### Class: org.betonquest.betonquest.api.bukkit.config.custom.handle.HandleModificationConfigurationSection
-Type: Class
-Extends: org.betonquest.betonquest.api.bukkit.config.custom.ConfigurationSectionDecorator
-
-Methods:
-- void addDefault(String, Object)
-- ConfigurationSection getDefaultSection()
-- Object getObject(String, Class)
-- Object getObject(String, Class, Object)
-- ConfigurationSection getParent()
-- ConfigurationSection getConfigurationSection(String)
-- void set(String, Object)
-- Map getValues(boolean)
-- Object get(String)
-- Object get(String, Object)
-- void setComments(String, List)
-- Configuration getRoot()
-- void setInlineComments(String, List)
-- ConfigurationSection createSection(String)
-- ConfigurationSection createSection(String, Map)
-
-## Package: org.betonquest.betonquest.api.bukkit.config.custom.lazy
-
-### Class: org.betonquest.betonquest.api.bukkit.config.custom.lazy.LazyConfigurationSection
-Type: Class
-Extends: org.betonquest.betonquest.api.bukkit.config.custom.handle.HandleModificationConfigurationSection
-
-No public methods found
-
-### Class: org.betonquest.betonquest.api.bukkit.config.custom.lazy.LazyConfigurationSection$LazyMemoryConfigurationSection
-Type: Class
-Extends: org.bukkit.configuration.MemorySection
-
-No public methods found
-
-## Package: org.betonquest.betonquest.api.bukkit.config.custom.multi
-
-### Class: org.betonquest.betonquest.api.bukkit.config.custom.multi.MultiConfiguration
-Type: Interface
-Implements: org.bukkit.configuration.Configuration
-
-Methods:
-- void associateWith(ConfigurationSection)
-- void associateWith(String, ConfigurationSection)
-- boolean markAsSaved(ConfigurationSection)
-- Set getUnsavedConfigs()
-- List getUnassociatedKeys()
-- boolean needSave()
-- ConfigurationSection getSourceConfigurationSection(String) throws InvalidConfigurationException
-
-### Class: org.betonquest.betonquest.api.bukkit.config.custom.multi.InvalidSubConfigurationException
-Type: Class
-Extends: org.bukkit.configuration.InvalidConfigurationException
-
-Methods:
-- ConfigurationSection getSubConfiguration()
-
-### Class: org.betonquest.betonquest.api.bukkit.config.custom.multi.KeyConflictException
-Type: Class
-Extends: org.bukkit.configuration.InvalidConfigurationException
-
-Methods:
-- String resolvedMessage(Map)
-
-### Class: org.betonquest.betonquest.api.bukkit.config.custom.multi.MultiSectionConfiguration
-Type: Class
-Extends: org.betonquest.betonquest.api.bukkit.config.custom.handle.HandleModificationConfiguration
-Implements: org.betonquest.betonquest.api.bukkit.config.custom.multi.MultiConfiguration
-
-Methods:
-- void associateWith(ConfigurationSection)
-- void associateWith(String, ConfigurationSection)
-- boolean markAsSaved(ConfigurationSection)
-- Set getUnsavedConfigs()
-- ConfigurationOptions options()
-- List getUnassociatedKeys()
-- boolean needSave()
-- ConfigurationSection getSourceConfigurationSection(String) throws InvalidConfigurationException
-
-## Package: org.betonquest.betonquest.api.bukkit.config.custom.multi.fallback
-
-### Class: org.betonquest.betonquest.api.bukkit.config.custom.multi.fallback.MultiFallbackConfiguration
-Type: Class
-Extends: org.betonquest.betonquest.api.bukkit.config.custom.fallback.FallbackConfiguration
-Implements: org.betonquest.betonquest.api.bukkit.config.custom.multi.MultiConfiguration
-
-Methods:
-- void associateWith(ConfigurationSection)
-- void associateWith(String, ConfigurationSection)
-- boolean markAsSaved(ConfigurationSection)
-- Set getUnsavedConfigs()
-- List getUnassociatedKeys()
-- boolean needSave()
-- ConfigurationSection getSourceConfigurationSection(String) throws InvalidConfigurationException
-
-## Package: org.betonquest.betonquest.api.bukkit.config.custom.unmodifiable
-
-### Class: org.betonquest.betonquest.api.bukkit.config.custom.unmodifiable.UnmodifiableConfiguration
-Type: Class
-Extends: org.betonquest.betonquest.api.bukkit.config.custom.handle.HandleModificationConfiguration
-
-No public methods found
-
-### Class: org.betonquest.betonquest.api.bukkit.config.custom.unmodifiable.UnmodifiableConfigurationSection
-Type: Class
-Extends: org.betonquest.betonquest.api.bukkit.config.custom.handle.HandleModificationConfigurationSection
-
-No public methods found
-
-## Package: org.betonquest.betonquest.api.common.function
-
-### Class: org.betonquest.betonquest.api.common.function.Selector
-Type: Interface
-
-Methods:
-- Object selectFor(Profile) throws QuestRuntimeException
-
-### Class: org.betonquest.betonquest.api.common.function.ConstantSelector
-Type: Class
-Implements: org.betonquest.betonquest.api.common.function.Selector
-
-Methods:
-- Object selectFor(Profile)
-
-### Class: org.betonquest.betonquest.api.common.function.Selectors
-Type: Class
-
-Methods:
-- **static** Selector fromPlayer(Function)
-- **static** Selector fromOnlineProfile(Function)
-- **static** Selector fromOfflinePlayer(Function)
-
-## Package: org.betonquest.betonquest.api.config
-
-### Class: org.betonquest.betonquest.api.config.ConfigAccessor
-Type: Interface
-
-Methods:
-- boolean reload() throws IOException
-- File getConfigurationFile()
-- boolean save() throws IOException
-- boolean delete() throws IOException
-- YamlConfiguration getConfig()
-
-### Class: org.betonquest.betonquest.api.config.ConfigAccessorFactory
-Type: Interface
-
-Methods:
-- ConfigAccessor create(File) throws InvalidConfigurationException, FileNotFoundException
-- ConfigAccessor create(Plugin, String) throws InvalidConfigurationException, FileNotFoundException
-- ConfigAccessor create(File, Plugin, String) throws InvalidConfigurationException, FileNotFoundException
-
-### Class: org.betonquest.betonquest.api.config.ConfigurationFile
-Type: Interface
-Implements: org.bukkit.configuration.ConfigurationSection
-
-Methods:
-- boolean reload() throws IOException
-- boolean save() throws IOException
-- boolean delete() throws IOException
-
-### Class: org.betonquest.betonquest.api.config.ConfigurationFileFactory
-Type: Interface
-
-Methods:
-- ConfigurationFile create(File, Plugin, String) throws InvalidConfigurationException, FileNotFoundException
-- ConfigurationFile create(File, Plugin, String, PatchTransformerRegisterer) throws InvalidConfigurationException, FileNotFoundException
-
-## Package: org.betonquest.betonquest.api.config.patcher
-
-### Class: org.betonquest.betonquest.api.config.patcher.PatchTransformer
-Type: Interface
-
-Methods:
-- void transform(Map, ConfigurationSection) throws PatchException
-
-### Class: org.betonquest.betonquest.api.config.patcher.PatchTransformerRegisterer
-Type: Interface
-
-Methods:
-- void registerTransformers(Patcher)
-
-### Class: org.betonquest.betonquest.api.config.patcher.PatchException
-Type: Class
-Extends: java.lang.Exception
-
-No public methods found
-
-## Package: org.betonquest.betonquest.api.config.quest
-
-### Class: org.betonquest.betonquest.api.config.quest.QuestPackage
-Type: Interface
-
-Methods:
-- String getFormattedString(String)
-- boolean saveAll() throws IOException
-- String getQuestPath()
-- ConfigAccessor getOrCreateConfigAccessor(String) throws InvalidConfigurationException, FileNotFoundException
-- String subst(String)
-- String getString(String)
-- String getString(String, String)
-- String getRawString(String)
-- boolean hasTemplate(String)
-- MultiConfiguration getConfig()
-- List getTemplates()
-
-## Package: org.betonquest.betonquest.api.logger
-
-### Class: org.betonquest.betonquest.api.logger.BetonQuestLogger
-Type: Interface
-
-Methods:
-- void warn(String)
-- void warn(String, Throwable)
-- void warn(QuestPackage, String)
-- void warn(QuestPackage, String, Throwable)
-- void debug(String)
-- void debug(String, Throwable)
-- void debug(QuestPackage, String)
-- void debug(QuestPackage, String, Throwable)
-- void reportException(Throwable)
-- void reportException(QuestPackage, Throwable)
-- void error(String)
-- void error(String, Throwable)
-- void error(QuestPackage, String)
-- void error(QuestPackage, String, Throwable)
-- void info(String)
-- void info(QuestPackage, String)
-
-### Class: org.betonquest.betonquest.api.logger.BetonQuestLoggerFactory
-Type: Interface
-
-Methods:
-- BetonQuestLogger create(Class)
-- BetonQuestLogger create(Class, String)
-- BetonQuestLogger create(Plugin)
-- BetonQuestLogger create(Plugin, String)
-
-### Class: org.betonquest.betonquest.api.logger.CachingBetonQuestLoggerFactory
-Type: Class
-Implements: org.betonquest.betonquest.api.logger.BetonQuestLoggerFactory
-
-Methods:
-- BetonQuestLogger create(Class, String)
-- BetonQuestLogger create(Plugin, String)
-
-### Class: org.betonquest.betonquest.api.logger.SingletonLoggerFactory
-Type: Class
-Implements: org.betonquest.betonquest.api.logger.BetonQuestLoggerFactory
-
-Methods:
-- BetonQuestLogger create(Class, String)
-- BetonQuestLogger create(Plugin, String)
-
-## Package: org.betonquest.betonquest.api.profiles
-
-### Class: org.betonquest.betonquest.api.profiles.OnlineProfile
-Type: Interface
-Implements: org.betonquest.betonquest.api.profiles.Profile
-
-Methods:
-- Player getPlayer()
-- OfflinePlayer getPlayer()
-
-### Class: org.betonquest.betonquest.api.profiles.Profile
-Type: Interface
-
-Methods:
-- OfflinePlayer getPlayer()
-- UUID getProfileUUID()
-- Optional getOnlineProfile()
-- String getProfileName()
-- String toString()
-- UUID getPlayerUUID()
-
-### Class: org.betonquest.betonquest.api.profiles.ProfileEvent
-Type: Abstract Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- Profile getProfile()
-
-## Package: org.betonquest.betonquest.api.quest
-
-### Class: org.betonquest.betonquest.api.quest.PlayerQuestFactory
-Type: Interface
-
-Methods:
-- Object parsePlayer(Instruction) throws InstructionParseException
-
-### Class: org.betonquest.betonquest.api.quest.PlayerlessQuestFactory
-Type: Interface
-
-Methods:
-- Object parsePlayerless(Instruction) throws InstructionParseException
-
-## Package: org.betonquest.betonquest.api.quest.condition
-
-### Class: org.betonquest.betonquest.api.quest.condition.PlayerCondition
-Type: Interface
-
-Methods:
-- boolean check(Profile) throws QuestRuntimeException
-
-### Class: org.betonquest.betonquest.api.quest.condition.PlayerConditionFactory
-Type: Interface
-Implements: org.betonquest.betonquest.api.quest.PlayerQuestFactory
-
-Methods:
-- PlayerCondition parsePlayer(Instruction) throws InstructionParseException
-- Object parsePlayer(Instruction) throws InstructionParseException
-
-### Class: org.betonquest.betonquest.api.quest.condition.PlayerlessCondition
-Type: Interface
-
-Methods:
-- boolean check() throws QuestRuntimeException
-
-### Class: org.betonquest.betonquest.api.quest.condition.PlayerlessConditionFactory
-Type: Interface
-Implements: org.betonquest.betonquest.api.quest.PlayerlessQuestFactory
-
-Methods:
-- PlayerlessCondition parsePlayerless(Instruction) throws InstructionParseException
-- Object parsePlayerless(Instruction) throws InstructionParseException
-
-## Package: org.betonquest.betonquest.api.quest.condition.nullable
-
-### Class: org.betonquest.betonquest.api.quest.condition.nullable.NullableCondition
-Type: Interface
-
-Methods:
-- boolean check(Profile) throws QuestRuntimeException
-
-### Class: org.betonquest.betonquest.api.quest.condition.nullable.NullableConditionAdapter
-Type: Class
-Implements: org.betonquest.betonquest.api.quest.condition.PlayerCondition, org.betonquest.betonquest.api.quest.condition.PlayerlessCondition
-
-Methods:
-- boolean check(Profile) throws QuestRuntimeException
-- boolean check() throws QuestRuntimeException
-
-## Package: org.betonquest.betonquest.api.quest.condition.online
-
-### Class: org.betonquest.betonquest.api.quest.condition.online.OnlineCondition
-Type: Interface
-
-Methods:
-- boolean check(OnlineProfile) throws QuestRuntimeException
-
-### Class: org.betonquest.betonquest.api.quest.condition.online.OnlineConditionAdapter
-Type: Class
-Implements: org.betonquest.betonquest.api.quest.condition.PlayerCondition
-
-Methods:
-- boolean check(Profile) throws QuestRuntimeException
-
-## Package: org.betonquest.betonquest.api.quest.event
-
-### Class: org.betonquest.betonquest.api.quest.event.Event
-Type: Interface
-
-Methods:
-- void execute(Profile) throws QuestRuntimeException
-
-### Class: org.betonquest.betonquest.api.quest.event.EventFactory
-Type: Interface
-Implements: org.betonquest.betonquest.api.quest.PlayerQuestFactory
-
-Methods:
-- Event parseEvent(Instruction) throws InstructionParseException
-- Event parsePlayer(Instruction) throws InstructionParseException
-- Object parsePlayer(Instruction) throws InstructionParseException
-
-### Class: org.betonquest.betonquest.api.quest.event.StaticEvent
-Type: Interface
-
-Methods:
-- void execute() throws QuestRuntimeException
-
-### Class: org.betonquest.betonquest.api.quest.event.StaticEventFactory
-Type: Interface
-Implements: org.betonquest.betonquest.api.quest.PlayerlessQuestFactory
-
-Methods:
-- StaticEvent parseStaticEvent(Instruction) throws InstructionParseException
-- StaticEvent parsePlayerless(Instruction) throws InstructionParseException
-- Object parsePlayerless(Instruction) throws InstructionParseException
-
-## Package: org.betonquest.betonquest.api.quest.event.nullable
-
-### Class: org.betonquest.betonquest.api.quest.event.nullable.NullableEvent
-Type: Interface
-
-Methods:
-- void execute(Profile) throws QuestRuntimeException
-
-### Class: org.betonquest.betonquest.api.quest.event.nullable.NullableEventAdapter
-Type: Class
-Implements: org.betonquest.betonquest.api.quest.event.Event, org.betonquest.betonquest.api.quest.event.StaticEvent
-
-Methods:
-- void execute(Profile) throws QuestRuntimeException
-- void execute() throws QuestRuntimeException
-
-## Package: org.betonquest.betonquest.api.quest.event.online
-
-### Class: org.betonquest.betonquest.api.quest.event.online.OnlineEvent
-Type: Interface
-
-Methods:
-- void execute(OnlineProfile) throws QuestRuntimeException
-
-### Class: org.betonquest.betonquest.api.quest.event.online.OnlineEventAdapter
-Type: Class
-Implements: org.betonquest.betonquest.api.quest.event.Event
-
-Methods:
-- void execute(Profile) throws QuestRuntimeException
-
-## Package: org.betonquest.betonquest.api.quest.variable
-
-### Class: org.betonquest.betonquest.api.quest.variable.PlayerVariable
-Type: Interface
-
-Methods:
-- String getValue(Profile)
-
-### Class: org.betonquest.betonquest.api.quest.variable.PlayerVariableFactory
-Type: Interface
-Implements: org.betonquest.betonquest.api.quest.PlayerQuestFactory
-
-Methods:
-- PlayerVariable parsePlayer(Instruction) throws InstructionParseException
-- Object parsePlayer(Instruction) throws InstructionParseException
-
-### Class: org.betonquest.betonquest.api.quest.variable.PlayerlessVariable
-Type: Interface
-
-Methods:
-- String getValue()
-
-### Class: org.betonquest.betonquest.api.quest.variable.PlayerlessVariableFactory
-Type: Interface
-Implements: org.betonquest.betonquest.api.quest.PlayerlessQuestFactory
-
-Methods:
-- PlayerlessVariable parsePlayerless(Instruction) throws InstructionParseException
-- Object parsePlayerless(Instruction) throws InstructionParseException
-
-## Package: org.betonquest.betonquest.api.quest.variable.nullable
-
-### Class: org.betonquest.betonquest.api.quest.variable.nullable.NullableVariable
-Type: Interface
-
-Methods:
-- String getValue(Profile)
-
-### Class: org.betonquest.betonquest.api.quest.variable.nullable.NullableVariableAdapter
-Type: Class
-Implements: org.betonquest.betonquest.api.quest.variable.PlayerVariable, org.betonquest.betonquest.api.quest.variable.PlayerlessVariable
-
-Methods:
-- String getValue(Profile)
-- String getValue()
-
-## Package: org.betonquest.betonquest.api.quest.variable.online
-
-### Class: org.betonquest.betonquest.api.quest.variable.online.OnlineVariable
-Type: Interface
-
-Methods:
-- String getValue(OnlineProfile)
-
-### Class: org.betonquest.betonquest.api.quest.variable.online.OnlineVariableAdapter
-Type: Class
-Implements: org.betonquest.betonquest.api.quest.variable.PlayerVariable
-
-Methods:
-- String getValue(Profile)
-
-## Package: org.betonquest.betonquest.api.schedule
-
-### Class: org.betonquest.betonquest.api.schedule.CatchupStrategy
-Type: Enum
-Extends: java.lang.Enum
-
-Methods:
-- **static** CatchupStrategy valueOf(String)
-- **static** CatchupStrategy[] values()
-
-### Class: org.betonquest.betonquest.api.schedule.CronSchedule
-Type: Abstract Class
-Extends: org.betonquest.betonquest.api.schedule.Schedule
-
-Methods:
-- Cron getTimeCron()
-- boolean shouldRunOnReboot()
-- ExecutionTime getExecutionTime()
-
-### Class: org.betonquest.betonquest.api.schedule.Schedule
-Type: Abstract Class
-
-Methods:
-- List getEvents()
-- String getTime()
-- ScheduleID getId()
-- CatchupStrategy getCatchup()
-
-### Class: org.betonquest.betonquest.api.schedule.Scheduler
-Type: Abstract Class
-
-Methods:
-- void stop()
-- boolean isRunning()
-- void start()
-- void start(Object)
-- void addSchedule(Schedule)
-
-# BetonQuest-org-betonquest-betonquest-api API Reference
-
-**Package Filter:** `org.betonquest.betonquest.api`
-
-## Main BetonQuest Class Methods
+# BetonQuest API Reference
+
+BetonQuest is an advanced quest and dialogue scripting plugin for Minecraft servers. It provides events, conditions, objectives, variables, conversations, and schedules. Third-party plugins can register custom implementations of all these types.
+
+**Note:** BetonQuest 2.x has both a Legacy API (class-based registration) and a newer Factory API (interface-based registration). The Legacy API methods are deprecated but still functional. The examples below show both approaches where applicable.
+
+## Accessing the Plugin
+
+```java
+import org.betonquest.betonquest.BetonQuest;
+
+BetonQuest betonQuest = BetonQuest.getInstance();
+```
+
+For the newer modular API, use Bukkit's ServicesManager:
+
+```java
+import org.betonquest.betonquest.api.logger.BetonQuestLoggerFactory;
+
+BetonQuestLoggerFactory loggerFactory =
+    getServer().getServicesManager().load(BetonQuestLoggerFactory.class);
+```
+
+## Profiles and Player Data
+
+BetonQuest uses `Profile` instead of raw player UUIDs. Always use Profile-based methods.
+
+```java
+import org.betonquest.betonquest.BetonQuest;
+import org.betonquest.betonquest.api.profiles.Profile;
+import org.betonquest.betonquest.api.profiles.OnlineProfile;
+import org.betonquest.betonquest.database.PlayerData;
+
+// Getting player data for a profile
+PlayerData data = BetonQuest.getInstance().getPlayerData(profile);
+PlayerData offlineData = BetonQuest.getInstance().getOfflinePlayerData(profile);
+
+// Profile interface methods
+UUID profileUuid = profile.getProfileUUID();
+UUID playerUuid = profile.getPlayerUUID();
+String name = profile.getProfileName();
+OfflinePlayer offlinePlayer = profile.getPlayer();
+Optional<OnlineProfile> online = profile.getOnlineProfile();
+
+// OnlineProfile extends Profile, adds:
+Player player = onlineProfile.getPlayer();
+```
+
+## Creating a Custom Event (Legacy API)
+
+Extend `QuestEvent`. The constructor receives an `Instruction` object to parse configuration. Override `execute` via the `handle` method.
+
+```java
+import org.betonquest.betonquest.api.QuestEvent;
+import org.betonquest.betonquest.api.profiles.Profile;
+import org.betonquest.betonquest.exceptions.InstructionParseException;
+import org.betonquest.betonquest.exceptions.QuestRuntimeException;
+import org.betonquest.betonquest.Instruction;
+import org.betonquest.betonquest.BetonQuest;
+
+public class MyCustomEvent extends QuestEvent {
+
+    private final String skillName;
+
+    public MyCustomEvent(Instruction instruction) throws InstructionParseException {
+        super(instruction, true); // true = run on main thread
+        // Parse arguments from the instruction string
+        skillName = instruction.next();
+        // Set super.persistent = true to allow firing for offline players
+        // Set super.staticness = true to allow null profile (static events)
+    }
+
+    @Override
+    protected Void execute(Profile profile) throws QuestRuntimeException {
+        // Your event logic here
+        // profile can be null if staticness is true
+        return null;
+    }
+}
+```
+
+Register in your plugin's `onEnable()`:
+
+```java
+BetonQuest.getInstance().registerEvents("myevent", MyCustomEvent.class);
+```
+
+## Creating a Custom Event (New Factory API)
+
+Implement `EventFactory` (and optionally `StaticEventFactory` for playerless events).
+
+```java
+import org.betonquest.betonquest.api.quest.event.Event;
+import org.betonquest.betonquest.api.quest.event.EventFactory;
+import org.betonquest.betonquest.api.quest.event.StaticEvent;
+import org.betonquest.betonquest.api.quest.event.StaticEventFactory;
+import org.betonquest.betonquest.api.profiles.Profile;
+import org.betonquest.betonquest.exceptions.InstructionParseException;
+import org.betonquest.betonquest.exceptions.QuestRuntimeException;
+import org.betonquest.betonquest.Instruction;
+import org.betonquest.betonquest.BetonQuest;
+
+public class MyEventFactory implements EventFactory, StaticEventFactory {
+
+    @Override
+    public Event parseEvent(Instruction instruction) throws InstructionParseException {
+        String skillName = instruction.next();
+        return (Event) profile -> {
+            // event logic using profile
+        };
+    }
+
+    // Alias required by EventFactory (delegates to parseEvent)
+    @Override
+    public Event parsePlayer(Instruction instruction) throws InstructionParseException {
+        return parseEvent(instruction);
+    }
+
+    @Override
+    public StaticEvent parseStaticEvent(Instruction instruction) throws InstructionParseException {
+        String skillName = instruction.next();
+        return () -> {
+            // static event logic (no player)
+        };
+    }
+
+    @Override
+    public StaticEvent parsePlayerless(Instruction instruction) throws InstructionParseException {
+        return parseStaticEvent(instruction);
+    }
+}
+```
+
+Register:
+
+```java
+MyEventFactory factory = new MyEventFactory();
+BetonQuest.getInstance().registerEvent("myevent", factory, factory);
+// Or for non-static events only:
+// BetonQuest.getInstance().registerNonStaticEvent("myevent", factory);
+```
+
+## Creating a Custom Condition (Legacy API)
+
+Extend `Condition`. Override `execute` via the `handle` method, returning true/false.
+
+```java
+import org.betonquest.betonquest.api.Condition;
+import org.betonquest.betonquest.api.profiles.Profile;
+import org.betonquest.betonquest.exceptions.InstructionParseException;
+import org.betonquest.betonquest.exceptions.QuestRuntimeException;
+import org.betonquest.betonquest.Instruction;
+import org.betonquest.betonquest.BetonQuest;
+
+public class MyCustomCondition extends Condition {
+
+    private final int requiredLevel;
+
+    public MyCustomCondition(Instruction instruction) throws InstructionParseException {
+        super(instruction, true);
+        requiredLevel = instruction.getInt();
+        // Set super.staticness = true for conditions that work without a player
+        // Set super.persistent = true for offline player support
+    }
+
+    @Override
+    protected Boolean execute(Profile profile) throws QuestRuntimeException {
+        // Return true if condition is met
+        return profile.getOnlineProfile()
+            .map(op -> op.getPlayer().getLevel() >= requiredLevel)
+            .orElse(false);
+    }
+}
+```
+
+Register:
+
+```java
+BetonQuest.getInstance().registerConditions("mylevel", MyCustomCondition.class);
+```
+
+## Creating a Custom Condition (New Factory API)
+
+```java
+import org.betonquest.betonquest.api.quest.condition.PlayerCondition;
+import org.betonquest.betonquest.api.quest.condition.PlayerConditionFactory;
+import org.betonquest.betonquest.api.quest.condition.PlayerlessCondition;
+import org.betonquest.betonquest.api.quest.condition.PlayerlessConditionFactory;
+import org.betonquest.betonquest.api.quest.condition.online.OnlineCondition;
+import org.betonquest.betonquest.api.quest.condition.online.OnlineConditionAdapter;
+import org.betonquest.betonquest.api.profiles.Profile;
+import org.betonquest.betonquest.api.profiles.OnlineProfile;
+import org.betonquest.betonquest.exceptions.InstructionParseException;
+import org.betonquest.betonquest.exceptions.QuestRuntimeException;
+import org.betonquest.betonquest.Instruction;
+
+public class MyConditionFactory implements PlayerConditionFactory {
+
+    @Override
+    public PlayerCondition parsePlayer(Instruction instruction) throws InstructionParseException {
+        int requiredLevel = instruction.getInt();
+        // Use OnlineConditionAdapter to wrap an OnlineCondition as a PlayerCondition
+        return new OnlineConditionAdapter(
+            (OnlineProfile op) -> op.getPlayer().getLevel() >= requiredLevel
+        );
+    }
+}
+```
+
+## Creating a Custom Objective
+
+Extend `Objective`. Objectives track player progress and use `ObjectiveData` for persistence.
+
+```java
+import org.betonquest.betonquest.api.Objective;
+import org.betonquest.betonquest.api.profiles.OnlineProfile;
+import org.betonquest.betonquest.api.profiles.Profile;
+import org.betonquest.betonquest.exceptions.InstructionParseException;
+import org.betonquest.betonquest.exceptions.QuestRuntimeException;
+import org.betonquest.betonquest.Instruction;
+import org.betonquest.betonquest.BetonQuest;
+import org.bukkit.Bukkit;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEvent;
+
+public class MyObjective extends Objective implements Listener {
+
+    private final String targetBlock;
+
+    public MyObjective(Instruction instruction) throws InstructionParseException {
+        super(instruction);
+        targetBlock = instruction.next();
+        // REQUIRED: set the data class template
+        template = ObjectiveData.class;
+    }
+
+    @EventHandler
+    public void onInteract(PlayerInteractEvent event) {
+        OnlineProfile onlineProfile = /* convert from event.getPlayer() */;
+        if (!containsPlayer(onlineProfile)) return;
+        if (!checkConditions(onlineProfile)) return;
+        completeObjective(onlineProfile);
+    }
+
+    @Override
+    public void start() {
+        Bukkit.getPluginManager().registerEvents(this, BetonQuest.getInstance());
+    }
+
+    @Override
+    public void stop() {
+        HandlerList.unregisterAll(this);
+    }
+
+    @Override
+    public String getDefaultDataInstruction() {
+        return "";
+    }
+
+    @Override
+    public String getDefaultDataInstruction(Profile profile) {
+        return getDefaultDataInstruction();
+    }
+
+    @Override
+    public String getProperty(String name, Profile profile) {
+        return "";
+    }
+}
+```
+
+Register:
+
+```java
+BetonQuest.getInstance().registerObjectives("myobjective", MyObjective.class);
+```
+
+## Using a CountingObjective
+
+For objectives that track numeric progress, extend `CountingObjective`:
+
+```java
+import org.betonquest.betonquest.api.CountingObjective;
+import org.betonquest.betonquest.api.profiles.OnlineProfile;
+import org.betonquest.betonquest.api.profiles.Profile;
+import org.betonquest.betonquest.exceptions.InstructionParseException;
+import org.betonquest.betonquest.Instruction;
+
+public class MyCountingObjective extends CountingObjective {
+
+    public MyCountingObjective(Instruction instruction) throws InstructionParseException {
+        super(instruction, "custom_property_name");
+        // targetAmount is parsed automatically from instruction
+    }
+
+    // In your event handler:
+    // CountingData data = getCountingData(profile);
+    // data.progress();              // increment by 1
+    // data.progress(5);             // increment by 5
+    // if (data.isComplete()) completeObjective(profile);
+}
+```
+
+## Creating a Custom Variable
+
+```java
+import org.betonquest.betonquest.api.Variable;
+import org.betonquest.betonquest.api.profiles.Profile;
+import org.betonquest.betonquest.exceptions.InstructionParseException;
+import org.betonquest.betonquest.Instruction;
+import org.betonquest.betonquest.BetonQuest;
+
+public class MyVariable extends Variable {
+
+    private final String key;
+
+    public MyVariable(Instruction instruction) throws InstructionParseException {
+        super(instruction);
+        key = instruction.next();
+    }
+
+    @Override
+    public String getValue(Profile profile) {
+        // Return the variable value as a string
+        return "some_value";
+    }
+}
+```
+
+Register:
+
+```java
+BetonQuest.getInstance().registerVariable("myvar", MyVariable.class);
+```
+
+## Firing Events and Checking Conditions Programmatically
+
+```java
+import org.betonquest.betonquest.BetonQuest;
+import org.betonquest.betonquest.api.profiles.Profile;
+import org.betonquest.betonquest.id.EventID;
+import org.betonquest.betonquest.id.ConditionID;
+import org.betonquest.betonquest.id.ObjectiveID;
+
+// Fire an event for a profile (profile can be null for static events)
+BetonQuest.event(profile, eventID);
+
+// Check a condition (returns boolean)
+boolean result = BetonQuest.condition(profile, conditionID);
+
+// Check multiple conditions (all must pass)
+boolean allMet = BetonQuest.conditions(profile, conditionID1, conditionID2);
+boolean allMet2 = BetonQuest.conditions(profile, conditionIdCollection);
+
+// Start a new objective for a player
+BetonQuest.newObjective(profile, objectiveID);
+
+// Resume an objective with saved data
+BetonQuest.resumeObjective(profile, objectiveID, dataInstruction);
+```
+
+## Instruction Parsing
+
+The `Instruction` class parses the user-defined configuration string:
+
+```java
+import org.betonquest.betonquest.Instruction;
+import org.betonquest.betonquest.exceptions.InstructionParseException;
+
+// In your constructor (Instruction instruction):
+String arg = instruction.next();                  // next required argument (throws if missing)
+instruction.getInt();                             // parse next arg as int
+instruction.getLocation();                        // parse as location
+instruction.getQuestItem();                       // parse as quest item
+String raw = instruction.getInstruction();        // raw instruction string
+```
+
+## Listening to BetonQuest Bukkit Events
+
+All profile-based events extend `ProfileEvent` and provide `getProfile()`:
+
+```java
+import org.betonquest.betonquest.api.PlayerTagAddEvent;
+import org.betonquest.betonquest.api.PlayerTagRemoveEvent;
+import org.betonquest.betonquest.api.PlayerConversationStartEvent;
+import org.betonquest.betonquest.api.PlayerConversationEndEvent;
+import org.betonquest.betonquest.api.ConversationOptionEvent;
+import org.betonquest.betonquest.api.PlayerObjectiveChangeEvent;
+import org.betonquest.betonquest.api.PlayerJournalAddEvent;
+import org.betonquest.betonquest.api.PlayerJournalDeleteEvent;
+import org.betonquest.betonquest.api.PlayerUpdatePointEvent;
+import org.betonquest.betonquest.api.QuestCompassTargetChangeEvent;
+import org.betonquest.betonquest.api.QuestDataUpdateEvent;
+import org.betonquest.betonquest.api.MobKillNotifier;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+
+public class MyListener implements Listener {
+
+    @EventHandler
+    public void onConversationStart(PlayerConversationStartEvent event) {
+        // Cancellable
+        event.getProfile();
+        event.getConversation();
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onTagAdd(PlayerTagAddEvent event) {
+        String tag = event.getTag();
+        Profile profile = event.getProfile();
+    }
+
+    @EventHandler
+    public void onObjectiveChange(PlayerObjectiveChangeEvent event) {
+        event.getObjective();
+        event.getObjectiveID();
+        event.getState();           // new state
+        event.getPreviousState();   // old state
+    }
+}
+```
+
+## Logging
+
+```java
+import org.betonquest.betonquest.api.logger.BetonQuestLogger;
+import org.betonquest.betonquest.api.logger.BetonQuestLoggerFactory;
+
+// Obtain via factory (preferred)
+BetonQuestLoggerFactory factory = BetonQuest.getInstance().getLoggerFactory();
+BetonQuestLogger log = factory.create(MyClass.class);
+
+// Or obtain via ServicesManager
+BetonQuestLoggerFactory factory2 =
+    getServer().getServicesManager().load(BetonQuestLoggerFactory.class);
+
+// Usage
+log.info("Message");
+log.warn("Warning message");
+log.warn(questPackage, "Warning in package context");
+log.error("Error message", throwable);
+log.debug("Debug message");
+log.reportException(throwable);
+```
+
+---
+
+## API Reference
 
 ### Class: org.betonquest.betonquest.BetonQuest
-Type: Main Plugin Class
-Extends: org.bukkit.plugin.java.JavaPlugin
+Type: Class (extends JavaPlugin)
 
-Methods:
+Key Methods:
 - **static** BetonQuest getInstance()
 - PlayerData getPlayerData(Profile profile)
-- PlayerData getPlayerData(OnlineProfile profile)
 - PlayerData getOfflinePlayerData(Profile profile)
-- void putPlayerData(Profile profile, PlayerData playerData)
-- void removePlayerData(Profile profile)
-- **static** boolean condition(@Nullable Profile profile, ConditionID conditionID)
-- **static** boolean conditions(@Nullable Profile profile, ConditionID... conditionIDs)
-- **static** boolean conditions(@Nullable Profile profile, Collection<ConditionID> conditionIDs)
-- **static** boolean event(@Nullable Profile profile, EventID eventID)
-- **static** void newObjective(Profile profile, ObjectiveID objectiveID)
-- **static** void resumeObjective(Profile profile, ObjectiveID objectiveID, String instruction)
-- **static** Variable createVariable(@Nullable QuestPackage pack, String instruction) throws InstructionParseException
-- **static** boolean isVariableType(String type)
-- **static** Map<QuestCancelerID, QuestCanceler> getCanceler()
-- **static** Class<? extends NotifyIO> getNotifyIO(String name)
+- **static** boolean condition(@Nullable Profile, ConditionID)
+- **static** boolean conditions(@Nullable Profile, ConditionID...)
+- **static** boolean conditions(@Nullable Profile, Collection<ConditionID>)
+- **static** boolean event(@Nullable Profile, EventID)
+- **static** void newObjective(Profile, ObjectiveID)
+- **static** void resumeObjective(Profile, ObjectiveID, String)
+- **static** Variable createVariable(@Nullable QuestPackage, String) throws InstructionParseException
+- @Nullable Objective getObjective(ObjectiveID)
+- List<Objective> getPlayerObjectives(Profile)
+- @Nullable ConversationData getConversation(ConversationID)
 - BetonQuestLoggerFactory getLoggerFactory()
-- ConfigAccessorFactory getConfigAccessorFactory()
-- ConfigurationFileFactory getConfigurationFileFactory()
-- BukkitAudiences getAdventure()
-- RPGMenu getRpgMenu()
-- ConfigurationFile getPluginConfig()
-- String getPluginTag()
-- Database getDB()
-- GlobalData getGlobalData()
-- boolean isMySQLUsed()
-- Saver getSaver()
 - QuestTypeRegistries getQuestRegistries()
 - VariableProcessor getVariableProcessor()
-- Map<String, Class<? extends Objective>> getObjectiveTypes()
-- Updater getUpdater()
-- LastExecutionCache getLastExecutionCache()
-- List<Objective> getPlayerObjectives(Profile profile)
-- @Nullable ConversationData getConversation(ConversationID conversationID)
-- @Nullable Objective getObjective(ObjectiveID objectiveID)
-- void loadData()
-- void reload()
-- void callSyncBukkitEvent(Event event)
-- void renameObjective(ObjectiveID name, ObjectiveID rename)
-- @Nullable Class<? extends ConversationIO> getConvIO(String name)
-- @Nullable Class<? extends Interceptor> getInterceptor(String name)
-- void registerObjectives(String name, Class<? extends Objective> objectiveClass)
-- void registerConversationIO(String name, Class<? extends ConversationIO> convIOClass)
-- void registerInterceptor(String name, Class<? extends Interceptor> interceptorClass)
-- void registerNotifyIO(String name, Class<? extends NotifyIO> ioClass)
-- <S extends Schedule> void registerScheduleType(String name, Class<S> schedule, Scheduler<S, ?> scheduler)
-- @Deprecated void registerConditions(String name, Class<? extends Condition> conditionClass)
-- @Deprecated void registerEvents(String name, Class<? extends QuestEvent> eventClass)
-- @Deprecated void registerVariable(String name, Class<? extends Variable> variable)
-- @Deprecated void registerNonStaticEvent(String name, EventFactory eventFactory)
-- @Deprecated <T extends EventFactory & StaticEventFactory> void registerEvent(String name, T eventFactory)
-- @Deprecated void registerEvent(String name, EventFactory eventFactory, StaticEventFactory staticEventFactory)
-- @Deprecated String getVariableValue(String packName, String name, @Nullable Profile profile)
-- @Deprecated @Nullable LegacyTypeFactory<QuestEvent> getEventFactory(String name)
+- GlobalData getGlobalData()
+- void registerObjectives(String name, Class<? extends Objective>)
+- void registerConversationIO(String name, Class<? extends ConversationIO>)
+- void registerInterceptor(String name, Class<? extends Interceptor>)
+- void registerNotifyIO(String name, Class<? extends NotifyIO>)
+- <S extends Schedule> void registerScheduleType(String, Class<S>, Scheduler<S, ?>)
+- @Deprecated void registerConditions(String, Class<? extends Condition>)
+- @Deprecated void registerEvents(String, Class<? extends QuestEvent>)
+- @Deprecated void registerVariable(String, Class<? extends Variable>)
+- @Deprecated void registerNonStaticEvent(String, EventFactory)
+- @Deprecated <T extends EventFactory & StaticEventFactory> void registerEvent(String, T)
+- @Deprecated void registerEvent(String, EventFactory, StaticEventFactory)
 
-## Package: org.betonquest.betonquest.api
-
-### Class: org.betonquest.betonquest.api.Objective$QREThrowing
-Type: Interface
+### Interface: org.betonquest.betonquest.api.profiles.Profile
 
 Methods:
-- void run() throws QuestRuntimeException
+- OfflinePlayer getPlayer()
+- UUID getProfileUUID()
+- UUID getPlayerUUID()
+- String getProfileName()
+- Optional<OnlineProfile> getOnlineProfile()
 
-### Class: org.betonquest.betonquest.api.Condition
-Type: Abstract Class
-Extends: org.betonquest.betonquest.api.ForceSyncHandler
+### Interface: org.betonquest.betonquest.api.profiles.OnlineProfile
+Extends: Profile
+
+Methods:
+- Player getPlayer()
+
+### Class: org.betonquest.betonquest.api.QuestEvent (Abstract)
+Extends: ForceSyncHandler
+
+Methods:
+- boolean fire(Profile) throws QuestRuntimeException
+
+### Class: org.betonquest.betonquest.api.Condition (Abstract)
+Extends: ForceSyncHandler
 
 Methods:
 - boolean isStatic()
 - boolean isPersistent()
 
-### Class: org.betonquest.betonquest.api.ConversationOptionEvent
-Type: Class
-Extends: org.betonquest.betonquest.api.profiles.ProfileEvent
+### Class: org.betonquest.betonquest.api.Objective (Abstract)
 
 Methods:
-- ResolvedOption getSelectedOption()
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- Conversation getConversation()
-- ResolvedOption getNextNPCOption()
-
-### Class: org.betonquest.betonquest.api.CountingObjective
-Type: Abstract Class
-Extends: org.betonquest.betonquest.api.Objective
-
-Methods:
-- String getProperty(String, Profile)
-- String getDefaultDataInstruction()
-- String getDefaultDataInstruction(Profile)
-- CountingObjective$CountingData getCountingData(Profile)
-
-### Class: org.betonquest.betonquest.api.CountingObjective$CountingData
-Type: Class
-Extends: org.betonquest.betonquest.api.Objective$ObjectiveData
-
-Methods:
-- CountingObjective$CountingData add()
-- CountingObjective$CountingData add(int)
-- int getTargetAmount()
-- int getPreviousAmountLeft()
-- CountingObjective$CountingData subtract()
-- CountingObjective$CountingData subtract(int)
-- CountingObjective$CountingData regress()
-- CountingObjective$CountingData regress(int)
-- int getDirectionFactor()
-- CountingObjective$CountingData progress()
-- CountingObjective$CountingData progress(int)
-- int getCompletedAmount()
-- String toString()
-- int getAmountLeft()
-- int getLastChange()
-- boolean isComplete()
-
-### Class: org.betonquest.betonquest.api.ForceSyncHandler
-Type: Abstract Class
-
-Methods:
-- Object handle(Profile) throws QuestRuntimeException
-
-### Class: org.betonquest.betonquest.api.LoadDataEvent
-Type: Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-
-### Class: org.betonquest.betonquest.api.MobKillNotifier
-Type: Class
-
-Methods:
-- **static** void addKill(Profile, Entity)
-
-### Class: org.betonquest.betonquest.api.MobKillNotifier$MobKilledEvent
-Type: Class
-Extends: org.betonquest.betonquest.api.profiles.ProfileEvent
-
-Methods:
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- Entity getEntity()
-
-### Class: org.betonquest.betonquest.api.Objective
-Type: Abstract Class
-
-Methods:
-- void startObjective(Profile, String, Objective$ObjectiveState)
-- boolean containsPlayer(Profile)
-- String getLabel()
-- String getProperty(String, Profile)
-- void completeObjective(Profile)
-- boolean checkConditions(Profile)
-- void newPlayer(Profile)
 - void start()
-- void start(Profile)
-- void cancelObjectiveForPlayer(Profile)
-- void createObjectiveForPlayer(Profile, String)
 - void stop()
+- void start(Profile)
 - void stop(Profile)
-- void resumeObjectiveForPlayer(Profile, String)
-- boolean isGlobal()
-- void setLabel(ObjectiveID)
-- void stopObjective(Profile, Objective$ObjectiveState)
+- boolean containsPlayer(Profile)
+- boolean checkConditions(Profile)
+- void completeObjective(Profile)
+- void newPlayer(Profile)
+- String getProperty(String, Profile)
 - String getDefaultDataInstruction()
 - String getDefaultDataInstruction(Profile)
-- void pauseObjectiveForPlayer(Profile)
-- void close()
 - String getData(Profile)
-- void completeObjectiveForPlayer(Profile)
+- String getLabel()
+- void setLabel(ObjectiveID)
+- boolean isGlobal()
+- void close()
 
 ### Class: org.betonquest.betonquest.api.Objective$ObjectiveData
-Type: Class
 
 Methods:
 - String toString()
 
-### Class: org.betonquest.betonquest.api.Objective$ObjectiveState
-Type: Enum
-Extends: java.lang.Enum
+### Class: org.betonquest.betonquest.api.CountingObjective (Abstract)
+Extends: Objective
 
 Methods:
-- **static** Objective$ObjectiveState valueOf(String)
-- **static** Objective$ObjectiveState[] values()
+- String getProperty(String, Profile)
+- String getDefaultDataInstruction()
+- String getDefaultDataInstruction(Profile)
+- CountingData getCountingData(Profile)
 
-### Class: org.betonquest.betonquest.api.Objective$QREHandler
-Type: Class
-
-Methods:
-- void handle(Objective$QREThrowing)
-
-### Class: org.betonquest.betonquest.api.PlayerConversationEndEvent
-Type: Class
-Extends: org.betonquest.betonquest.api.profiles.ProfileEvent
+### Class: org.betonquest.betonquest.api.CountingObjective$CountingData
+Extends: ObjectiveData
 
 Methods:
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- Conversation getConversation()
+- CountingData add() / add(int)
+- CountingData subtract() / subtract(int)
+- CountingData progress() / progress(int)
+- CountingData regress() / regress(int)
+- int getTargetAmount()
+- int getCompletedAmount()
+- int getAmountLeft()
+- int getPreviousAmountLeft()
+- int getLastChange()
+- int getDirectionFactor()
+- boolean isComplete()
 
-### Class: org.betonquest.betonquest.api.PlayerConversationStartEvent
-Type: Class
-Extends: org.betonquest.betonquest.api.profiles.ProfileEvent
-Implements: org.bukkit.event.Cancellable
-
-Methods:
-- boolean isCancelled()
-- void setCancelled(boolean)
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- Conversation getConversation()
-
-### Class: org.betonquest.betonquest.api.PlayerJournalAddEvent
-Type: Class
-Extends: org.betonquest.betonquest.api.profiles.ProfileEvent
-
-Methods:
-- Journal getJournal()
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- Pointer getPointer()
-
-### Class: org.betonquest.betonquest.api.PlayerJournalDeleteEvent
-Type: Class
-Extends: org.betonquest.betonquest.api.profiles.ProfileEvent
-
-Methods:
-- Journal getJournal()
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- Pointer getPointer()
-
-### Class: org.betonquest.betonquest.api.PlayerObjectiveChangeEvent
-Type: Class
-Extends: org.betonquest.betonquest.api.profiles.ProfileEvent
-
-Methods:
-- Objective$ObjectiveState getPreviousState()
-- Objective$ObjectiveState getState()
-- HandlerList getHandlers()
-- Objective getObjective()
-- **static** HandlerList getHandlerList()
-- ObjectiveID getObjectiveID()
-
-### Class: org.betonquest.betonquest.api.PlayerTagAddEvent
-Type: Class
-Extends: org.betonquest.betonquest.api.profiles.ProfileEvent
-
-Methods:
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- String getTag()
-
-### Class: org.betonquest.betonquest.api.PlayerTagRemoveEvent
-Type: Class
-Extends: org.betonquest.betonquest.api.profiles.ProfileEvent
-
-Methods:
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- String getTag()
-
-### Class: org.betonquest.betonquest.api.PlayerUpdatePointEvent
-Type: Class
-Extends: org.betonquest.betonquest.api.profiles.ProfileEvent
-
-Methods:
-- int getNewCount()
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- String getCategory()
-
-### Class: org.betonquest.betonquest.api.QuestCompassTargetChangeEvent
-Type: Class
-Extends: org.betonquest.betonquest.api.profiles.ProfileEvent
-Implements: org.bukkit.event.Cancellable
-
-Methods:
-- boolean isCancelled()
-- Location getLocation()
-- void setCancelled(boolean)
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-
-### Class: org.betonquest.betonquest.api.QuestDataUpdateEvent
-Type: Class
-Extends: org.betonquest.betonquest.api.profiles.ProfileEvent
-
-Methods:
-- HandlerList getHandlers()
-- **static** HandlerList getHandlerList()
-- String getObjID()
-- String getData()
-
-### Class: org.betonquest.betonquest.api.QuestEvent
-Type: Abstract Class
-Extends: org.betonquest.betonquest.api.ForceSyncHandler
-
-Methods:
-- boolean fire(Profile) throws QuestRuntimeException
-
-### Class: org.betonquest.betonquest.api.Variable
-Type: Abstract Class
+### Class: org.betonquest.betonquest.api.Variable (Abstract)
 
 Methods:
 - String getValue(Profile)
 - Instruction getInstruction()
-- String toString()
 - boolean isStaticness()
 
-## Package: org.betonquest.betonquest.api.bukkit.command
-
-### Class: org.betonquest.betonquest.api.bukkit.command.SilentCommandSender
-Type: Class
-Implements: org.bukkit.command.CommandSender
+### Interface: org.betonquest.betonquest.api.quest.event.Event
 
 Methods:
-- Server getServer()
-- Set getEffectivePermissions()
-- String getName()
-- void setOp(boolean)
-- boolean hasPermission(String)
-- boolean hasPermission(Permission)
-- Component name()
-- CommandSender$Spigot spigot()
-- void sendMessage(String)
-- void sendMessage(String[])
-- void sendMessage(UUID, String)
-- void sendMessage(UUID, String[])
-- boolean isOp()
-- void recalculatePermissions()
-- void removeAttachment(PermissionAttachment)
-- PermissionAttachment addAttachment(Plugin, String, boolean)
-- PermissionAttachment addAttachment(Plugin)
-- PermissionAttachment addAttachment(Plugin, String, boolean, int)
-- PermissionAttachment addAttachment(Plugin, int)
-- boolean isPermissionSet(String)
-- boolean isPermissionSet(Permission)
+- void execute(Profile) throws QuestRuntimeException
 
-### Class: org.betonquest.betonquest.api.bukkit.command.SilentConsoleCommandSender
-Type: Class
-Extends: org.betonquest.betonquest.api.bukkit.command.SilentCommandSender
-Implements: org.bukkit.command.ConsoleCommandSender
+### Interface: org.betonquest.betonquest.api.quest.event.EventFactory
 
 Methods:
-- boolean beginConversation(Conversation)
-- void acceptConversationInput(String)
-- void sendRawMessage(String)
-- void sendRawMessage(UUID, String)
-- boolean isConversing()
-- void abandonConversation(Conversation)
-- void abandonConversation(Conversation, ConversationAbandonedEvent)
+- Event parseEvent(Instruction) throws InstructionParseException
+- Event parsePlayer(Instruction) throws InstructionParseException
 
-## Package: org.betonquest.betonquest.api.bukkit.config.custom
-
-### Class: org.betonquest.betonquest.api.bukkit.config.custom.ConfigurationSectionDecorator
-Type: Class
-Implements: org.bukkit.configuration.ConfigurationSection
+### Interface: org.betonquest.betonquest.api.quest.event.StaticEvent
 
 Methods:
-- List getLongList(String)
-- Location getLocation(String)
-- Location getLocation(String, Location)
-- String getName()
-- Vector getVector(String)
-- Vector getVector(String, Vector)
-- List getShortList(String)
-- ConfigurationSection getConfigurationSection(String)
-- List getList(String)
-- List getList(String, List)
-- List getComments(String)
-- boolean isInt(String)
-- List getCharacterList(String)
-- ConfigurationSection createSection(String)
-- ConfigurationSection createSection(String, Map)
-- ConfigurationSection getDefaultSection()
-- Object getObject(String, Class)
-- Object getObject(String, Class, Object)
-- String getCurrentPath()
-- boolean isSet(String)
-- boolean isOfflinePlayer(String)
-- List getDoubleList(String)
-- OfflinePlayer getOfflinePlayer(String)
-- OfflinePlayer getOfflinePlayer(String, OfflinePlayer)
-- void addDefault(String, Object)
-- ConfigurationSerializable getSerializable(String, Class)
-- ConfigurationSerializable getSerializable(String, Class, ConfigurationSerializable)
-- int getInt(String)
-- int getInt(String, int)
-- boolean contains(String)
-- boolean contains(String, boolean)
-- List getIntegerList(String)
-- List getByteList(String)
-- List getStringList(String)
-- void setInlineComments(String, List)
-- List getInlineComments(String)
-- boolean isDouble(String)
-- List getBooleanList(String)
-- double getDouble(String)
-- double getDouble(String, double)
-- boolean isVector(String)
-- List getMapList(String)
-- boolean isList(String)
-- boolean isBoolean(String)
-- boolean isColor(String)
-- Object get(String)
-- Object get(String, Object)
-- boolean isString(String)
-- boolean getBoolean(String)
-- boolean getBoolean(String, boolean)
-- ItemStack getItemStack(String)
-- ItemStack getItemStack(String, ItemStack)
-- void setComments(String, List)
-- Configuration getRoot()
-- boolean isItemStack(String)
-- ConfigurationSection getParent()
-- boolean isLong(String)
-- void set(String, Object)
-- Map getValues(boolean)
-- Color getColor(String)
-- Color getColor(String, Color)
-- String getString(String)
-- String getString(String, String)
-- Set getKeys(boolean)
-- long getLong(String)
-- long getLong(String, long)
-- List getFloatList(String)
-- boolean isLocation(String)
-- boolean isConfigurationSection(String)
-- String toString()
+- void execute() throws QuestRuntimeException
 
-## Package: org.betonquest.betonquest.api.bukkit.config.custom.fallback
-
-### Class: org.betonquest.betonquest.api.bukkit.config.custom.fallback.FallbackConfiguration
-Type: Class
-Extends: org.betonquest.betonquest.api.bukkit.config.custom.fallback.FallbackConfigurationSection
-Implements: org.bukkit.configuration.Configuration
+### Interface: org.betonquest.betonquest.api.quest.event.StaticEventFactory
 
 Methods:
-- void addDefaults(Map)
-- void addDefaults(Configuration)
-- ConfigurationOptions options()
-- Configuration getDefaults()
-- void setDefaults(Configuration)
+- StaticEvent parseStaticEvent(Instruction) throws InstructionParseException
+- StaticEvent parsePlayerless(Instruction) throws InstructionParseException
 
-### Class: org.betonquest.betonquest.api.bukkit.config.custom.fallback.FallbackConfigurationOptions
-Type: Class
-Extends: org.bukkit.configuration.ConfigurationOptions
+### Interface: org.betonquest.betonquest.api.quest.condition.PlayerCondition
 
 Methods:
-- boolean copyDefaults()
-- ConfigurationOptions copyDefaults(boolean)
-- char pathSeparator()
-- ConfigurationOptions pathSeparator(char)
+- boolean check(Profile) throws QuestRuntimeException
 
-### Class: org.betonquest.betonquest.api.bukkit.config.custom.fallback.FallbackConfigurationSection
-Type: Class
-Implements: org.bukkit.configuration.ConfigurationSection
+### Interface: org.betonquest.betonquest.api.quest.condition.PlayerConditionFactory
 
 Methods:
-- List getLongList(String)
-- Location getLocation(String)
-- Location getLocation(String, Location)
-- String getName()
-- Vector getVector(String)
-- Vector getVector(String, Vector)
-- List getShortList(String)
-- ConfigurationSection getConfigurationSection(String)
-- List getList(String)
-- List getList(String, List)
-- List getComments(String)
-- boolean isInt(String)
-- List getCharacterList(String)
-- ConfigurationSection createSection(String)
-- ConfigurationSection createSection(String, Map)
-- ConfigurationSection getDefaultSection()
-- Object getObject(String, Class)
-- Object getObject(String, Class, Object)
-- String getCurrentPath()
-- boolean isSet(String)
-- boolean isOfflinePlayer(String)
-- List getDoubleList(String)
-- OfflinePlayer getOfflinePlayer(String)
-- OfflinePlayer getOfflinePlayer(String, OfflinePlayer)
-- void addDefault(String, Object)
-- ConfigurationSerializable getSerializable(String, Class)
-- ConfigurationSerializable getSerializable(String, Class, ConfigurationSerializable)
-- int getInt(String)
-- int getInt(String, int)
-- boolean contains(String)
-- boolean contains(String, boolean)
-- List getIntegerList(String)
-- List getByteList(String)
-- List getStringList(String)
-- void setInlineComments(String, List)
-- List getInlineComments(String)
-- boolean isDouble(String)
-- List getBooleanList(String)
-- double getDouble(String)
-- double getDouble(String, double)
-- boolean isVector(String)
-- List getMapList(String)
-- boolean isList(String)
-- boolean isBoolean(String)
-- boolean isColor(String)
-- Object get(String)
-- Object get(String, Object)
-- boolean isString(String)
-- boolean getBoolean(String)
-- boolean getBoolean(String, boolean)
-- ItemStack getItemStack(String)
-- ItemStack getItemStack(String, ItemStack)
-- void setComments(String, List)
-- Configuration getRoot()
-- boolean isItemStack(String)
-- ConfigurationSection getParent()
-- boolean isLong(String)
-- void set(String, Object)
-- Map getValues(boolean)
-- Color getColor(String)
-- Color getColor(String, Color)
-- String getString(String)
-- String getString(String, String)
-- Set getKeys(boolean)
-- long getLong(String)
-- long getLong(String, long)
-- List getFloatList(String)
-- boolean isLocation(String)
-- boolean isConfigurationSection(String)
-- String toString()
+- PlayerCondition parsePlayer(Instruction) throws InstructionParseException
 
-### Class: org.betonquest.betonquest.api.bukkit.config.custom.fallback.FallbackConfigurationSection$ConfigManager
-Type: Class
-
-No public methods found
-
-## Package: org.betonquest.betonquest.api.bukkit.config.custom.handle
-
-### Class: org.betonquest.betonquest.api.bukkit.config.custom.handle.ConfigurationModificationHandler
-Type: Interface
-Implements: org.betonquest.betonquest.api.bukkit.config.custom.handle.ConfigurationSectionModificationHandler
+### Interface: org.betonquest.betonquest.api.quest.condition.PlayerlessCondition
 
 Methods:
-- void addDefault(ConfigurationSection, String, Object)
-- void addDefaults(Configuration, Map)
-- void addDefaults(Configuration, Configuration)
-- void setDefaults(Configuration, Configuration)
+- boolean check() throws QuestRuntimeException
 
-### Class: org.betonquest.betonquest.api.bukkit.config.custom.handle.ConfigurationSectionModificationHandler
-Type: Interface
+### Interface: org.betonquest.betonquest.api.quest.condition.PlayerlessConditionFactory
 
 Methods:
-- void addDefault(ConfigurationSection, String, Object)
-- void set(ConfigurationSection, String, Object)
-- **static** String getAbsolutePath(ConfigurationSection, String)
-- void setComments(ConfigurationSection, String, List)
-- void setInlineComments(ConfigurationSection, String, List)
-- ConfigurationSection createSection(ConfigurationSection, String)
-- ConfigurationSection createSection(ConfigurationSection, String, Map)
+- PlayerlessCondition parsePlayerless(Instruction) throws InstructionParseException
 
-### Class: org.betonquest.betonquest.api.bukkit.config.custom.handle.HandleConfigurationOptions
-Type: Class
-Extends: org.bukkit.configuration.ConfigurationOptions
+### Interface: org.betonquest.betonquest.api.quest.condition.online.OnlineCondition
 
 Methods:
-- boolean copyDefaults()
-- ConfigurationOptions copyDefaults(boolean)
-- char pathSeparator()
-- ConfigurationOptions pathSeparator(char)
+- boolean check(OnlineProfile) throws QuestRuntimeException
 
-### Class: org.betonquest.betonquest.api.bukkit.config.custom.handle.HandleModificationConfiguration
-Type: Class
-Extends: org.betonquest.betonquest.api.bukkit.config.custom.handle.HandleModificationConfigurationSection
-Implements: org.bukkit.configuration.Configuration
+### Class: org.betonquest.betonquest.api.quest.condition.online.OnlineConditionAdapter
+Implements: PlayerCondition
 
 Methods:
-- void addDefault(String, Object)
-- void addDefaults(Map)
-- void addDefaults(Configuration)
-- ConfigurationOptions options()
-- Configuration getDefaults()
-- void setDefaults(Configuration)
+- boolean check(Profile) throws QuestRuntimeException
 
-### Class: org.betonquest.betonquest.api.bukkit.config.custom.handle.HandleModificationConfigurationSection
-Type: Class
-Extends: org.betonquest.betonquest.api.bukkit.config.custom.ConfigurationSectionDecorator
+### Interface: org.betonquest.betonquest.api.quest.variable.PlayerVariable
 
 Methods:
-- void addDefault(String, Object)
-- ConfigurationSection getDefaultSection()
-- Object getObject(String, Class)
-- Object getObject(String, Class, Object)
-- ConfigurationSection getParent()
-- ConfigurationSection getConfigurationSection(String)
-- void set(String, Object)
-- Map getValues(boolean)
-- Object get(String)
-- Object get(String, Object)
-- void setComments(String, List)
-- Configuration getRoot()
-- void setInlineComments(String, List)
-- ConfigurationSection createSection(String)
-- ConfigurationSection createSection(String, Map)
+- String getValue(Profile)
 
-## Package: org.betonquest.betonquest.api.bukkit.config.custom.lazy
-
-### Class: org.betonquest.betonquest.api.bukkit.config.custom.lazy.LazyConfigurationSection
-Type: Class
-Extends: org.betonquest.betonquest.api.bukkit.config.custom.handle.HandleModificationConfigurationSection
-
-No public methods found
-
-### Class: org.betonquest.betonquest.api.bukkit.config.custom.lazy.LazyConfigurationSection$LazyMemoryConfigurationSection
-Type: Class
-Extends: org.bukkit.configuration.MemorySection
-
-No public methods found
-
-## Package: org.betonquest.betonquest.api.bukkit.config.custom.multi
-
-### Class: org.betonquest.betonquest.api.bukkit.config.custom.multi.MultiConfiguration
-Type: Interface
-Implements: org.bukkit.configuration.Configuration
+### Interface: org.betonquest.betonquest.api.quest.variable.PlayerVariableFactory
 
 Methods:
-- void associateWith(ConfigurationSection)
-- void associateWith(String, ConfigurationSection)
-- boolean markAsSaved(ConfigurationSection)
-- Set getUnsavedConfigs()
-- List getUnassociatedKeys()
-- boolean needSave()
-- ConfigurationSection getSourceConfigurationSection(String) throws InvalidConfigurationException
+- PlayerVariable parsePlayer(Instruction) throws InstructionParseException
 
-### Class: org.betonquest.betonquest.api.bukkit.config.custom.multi.InvalidSubConfigurationException
-Type: Class
-Extends: org.bukkit.configuration.InvalidConfigurationException
+### Interface: org.betonquest.betonquest.api.quest.variable.PlayerlessVariable
 
 Methods:
-- ConfigurationSection getSubConfiguration()
+- String getValue()
 
-### Class: org.betonquest.betonquest.api.bukkit.config.custom.multi.KeyConflictException
-Type: Class
-Extends: org.bukkit.configuration.InvalidConfigurationException
-
-Methods:
-- String resolvedMessage(Map)
-
-### Class: org.betonquest.betonquest.api.bukkit.config.custom.multi.MultiSectionConfiguration
-Type: Class
-Extends: org.betonquest.betonquest.api.bukkit.config.custom.handle.HandleModificationConfiguration
-Implements: org.betonquest.betonquest.api.bukkit.config.custom.multi.MultiConfiguration
+### Class: org.betonquest.betonquest.api.quest.event.nullable.NullableEventAdapter
+Implements: Event, StaticEvent
 
 Methods:
-- void associateWith(ConfigurationSection)
-- void associateWith(String, ConfigurationSection)
-- boolean markAsSaved(ConfigurationSection)
-- Set getUnsavedConfigs()
-- ConfigurationOptions options()
-- List getUnassociatedKeys()
-- boolean needSave()
-- ConfigurationSection getSourceConfigurationSection(String) throws InvalidConfigurationException
+- void execute(Profile) throws QuestRuntimeException
+- void execute() throws QuestRuntimeException
 
-## Package: org.betonquest.betonquest.api.bukkit.config.custom.multi.fallback
-
-### Class: org.betonquest.betonquest.api.bukkit.config.custom.multi.fallback.MultiFallbackConfiguration
-Type: Class
-Extends: org.betonquest.betonquest.api.bukkit.config.custom.fallback.FallbackConfiguration
-Implements: org.betonquest.betonquest.api.bukkit.config.custom.multi.MultiConfiguration
+### Class: org.betonquest.betonquest.api.quest.condition.nullable.NullableConditionAdapter
+Implements: PlayerCondition, PlayerlessCondition
 
 Methods:
-- void associateWith(ConfigurationSection)
-- void associateWith(String, ConfigurationSection)
-- boolean markAsSaved(ConfigurationSection)
-- Set getUnsavedConfigs()
-- List getUnassociatedKeys()
-- boolean needSave()
-- ConfigurationSection getSourceConfigurationSection(String) throws InvalidConfigurationException
+- boolean check(Profile) throws QuestRuntimeException
+- boolean check() throws QuestRuntimeException
 
-## Package: org.betonquest.betonquest.api.bukkit.config.custom.unmodifiable
-
-### Class: org.betonquest.betonquest.api.bukkit.config.custom.unmodifiable.UnmodifiableConfiguration
-Type: Class
-Extends: org.betonquest.betonquest.api.bukkit.config.custom.handle.HandleModificationConfiguration
-
-No public methods found
-
-### Class: org.betonquest.betonquest.api.bukkit.config.custom.unmodifiable.UnmodifiableConfigurationSection
-Type: Class
-Extends: org.betonquest.betonquest.api.bukkit.config.custom.handle.HandleModificationConfigurationSection
-
-No public methods found
-
-## Package: org.betonquest.betonquest.api.common.function
-
-### Class: org.betonquest.betonquest.api.common.function.Selector
-Type: Interface
+### Abstract Class: org.betonquest.betonquest.api.profiles.ProfileEvent
+Extends: org.bukkit.event.Event
 
 Methods:
-- Object selectFor(Profile) throws QuestRuntimeException
+- Profile getProfile()
 
-### Class: org.betonquest.betonquest.api.common.function.ConstantSelector
-Type: Class
-Implements: org.betonquest.betonquest.api.common.function.Selector
-
-Methods:
-- Object selectFor(Profile)
-
-### Class: org.betonquest.betonquest.api.common.function.Selectors
-Type: Class
+### Class: org.betonquest.betonquest.api.PlayerConversationStartEvent
+Extends: ProfileEvent, implements Cancellable
 
 Methods:
-- **static** Selector fromPlayer(Function)
-- **static** Selector fromOnlineProfile(Function)
-- **static** Selector fromOfflinePlayer(Function)
+- Conversation getConversation()
+- boolean isCancelled()
+- void setCancelled(boolean)
 
-## Package: org.betonquest.betonquest.api.config
-
-### Class: org.betonquest.betonquest.api.config.ConfigAccessor
-Type: Interface
+### Class: org.betonquest.betonquest.api.PlayerConversationEndEvent
+Extends: ProfileEvent
 
 Methods:
-- boolean reload() throws IOException
-- File getConfigurationFile()
-- boolean save() throws IOException
-- boolean delete() throws IOException
-- YamlConfiguration getConfig()
+- Conversation getConversation()
 
-### Class: org.betonquest.betonquest.api.config.ConfigAccessorFactory
-Type: Interface
+### Class: org.betonquest.betonquest.api.ConversationOptionEvent
+Extends: ProfileEvent
 
 Methods:
-- ConfigAccessor create(File) throws InvalidConfigurationException, FileNotFoundException
-- ConfigAccessor create(Plugin, String) throws InvalidConfigurationException, FileNotFoundException
-- ConfigAccessor create(File, Plugin, String) throws InvalidConfigurationException, FileNotFoundException
+- Conversation getConversation()
+- ResolvedOption getSelectedOption()
+- ResolvedOption getNextNPCOption()
 
-### Class: org.betonquest.betonquest.api.config.ConfigurationFile
-Type: Interface
-Implements: org.bukkit.configuration.ConfigurationSection
-
-Methods:
-- boolean reload() throws IOException
-- boolean save() throws IOException
-- boolean delete() throws IOException
-
-### Class: org.betonquest.betonquest.api.config.ConfigurationFileFactory
-Type: Interface
+### Class: org.betonquest.betonquest.api.PlayerObjectiveChangeEvent
+Extends: ProfileEvent
 
 Methods:
-- ConfigurationFile create(File, Plugin, String) throws InvalidConfigurationException, FileNotFoundException
-- ConfigurationFile create(File, Plugin, String, PatchTransformerRegisterer) throws InvalidConfigurationException, FileNotFoundException
+- Objective getObjective()
+- ObjectiveID getObjectiveID()
+- ObjectiveState getState()
+- ObjectiveState getPreviousState()
 
-## Package: org.betonquest.betonquest.api.config.patcher
-
-### Class: org.betonquest.betonquest.api.config.patcher.PatchTransformer
-Type: Interface
-
-Methods:
-- void transform(Map, ConfigurationSection) throws PatchException
-
-### Class: org.betonquest.betonquest.api.config.patcher.PatchTransformerRegisterer
-Type: Interface
+### Class: org.betonquest.betonquest.api.PlayerTagAddEvent / PlayerTagRemoveEvent
+Extends: ProfileEvent
 
 Methods:
-- void registerTransformers(Patcher)
+- String getTag()
 
-### Class: org.betonquest.betonquest.api.config.patcher.PatchException
-Type: Class
-Extends: java.lang.Exception
-
-No public methods found
-
-## Package: org.betonquest.betonquest.api.config.quest
-
-### Class: org.betonquest.betonquest.api.config.quest.QuestPackage
-Type: Interface
+### Class: org.betonquest.betonquest.api.PlayerUpdatePointEvent
+Extends: ProfileEvent
 
 Methods:
-- String getFormattedString(String)
-- boolean saveAll() throws IOException
-- String getQuestPath()
-- ConfigAccessor getOrCreateConfigAccessor(String) throws InvalidConfigurationException, FileNotFoundException
-- String subst(String)
-- String getString(String)
-- String getString(String, String)
-- String getRawString(String)
-- boolean hasTemplate(String)
-- MultiConfiguration getConfig()
-- List getTemplates()
+- String getCategory()
+- int getNewCount()
 
-## Package: org.betonquest.betonquest.api.logger
-
-### Class: org.betonquest.betonquest.api.logger.BetonQuestLogger
-Type: Interface
+### Class: org.betonquest.betonquest.api.PlayerJournalAddEvent / PlayerJournalDeleteEvent
+Extends: ProfileEvent
 
 Methods:
-- void warn(String)
-- void warn(String, Throwable)
-- void warn(QuestPackage, String)
-- void warn(QuestPackage, String, Throwable)
-- void debug(String)
-- void debug(String, Throwable)
-- void debug(QuestPackage, String)
-- void debug(QuestPackage, String, Throwable)
-- void reportException(Throwable)
-- void reportException(QuestPackage, Throwable)
-- void error(String)
-- void error(String, Throwable)
-- void error(QuestPackage, String)
-- void error(QuestPackage, String, Throwable)
+- Journal getJournal()
+- Pointer getPointer()
+
+### Class: org.betonquest.betonquest.api.QuestCompassTargetChangeEvent
+Extends: ProfileEvent, implements Cancellable
+
+Methods:
+- Location getLocation()
+- boolean isCancelled()
+- void setCancelled(boolean)
+
+### Class: org.betonquest.betonquest.api.MobKillNotifier
+
+Methods:
+- **static** void addKill(Profile, Entity)
+
+### Interface: org.betonquest.betonquest.api.logger.BetonQuestLogger
+
+Methods:
 - void info(String)
 - void info(QuestPackage, String)
+- void warn(String) / warn(String, Throwable)
+- void warn(QuestPackage, String) / warn(QuestPackage, String, Throwable)
+- void error(String) / error(String, Throwable)
+- void error(QuestPackage, String) / error(QuestPackage, String, Throwable)
+- void debug(String) / debug(String, Throwable)
+- void debug(QuestPackage, String) / debug(QuestPackage, String, Throwable)
+- void reportException(Throwable)
+- void reportException(QuestPackage, Throwable)
 
-### Class: org.betonquest.betonquest.api.logger.BetonQuestLoggerFactory
-Type: Interface
+### Interface: org.betonquest.betonquest.api.logger.BetonQuestLoggerFactory
 
 Methods:
 - BetonQuestLogger create(Class)
@@ -1881,294 +742,43 @@ Methods:
 - BetonQuestLogger create(Plugin)
 - BetonQuestLogger create(Plugin, String)
 
-### Class: org.betonquest.betonquest.api.logger.CachingBetonQuestLoggerFactory
-Type: Class
-Implements: org.betonquest.betonquest.api.logger.BetonQuestLoggerFactory
+### Interface: org.betonquest.betonquest.api.config.quest.QuestPackage
 
 Methods:
-- BetonQuestLogger create(Class, String)
-- BetonQuestLogger create(Plugin, String)
+- String getQuestPath()
+- MultiConfiguration getConfig()
+- String getString(String) / getString(String, String)
+- String getRawString(String)
+- String getFormattedString(String)
+- String subst(String)
+- boolean hasTemplate(String)
+- List getTemplates()
+- boolean saveAll() throws IOException
 
-### Class: org.betonquest.betonquest.api.logger.SingletonLoggerFactory
-Type: Class
-Implements: org.betonquest.betonquest.api.logger.BetonQuestLoggerFactory
-
-Methods:
-- BetonQuestLogger create(Class, String)
-- BetonQuestLogger create(Plugin, String)
-
-## Package: org.betonquest.betonquest.api.profiles
-
-### Class: org.betonquest.betonquest.api.profiles.OnlineProfile
-Type: Interface
-Implements: org.betonquest.betonquest.api.profiles.Profile
+### Abstract Class: org.betonquest.betonquest.api.schedule.Schedule
 
 Methods:
-- Player getPlayer()
-- OfflinePlayer getPlayer()
-
-### Class: org.betonquest.betonquest.api.profiles.Profile
-Type: Interface
-
-Methods:
-- OfflinePlayer getPlayer()
-- UUID getProfileUUID()
-- Optional getOnlineProfile()
-- String getProfileName()
-- String toString()
-- UUID getPlayerUUID()
-
-### Class: org.betonquest.betonquest.api.profiles.ProfileEvent
-Type: Abstract Class
-Extends: org.bukkit.event.Event
-
-Methods:
-- Profile getProfile()
-
-## Package: org.betonquest.betonquest.api.quest
-
-### Class: org.betonquest.betonquest.api.quest.PlayerQuestFactory
-Type: Interface
-
-Methods:
-- Object parsePlayer(Instruction) throws InstructionParseException
-
-### Class: org.betonquest.betonquest.api.quest.PlayerlessQuestFactory
-Type: Interface
-
-Methods:
-- Object parsePlayerless(Instruction) throws InstructionParseException
-
-## Package: org.betonquest.betonquest.api.quest.condition
-
-### Class: org.betonquest.betonquest.api.quest.condition.PlayerCondition
-Type: Interface
-
-Methods:
-- boolean check(Profile) throws QuestRuntimeException
-
-### Class: org.betonquest.betonquest.api.quest.condition.PlayerConditionFactory
-Type: Interface
-Implements: org.betonquest.betonquest.api.quest.PlayerQuestFactory
-
-Methods:
-- PlayerCondition parsePlayer(Instruction) throws InstructionParseException
-- Object parsePlayer(Instruction) throws InstructionParseException
-
-### Class: org.betonquest.betonquest.api.quest.condition.PlayerlessCondition
-Type: Interface
-
-Methods:
-- boolean check() throws QuestRuntimeException
-
-### Class: org.betonquest.betonquest.api.quest.condition.PlayerlessConditionFactory
-Type: Interface
-Implements: org.betonquest.betonquest.api.quest.PlayerlessQuestFactory
-
-Methods:
-- PlayerlessCondition parsePlayerless(Instruction) throws InstructionParseException
-- Object parsePlayerless(Instruction) throws InstructionParseException
-
-## Package: org.betonquest.betonquest.api.quest.condition.nullable
-
-### Class: org.betonquest.betonquest.api.quest.condition.nullable.NullableCondition
-Type: Interface
-
-Methods:
-- boolean check(Profile) throws QuestRuntimeException
-
-### Class: org.betonquest.betonquest.api.quest.condition.nullable.NullableConditionAdapter
-Type: Class
-Implements: org.betonquest.betonquest.api.quest.condition.PlayerCondition, org.betonquest.betonquest.api.quest.condition.PlayerlessCondition
-
-Methods:
-- boolean check(Profile) throws QuestRuntimeException
-- boolean check() throws QuestRuntimeException
-
-## Package: org.betonquest.betonquest.api.quest.condition.online
-
-### Class: org.betonquest.betonquest.api.quest.condition.online.OnlineCondition
-Type: Interface
-
-Methods:
-- boolean check(OnlineProfile) throws QuestRuntimeException
-
-### Class: org.betonquest.betonquest.api.quest.condition.online.OnlineConditionAdapter
-Type: Class
-Implements: org.betonquest.betonquest.api.quest.condition.PlayerCondition
-
-Methods:
-- boolean check(Profile) throws QuestRuntimeException
-
-## Package: org.betonquest.betonquest.api.quest.event
-
-### Class: org.betonquest.betonquest.api.quest.event.Event
-Type: Interface
-
-Methods:
-- void execute(Profile) throws QuestRuntimeException
-
-### Class: org.betonquest.betonquest.api.quest.event.EventFactory
-Type: Interface
-Implements: org.betonquest.betonquest.api.quest.PlayerQuestFactory
-
-Methods:
-- Event parseEvent(Instruction) throws InstructionParseException
-- Event parsePlayer(Instruction) throws InstructionParseException
-- Object parsePlayer(Instruction) throws InstructionParseException
-
-### Class: org.betonquest.betonquest.api.quest.event.StaticEvent
-Type: Interface
-
-Methods:
-- void execute() throws QuestRuntimeException
-
-### Class: org.betonquest.betonquest.api.quest.event.StaticEventFactory
-Type: Interface
-Implements: org.betonquest.betonquest.api.quest.PlayerlessQuestFactory
-
-Methods:
-- StaticEvent parseStaticEvent(Instruction) throws InstructionParseException
-- StaticEvent parsePlayerless(Instruction) throws InstructionParseException
-- Object parsePlayerless(Instruction) throws InstructionParseException
-
-## Package: org.betonquest.betonquest.api.quest.event.nullable
-
-### Class: org.betonquest.betonquest.api.quest.event.nullable.NullableEvent
-Type: Interface
-
-Methods:
-- void execute(Profile) throws QuestRuntimeException
-
-### Class: org.betonquest.betonquest.api.quest.event.nullable.NullableEventAdapter
-Type: Class
-Implements: org.betonquest.betonquest.api.quest.event.Event, org.betonquest.betonquest.api.quest.event.StaticEvent
-
-Methods:
-- void execute(Profile) throws QuestRuntimeException
-- void execute() throws QuestRuntimeException
-
-## Package: org.betonquest.betonquest.api.quest.event.online
-
-### Class: org.betonquest.betonquest.api.quest.event.online.OnlineEvent
-Type: Interface
-
-Methods:
-- void execute(OnlineProfile) throws QuestRuntimeException
-
-### Class: org.betonquest.betonquest.api.quest.event.online.OnlineEventAdapter
-Type: Class
-Implements: org.betonquest.betonquest.api.quest.event.Event
-
-Methods:
-- void execute(Profile) throws QuestRuntimeException
-
-## Package: org.betonquest.betonquest.api.quest.variable
-
-### Class: org.betonquest.betonquest.api.quest.variable.PlayerVariable
-Type: Interface
-
-Methods:
-- String getValue(Profile)
-
-### Class: org.betonquest.betonquest.api.quest.variable.PlayerVariableFactory
-Type: Interface
-Implements: org.betonquest.betonquest.api.quest.PlayerQuestFactory
-
-Methods:
-- PlayerVariable parsePlayer(Instruction) throws InstructionParseException
-- Object parsePlayer(Instruction) throws InstructionParseException
-
-### Class: org.betonquest.betonquest.api.quest.variable.PlayerlessVariable
-Type: Interface
-
-Methods:
-- String getValue()
-
-### Class: org.betonquest.betonquest.api.quest.variable.PlayerlessVariableFactory
-Type: Interface
-Implements: org.betonquest.betonquest.api.quest.PlayerlessQuestFactory
-
-Methods:
-- PlayerlessVariable parsePlayerless(Instruction) throws InstructionParseException
-- Object parsePlayerless(Instruction) throws InstructionParseException
-
-## Package: org.betonquest.betonquest.api.quest.variable.nullable
-
-### Class: org.betonquest.betonquest.api.quest.variable.nullable.NullableVariable
-Type: Interface
-
-Methods:
-- String getValue(Profile)
-
-### Class: org.betonquest.betonquest.api.quest.variable.nullable.NullableVariableAdapter
-Type: Class
-Implements: org.betonquest.betonquest.api.quest.variable.PlayerVariable, org.betonquest.betonquest.api.quest.variable.PlayerlessVariable
-
-Methods:
-- String getValue(Profile)
-- String getValue()
-
-## Package: org.betonquest.betonquest.api.quest.variable.online
-
-### Class: org.betonquest.betonquest.api.quest.variable.online.OnlineVariable
-Type: Interface
-
-Methods:
-- String getValue(OnlineProfile)
-
-### Class: org.betonquest.betonquest.api.quest.variable.online.OnlineVariableAdapter
-Type: Class
-Implements: org.betonquest.betonquest.api.quest.variable.PlayerVariable
-
-Methods:
-- String getValue(Profile)
-
-## Package: org.betonquest.betonquest.api.schedule
-
-### Class: org.betonquest.betonquest.api.schedule.CatchupStrategy
-Type: Enum
-Extends: java.lang.Enum
-
-Methods:
-- **static** CatchupStrategy valueOf(String)
-- **static** CatchupStrategy[] values()
-
-### Class: org.betonquest.betonquest.api.schedule.CronSchedule
-Type: Abstract Class
-Extends: org.betonquest.betonquest.api.schedule.Schedule
-
-Methods:
-- Cron getTimeCron()
-- boolean shouldRunOnReboot()
-- ExecutionTime getExecutionTime()
-
-### Class: org.betonquest.betonquest.api.schedule.Schedule
-Type: Abstract Class
-
-Methods:
-- List getEvents()
-- String getTime()
 - ScheduleID getId()
+- String getTime()
 - CatchupStrategy getCatchup()
+- List getEvents()
 
-### Class: org.betonquest.betonquest.api.schedule.Scheduler
-Type: Abstract Class
+### Abstract Class: org.betonquest.betonquest.api.schedule.Scheduler
 
 Methods:
+- void start()
 - void stop()
 - boolean isRunning()
-- void start()
-- void start(Object)
 - void addSchedule(Schedule)
 
-## PlayerConverter Utility Class
-
-### Class: org.betonquest.betonquest.utils.PlayerConverter
-Type: Utility Class
+### Interface: org.betonquest.betonquest.api.common.function.Selector
 
 Methods:
-- **static** OnlineProfile getOnlineProfile(Player player)
-- **static** Collection<OnlineProfile> getOnlineProfiles()
-- **static** Profile getProfile(String playerName)
-- **static** Profile getProfile(UUID uuid)
+- Object selectFor(Profile) throws QuestRuntimeException
+
+### Class: org.betonquest.betonquest.api.common.function.Selectors
+
+Methods:
+- **static** Selector fromPlayer(Function)
+- **static** Selector fromOnlineProfile(Function)
+- **static** Selector fromOfflinePlayer(Function)

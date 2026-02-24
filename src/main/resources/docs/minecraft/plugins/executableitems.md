@@ -1,247 +1,220 @@
-# ExecutableItems-API-Complete-Documentation
+# ExecutableItems API
 
-**Plugin:** ExecutableItems
-**Library:** SCore
-**Package:** com.ssomar.score.api.executableitems
+ExecutableItems (by Ssomar) lets server owners create custom items with activators/triggers. The API lives in SCore and uses interfaces so your plugin can look up items by ID, build ItemStacks, inspect held items, and track usage -- all without depending on ExecutableItems internals.
 
-## Plugin Setup
+**Requires:** SCore library (ships with ExecutableItems). Add `softdepend: [ExecutableItems, SCore]` to your plugin.yml.
 
-### Plugin.yml Configuration
-softdepend: [ExecutableItems, SCore]
+## Code Examples
 
-## Getting Started
-
-### Check if ExecutableItems is Present
+### Check if ExecutableItems is installed
 ```java
-public static boolean hasExecutableItems = false;
-Plugin executableItems;
-if(executableItems = Bukkit.getPluginManager().getPlugin("ExecutableItems") != null && executableItems.isEnabled()) {
-    SCore.plugin.getServer().getLogger().info("["+NAME+"] ExecutableItems hooked !");
-    hasExecutableItems = true;
-}
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
+
+Plugin eiPlugin = Bukkit.getPluginManager().getPlugin("ExecutableItems");
+boolean hasEI = eiPlugin != null && eiPlugin.isEnabled();
 ```
 
-### Access the API
+### Get the manager
 ```java
 import com.ssomar.score.api.executableitems.ExecutableItemsAPI;
+import com.ssomar.score.api.executableitems.config.ExecutableItemsManagerInterface;
 
 ExecutableItemsManagerInterface manager = ExecutableItemsAPI.getExecutableItemsManager();
 ```
 
-## Usage Examples
-
-### Give ExecutableItem to Player
+### Look up an ExecutableItem by ID and give it to a player
 ```java
-public void giveExecutableItem(Player player, String executableItemId, int amount){
-    ItemStack item = null;
-    Optional<ExecutableItemInterface> eiOpt = ExecutableItemsAPI.getExecutableItemsManager().getExecutableItem(executableItemId);
-    if(eiOpt.isPresent()) {
-        item = eiOpt.get().buildItem(amount, Optional.empty(), Optional.of(player));
-    }
-    if(item != null) {
-        player.getInventory().addItem(item);
-    }
-    /* else
-         Your error message here */
+import com.ssomar.score.api.executableitems.ExecutableItemsAPI;
+import com.ssomar.score.api.executableitems.config.ExecutableItemInterface;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import java.util.Optional;
+
+Optional<ExecutableItemInterface> eiOpt =
+    ExecutableItemsAPI.getExecutableItemsManager().getExecutableItem("legendary_sword");
+if (eiOpt.isPresent()) {
+    // args: amount, optional custom usage count, optional creator player
+    ItemStack item = eiOpt.get().buildItem(1, Optional.empty(), Optional.of(player));
+    player.getInventory().addItem(item);
 }
 ```
 
-### Check if ItemStack is ExecutableItem
+### Build an item with a specific usage count and variables
 ```java
-ItemStack itemStack = player.getItemInHand();
-Optional<ExecutableItemInterface> eiOpt = ExecutableItemsAPI.getExecutableItemsManager().getExecutableItem(itemStack);
-if(eiOpt.isPresent()) {
-    // It's an ExecutableItem
+import java.util.Map;
+import java.util.Optional;
+
+Map<String, String> variables = Map.of("level", "5", "owner", player.getName());
+ItemStack item = eiOpt.get().buildItem(1, Optional.of(50), Optional.of(player), variables);
+```
+
+### Check if an ItemStack is an ExecutableItem
+```java
+import com.ssomar.score.api.executableitems.ExecutableItemsAPI;
+import com.ssomar.score.api.executableitems.config.ExecutableItemInterface;
+import org.bukkit.inventory.ItemStack;
+import java.util.Optional;
+
+ItemStack held = player.getInventory().getItemInMainHand();
+Optional<ExecutableItemInterface> eiOpt =
+    ExecutableItemsAPI.getExecutableItemsManager().getExecutableItem(held);
+if (eiOpt.isPresent()) {
     ExecutableItemInterface ei = eiOpt.get();
-    // Do something with it
+    // confirmed ExecutableItem -- use ei.getId(), ei.getDescription(), etc.
 }
 ```
 
-### Verify ExecutableItem ID
+### Get the ExecutableItemObject for an ItemStack (usage, variables)
 ```java
-String itemId = "legendary_sword";
-if(ExecutableItemsAPI.getExecutableItemsManager().isValidID(itemId)) {
-    // Valid ExecutableItem ID
+import com.ssomar.score.api.executableitems.ExecutableItemsAPI;
+import com.ssomar.score.api.executableitems.config.ExecutableItemObjectInterface;
+import com.ssomar.score.utils.emums.VariableUpdateType;
+
+ExecutableItemObjectInterface obj = ExecutableItemsAPI.getExecutableItemObject(held);
+if (obj.isValid()) {
+    int usage = obj.getUsage();
+    obj.updateUsage(usage - 1);
+
+    // update a custom variable
+    obj.updateVariable("kills", "10", VariableUpdateType.SET);
+
+    obj.refreshItem(); // apply changes to the ItemStack in-hand
 }
 ```
 
-### Get All ExecutableItem IDs
+### Add ExecutableItem metadata to an existing ItemStack
 ```java
-List<String> allIds = ExecutableItemsAPI.getExecutableItemsManager().getExecutableItemIdsList();
-for(String id : allIds) {
-    System.out.println("Found ExecutableItem: " + id);
-}
+// Overrides name/lore with the EI config but keeps customModelData
+ItemStack result = eiOpt.get().addExecutableItemInfos(existingItemStack, Optional.of(player));
 ```
 
-### Build Item with Custom Usage
+### Register a brand-new ExecutableItem at runtime
 ```java
-Optional<ExecutableItemInterface> eiOpt = ExecutableItemsAPI.getExecutableItemsManager().getExecutableItem("special_sword");
-if(eiOpt.isPresent()) {
-    ExecutableItemInterface ei = eiOpt.get();
-    // Build with 1 item, 50 custom usage, created by player
-    ItemStack item = ei.buildItem(1, Optional.of(50), Optional.of(player));
-}
+import com.ssomar.score.api.executableitems.ExecutableItemsAPI;
+import com.ssomar.score.api.executableitems.config.ExecutableItemInterface;
+
+// third arg is the sub-folder inside plugins/ExecutableItems/items/
+ExecutableItemInterface created =
+    ExecutableItemsAPI.registerNewExecutableItemObject(itemStack, "my_custom_id", "custom/");
 ```
 
-### Add ExecutableItem Infos to Existing Item
+### Validate an ID and list all IDs
 ```java
-ItemStack customItem = new ItemStack(Material.DIAMOND_SWORD);
-// Add custom modifications to item...
+boolean valid = manager.isValidID("legendary_sword");
 
-Optional<ExecutableItemInterface> eiOpt = ExecutableItemsAPI.getExecutableItemsManager().getExecutableItem("legendary_sword");
-if(eiOpt.isPresent()) {
-    // This will add ExecutableItem data to your item
-    // It overrides name/lore but keeps customModelData
-    customItem = eiOpt.get().addExecutableItemInfos(customItem, Optional.of(player));
-}
+java.util.List<String> allIds = manager.getExecutableItemIdsList();
 ```
 
-### Check Player Permission for Item
+### Listen to events
 ```java
-Optional<ExecutableItemInterface> eiOpt = ExecutableItemsAPI.getExecutableItemsManager().getExecutableItem("vip_sword");
-if(eiOpt.isPresent()) {
-    ExecutableItemInterface ei = eiOpt.get();
-    boolean showError = true; // Show error message if no permission
-    if(ei.hasItemPerm(player, showError)) {
-        // Player has permission to use this item
+import com.ssomar.score.api.executableitems.events.AddItemInPlayerInventoryEvent;
+import com.ssomar.score.api.executableitems.events.RemoveItemInPlayerInventoryEvent;
+import com.ssomar.score.api.executableitems.load.ExecutableItemsPostLoadEvent;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+
+public class EIListener implements Listener {
+
+    // Fired after all EI configs are loaded -- safe to query the API
+    @EventHandler
+    public void onLoaded(ExecutableItemsPostLoadEvent event) {
+        // initialize your cache here
+    }
+
+    // Fire this yourself when programmatically adding an EI to inventory
+    // so the EI ENTER_IN_PLAYER_INVENTORY activator triggers:
+    // Bukkit.getPluginManager().callEvent(
+    //     new AddItemInPlayerInventoryEvent(player, itemStack, slot));
+
+    @EventHandler
+    public void onItemAdded(AddItemInPlayerInventoryEvent event) {
+        event.getPlayer();  // Player
+        event.getItem();    // ItemStack
+        event.getSlot();    // int
+    }
+
+    @EventHandler
+    public void onItemRemoved(RemoveItemInPlayerInventoryEvent event) {
+        event.getPlayer();
+        event.getItem();
+        event.getSlot();
     }
 }
 ```
 
-### Register New ExecutableItem Object
-```java
-ItemStack itemStack = player.getItemInHand();
-String id = "custom_item";
-String name = "Custom Item";
-ExecutableItemInterface newItem = ExecutableItemsAPI.registerNewExecutableItemObject(itemStack, id, name);
+---
+
+## API Reference
+
+### com.ssomar.score.api.executableitems.ExecutableItemsAPI
+```
+static ExecutableItemsManagerInterface  getExecutableItemsManager()
+static ExecutableItemObjectInterface    getExecutableItemObject(ItemStack)
+static ExecutableItemInterface          registerNewExecutableItemObject(ItemStack, String id, String folder)
 ```
 
-### Get ExecutableItem Object from ItemStack
-```java
-ItemStack itemStack = player.getItemInHand();
-ExecutableItemObjectInterface eiObject = ExecutableItemsAPI.getExecutableItemObject(itemStack);
-if(eiObject != null) {
-    // Get usage remaining
-    int usage = eiObject.getUsage();
-    
-    // Update usage
-    eiObject.updateUsage(usage - 1);
-    
-    // Refresh the item
-    eiObject.refreshItem();
-}
+### com.ssomar.score.api.executableitems.config.ExecutableItemsManagerInterface
+```
+boolean                           isValidID(String id)
+Optional<ExecutableItemInterface> getExecutableItem(String id)
+Optional<ExecutableItemInterface> getExecutableItem(ItemStack)
+List<String>                      getExecutableItemIdsList()
+List<ExecutableItemInterface>     getAllExecutableItems()
 ```
 
-## Important Events
-
-### AddItemInPlayerInventoryEvent (Since SCore 3.4.7)
-Call this when adding ExecutableItem to player inventory:
-```java
-AddItemInPlayerInventoryEvent eventToCall = new AddItemInPlayerInventoryEvent(player, itemStack, firstEmptySlot);
-Bukkit.getPluginManager().callEvent(eventToCall);
-```
-This event is particularly useful for the custom activator/trigger: EI ENTER IN PLAYER INVENTORY
-
-### RemoveItemInPlayerInventoryEvent
-```java
-@EventHandler
-public void onItemRemove(RemoveItemInPlayerInventoryEvent event) {
-    Player player = event.getPlayer();
-    ItemStack item = event.getItem();
-    int slot = event.getSlot();
-    // Handle item removal
-}
-```
-
-### ExecutableItemsPostLoadEvent
-```java
-@EventHandler
-public void onExecutableItemsLoaded(ExecutableItemsPostLoadEvent event) {
-    // All ExecutableItems are now loaded
-    // Safe to access them via API
-}
-```
-
-## API Components Documentation
-
-### ExecutableItemsAPI Class
-Package: com.ssomar.score.api.executableitems.ExecutableItemsAPI
-Type: Class
-
-Methods:
-- **static** ExecutableItemsManagerInterface getExecutableItemsManager()
-- **static** ExecutableItemInterface registerNewExecutableItemObject(ItemStack, String, String)
-- **static** ExecutableItemObjectInterface getExecutableItemObject(ItemStack)
-
-### ExecutableItemsManagerInterface
-Package: com.ssomar.score.api.executableitems.config
-Type: Interface
-
-Methods:
-- List<ExecutableItemInterface> getAllExecutableItems() - Get all ExecutableItems
-- Optional<ExecutableItemInterface> getExecutableItem(String id) - Get by ID
-- Optional<ExecutableItemInterface> getExecutableItem(ItemStack itemStack) - Get from ItemStack
-- boolean isValidID(String id) - Verify if ID is valid
-- List<String> getExecutableItemIdsList() - Get all IDs
-
-### ExecutableItemInterface
-Package: com.ssomar.score.api.executableitems.config
-Type: Interface
+### com.ssomar.score.api.executableitems.config.ExecutableItemInterface
 Extends: SObjectInterface, SObjectWithActivators, SObjectBuildable, SObjectWithVariables
+```
+ItemStack buildItem(int amount, Optional<Integer> usage, Optional<Player> creator)
+ItemStack buildItem(int amount, Optional<Integer> usage, Optional<Player> creator, Map<String,String> variables)
+ItemStack buildItem(int amount, Optional<Player> creator)
+ItemStack buildItem(int amount, Optional<Player> creator, Map<String,Object> settings)
+ItemStack addExecutableItemInfos(ItemStack, Optional<Player> creator)
+boolean   hasItemPerm(@NotNull Player, boolean showError)
+boolean   hasKeepItemOnDeath()
+void      setUsage(int usage)
+void      addCooldown(Player, int cooldown, boolean isInTicks)
+void      addCooldown(Player, int cooldown, boolean isInTicks, String activatorID)
+void      addGlobalCooldown(int cooldown, boolean isInTicks)
+void      addGlobalCooldown(int cooldown, boolean isInTicks, String activatorID)
+Item      dropItem(Location, int amount)
+List<String>            getDescription()
+ColoredStringFeature    getDisplayName()
+```
 
-Methods:
-- ItemStack addExecutableItemInfos(ItemStack item, Optional<Player> creator) - Add EI data to item
-- boolean hasItemPerm(Player player, boolean showError) - Check player permission
-- ItemStack buildItem(int amount, Optional<Integer> usage, Optional<Player> creator) - Build the item
-- ItemStack buildItem(int amount, Optional<Integer> usage, Optional<Player> creator, Map<String,String> variables) - Build with variables
-- void addCooldown(Player player, int cooldown, boolean message) - Add player cooldown
-- void addCooldown(Player player, int cooldown, boolean message, String activatorId) - Add specific cooldown
-- void addGlobalCooldown(int cooldown, boolean message) - Add global cooldown
-- Item dropItem(Location location, int amount) - Drop item at location
-- boolean hasKeepItemOnDeath() - Check keep on death setting
-- ColoredStringFeature getDisplayName() - Get display name
-- List<String> getDescription() - Get item description
-- void setUsage(int usage) - Set item usage
+### com.ssomar.score.api.executableitems.config.ExecutableItemObjectInterface
+```
+boolean              isValid()
+int                  getUsage()
+void                 updateUsage(int usage)
+void                 refreshItem()
+ItemStack            refresh(List<ResetSetting> resetSettings)
+Map<String,String>   getVariablesValues()
+String               updateVariable(String name, String value, VariableUpdateType type)
+```
 
-### ExecutableItemObjectInterface  
-Package: com.ssomar.score.api.executableitems.config
-Type: Interface
-
-Methods:
-- void refreshItem() - Refresh the item
-- Map<String,String> getVariablesValues() - Get variable values
-- String updateVariable(String variableName, String value, VariableUpdateType type) - Update variable
-- boolean isValid() - Check if object is valid
-- ItemStack refresh(List<String> errors) - Refresh with error handling
-- void updateUsage(int usage) - Update usage count
-- int getUsage() - Get current usage
-
-### Event Classes
-
-#### AddItemInPlayerInventoryEvent
-Package: com.ssomar.score.api.executableitems.events
+### com.ssomar.score.api.executableitems.events.AddItemInPlayerInventoryEvent
 Extends: PlayerEvent
+```
+Constructor(Player, ItemStack, int slot)
+ItemStack getItem()
+int       getSlot()
+```
 
-Methods:
-- int getSlot() - Get inventory slot
-- ItemStack getItem() - Get the item
-- HandlerList getHandlers() - Event handlers
-- **static** HandlerList getHandlerList() - Static handler list
-
-#### RemoveItemInPlayerInventoryEvent
-Package: com.ssomar.score.api.executableitems.events
+### com.ssomar.score.api.executableitems.events.RemoveItemInPlayerInventoryEvent
 Extends: PlayerEvent
+```
+Constructor(Player, ItemStack, int slot)
+ItemStack getItem()
+int       getSlot()
+```
 
-Methods:
-- int getSlot() - Get inventory slot
-- ItemStack getItem() - Get the item
-- HandlerList getHandlers() - Event handlers
-- **static** HandlerList getHandlerList() - Static handler list
+### com.ssomar.score.api.executableitems.load.ExecutableItemsPostLoadEvent
+Extends: Event -- fired when all ExecutableItems configs finish loading.
 
-#### ExecutableItemsPostLoadEvent
-Package: com.ssomar.score.api.executableitems.load
-Extends: Event
+### com.ssomar.score.utils.emums.VariableUpdateType
+Enum: `SET`, `MODIFICATION`, `LIST_ADD`, `LIST_REMOVE`, `LIST_CLEAR`
 
-Methods:
-- HandlerList getHandlers() - Event handlers
-- **static** HandlerList getHandlerList() - Static handler list
+### com.ssomar.score.utils.emums.ResetSetting
+Enum: `MATERIAL`, `NAME`, `LORE`, `DURABILITY`, `ATTRIBUTES`, `ENCHANTS`, `CUSTOM_MODEL_DATA`, `USAGE`, `ARMOR_SETTINGS`, `ITEM_RARITY`, `BOOK`, `EQUIPPABLE`, `REPAIRABLE`, `HIDERS`, `INSTRUMENT`, `TOOL_RULES`, `FIREWORK`, `FIREWORK_EXPLOSION`, `CONTAINER`, `HEAD`, `BANNER`, `FOOD`, `CONSUMABLE`, `BUNDLE`, `BLOCK_STATE`, `CHARGED_PROJECTILES`, `MYFURNITURE`, `SPAWNER`, `WEAPON`, `BLOCK_ATTACKS`, `TOOLTIP_MODEL`
