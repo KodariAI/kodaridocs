@@ -42,7 +42,7 @@ if (HytaleServer.get().getPluginManager()
 
 ```java
 import at.helpch.placeholderapi.expansion.PlaceholderExpansion;
-import com.hypixel.hytale.server.api.player.PlayerRef;
+import com.hypixel.hytale.server.core.universe.PlayerRef;
 import org.jetbrains.annotations.NotNull;
 
 public class MyExpansion extends PlaceholderExpansion {
@@ -85,7 +85,7 @@ public class MyExpansion extends PlaceholderExpansion {
         }
 
         if (params.equals("name")) {
-            return player.getName();
+            return player.getUsername();
         }
 
         return null; // returning null means the placeholder is not recognized
@@ -123,7 +123,7 @@ For placeholders that compare two players (prefixed with `rel_`):
 ```java
 import at.helpch.placeholderapi.expansion.PlaceholderExpansion;
 import at.helpch.placeholderapi.expansion.Relational;
-import com.hypixel.hytale.server.api.player.PlayerRef;
+import com.hypixel.hytale.server.core.universe.PlayerRef;
 import org.jetbrains.annotations.NotNull;
 
 public class MyRelationalExpansion extends PlaceholderExpansion implements Relational {
@@ -234,13 +234,6 @@ Type: Class
 Methods:
 - **static** HytaleServer get()
 - PluginManager getPluginManager()
-
-### Class: com.hypixel.hytale.server.api.player.PlayerRef
-Type: Interface
-
-Methods:
-- String getName()
-- World getWorld()
 
 ### Class: com.hypixel.hytale.common.plugin.PluginIdentifier
 Type: Class
