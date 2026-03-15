@@ -36,7 +36,7 @@ public class TokenCountService {
     ) {
         try {
             MessageCountTokensParams params = MessageCountTokensParams.builder()
-                    .model(Model.CLAUDE_4_SONNET_20250514)
+                    .model(Model.CLAUDE_SONNET_4_6)
                     .addUserMessage(text)
                     .build();
 
