@@ -13,7 +13,7 @@ lombok = "1.18.44"
 # third party
 slf4j = "2.0.17"
 dotenv = "3.2.0"
-anthropic = "2.16.1"
+anthropic = "2.18.0"
 
 [libraries]
 # useful
