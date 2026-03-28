@@ -56,6 +56,9 @@ public class MyExpansion extends PlaceholderExpansion {
     @Override
     @NotNull
     public String getIdentifier() {
+        // WARNING: The identifier CANNOT contain underscores (_). It MUST be a single
+        // continuous string. Underscores are the separator between the identifier and
+        // the placeholder params, so using one in the identifier will break parsing.
         return "myplugin"; // %myplugin_<params>%
     }
 
