@@ -27,8 +27,6 @@ allprojects {
 }
 
 dependencies {
-    implementation(project(":autogen"))
-
     implementation(libs.spring.boot.starter.web)
     implementation(libs.grpc.services)
     implementation(libs.spring.grpc.starter)

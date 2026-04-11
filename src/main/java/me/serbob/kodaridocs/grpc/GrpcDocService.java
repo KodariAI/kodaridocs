@@ -8,7 +8,6 @@ import me.serbob.kodari.ai.context.docs.community.config.DocGrpc;
 import me.serbob.kodari.ai.context.docs.community.config.DocRequestProto;
 import me.serbob.kodari.ai.context.docs.community.config.DocResponseProto;
 import me.serbob.kodaridocs.dto.DocResponse;
-import me.serbob.kodaridocs.proto.*;
 import me.serbob.kodaridocs.service.DocsService;
 import org.springframework.stereotype.Service;
 

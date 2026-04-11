@@ -3,7 +3,6 @@ WORKDIR /app
 
 COPY build.gradle.kts settings.gradle.kts gradlew gradlew.bat ./
 COPY gradle ./gradle
-COPY autogen ./autogen
 
 RUN chmod +x ./gradlew
 
