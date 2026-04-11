@@ -1,15 +1,24 @@
+import io.spring.gradle.dependencymanagement.dsl.DependencyManagementExtension
+
 plugins {
     java
-    alias(libs.plugins.spring.boot)
-    alias(libs.plugins.dependency.management)
-    alias(libs.plugins.protobuf)
+    alias(libs.plugins.spring.boot) apply false
+    alias(libs.plugins.dependency.management) apply false
+    alias(libs.plugins.protobuf) apply false
 }
 
-allprojects {
+subprojects {
     apply(plugin = "java")
+    apply(plugin = "io.spring.dependency-management")
 
     repositories {
         mavenCentral()
+    }
+
+    configure<DependencyManagementExtension> {
+        imports {
+            mavenBom(rootProject.libs.spring.grpc.bom.get().toString())
+        }
     }
 
     dependencies {
@@ -22,41 +31,6 @@ allprojects {
     java {
         toolchain {
             languageVersion = JavaLanguageVersion.of(25)
-        }
-    }
-}
-
-dependencies {
-    implementation(libs.spring.boot.starter.web)
-    implementation(libs.grpc.services)
-    implementation(libs.spring.grpc.starter)
-
-    implementation(libs.dotenv)
-    implementation(libs.anthropic)
-}
-
-dependencyManagement {
-    imports {
-        mavenBom(libs.spring.grpc.bom.get().toString())
-    }
-}
-
-protobuf {
-    protoc {
-        artifact = "com.google.protobuf:protoc"
-    }
-    plugins {
-        register("grpc") {
-            artifact = "io.grpc:protoc-gen-grpc-java"
-        }
-    }
-    generateProtoTasks {
-        all().forEach { task ->
-            task.plugins {
-                register("grpc") {
-                    option("@generated=omit")
-                }
-            }
         }
     }
 }

@@ -1,109 +1,77 @@
 # KodariDocs
 
-Official documentation service for [Kodari.ai](https://kodari.ai) - providing AI with up-to-date API knowledge for Minecraft plugin development.
+Documentation service for [Kodari.ai](https://kodari.ai) that provides the AI with up-to-date API knowledge for Minecraft plugin development.
 
 ## What is this?
 
-This microservice serves API documentation that helps Kodari understand the latest Minecraft/Bukkit/Spigot/Paper APIs without relying on outdated training data.
+A gRPC microservice that serves markdown API references to Kodari. When Kodari generates a plugin that depends on, say, Citizens or WorldGuard, it fetches the relevant doc from here so the generated code uses correct package paths, real method signatures, and idiomatic patterns, instead of relying on stale training data.
 
-## Contributing Documentation
+## Requesting Documentation
 
-We welcome community contributions! Add your documentation to help make Kodari smarter.
+**Want a plugin added?** Open an issue: **[github.com/KodariAI/kodaridocs/issues](https://github.com/KodariAI/kodaridocs/issues)**
 
-### Quick Start
+Tell us:
+- **Plugin name** and link (GitHub repo, Spigot/BukkitDev page, or wiki)
+- **Why**: what functionality do you want Kodari to be able to generate code for?
+- **Is the API public?** Link to the Maven/JitPack coordinates or the API JAR download page if you know them
 
-1. Fork this repository
-2. Add your `.md` file to `src/main/resources/docs/`
-3. Submit a pull request
+That's all we need. We'll research the plugin's API from its source/docs and add the doc file. Paid/closed-source plugins can still be added if the API is reachable (e.g. SpigotMC API downloads, JavaDoc pages, or official docs).
 
-### Documentation Format
+## Project Structure
 
-Create markdown files with clear API references:
-
-```markdown
-# YourPlugin API
-
-## Classes
-
-### com.example.YourMainClass
-Methods:
-- void doSomething(String param)
-- String getSomething()
+```
+kodaridocs/
+├── app/                           ← Spring Boot bootstrap (the bootable module)
+│   └── src/main/
+│       ├── java/.../KodaridocsApplication.java
+│       └── resources/application.yml
+└── docs/                          ← docs library module
+    └── src/main/
+        ├── java/.../              ← DocsService, TokenCountService, gRPC service
+        ├── proto/                 ← gRPC protobuf definitions
+        └── resources/docs/        ← the markdown docs themselves
+            ├── hytale/mods/
+            └── minecraft/
+                ├── configs/
+                └── plugins/
 ```
 
-### Naming Convention
+All markdown docs live under `docs/src/main/resources/docs/`. Categories are:
+- `minecraft/plugins/`: Bukkit/Spigot/Paper plugins
+- `minecraft/configs/`: GUI/menu/config plugins
+- `hytale/mods/`: Hytale mods
 
-- File: `your-plugin-name.md` (lowercase, hyphens)
-- Content: Focus on method signatures and basic usage
+## Running Locally
 
-## Auto-generating Documentation
-We provide a tool to automatically generate docs from JAR files.
-
-### Using the Auto-generator
-
-1. Place your JAR files in `autogen/src/main/resources/input/`
-2. Choose your scanning mode and run from project root:
-
-#### Mode 1: Full JAR Scan (default)
 ```bash
-# Scan entire JAR
-./gradlew :autogen:run
-
-# Or explicitly
-./gradlew :autogen:run --args="full"
+./gradlew :app:bootRun
 ```
 
-#### Mode 2: Package-Specific Scan
+The gRPC server listens on port `9093` (configurable in `app/src/main/resources/application.yml`). Requires an `ANTHROPIC_API_KEY` in a `.env` file at the project root (used by `TokenCountService` for token counting).
+
+## Building
+
 ```bash
-# Scan only specific package
-./gradlew :autogen:run --args="package com.example.api"
-
-# Works with both dot and slash notation
-./gradlew :autogen:run --args="package com/example/api"
+./gradlew :app:bootJar
 ```
 
-3. Check `autogen/src/main/resources/output/` for generated docs
-4. Review and copy good docs to `src/main/resources/docs/`
+Output goes to `app/build/libs/`. The `Dockerfile` builds and ships this as a standalone container.
 
-### Examples
+## Contributing Docs Directly
 
-#### Example 1: Full JAR Scan
-```bash
-# Clone the repo
-git clone https://github.com/KodariAI/kodaridocs.git
-cd kodaridocs
+If you want to contribute a doc yourself instead of opening an issue:
 
-# Add your JAR
-cp ~/spigot-api-1.20.4.jar autogen/src/main/resources/input/
+1. Fork the repo
+2. Add your `.md` file under `docs/src/main/resources/docs/<category>/<subcategory>/`
+3. Follow the format of existing docs (short description, code examples with full imports, trimmed API reference table at the bottom, no Maven/Gradle setup sections)
+4. Open a PR
 
-# Generate complete docs
-./gradlew :autogen:run
+Naming convention: `pluginname.md`, all lowercase, no dashes or underscores, no version suffixes. Example: `worldguard.md`, not `world-guard.md` or `world_guard.md`.
 
-# Check output
-cat autogen/src/main/resources/output/spigot-api-1.20.4.md
-```
+## License
 
-#### Example 2: Package-Specific Scan
-```bash
-# Add your JAR
-cp ~/EcoPets.jar autogen/src/main/resources/input/
-
-# Generate docs only for the API package
-./gradlew :autogen:run --args="package com.willfp.ecopets.api"
-
-# Output will be named with package suffix
-cat autogen/src/main/resources/output/EcoPets-com-willfp-ecopets-api.md
-```
-
-## Guidelines
-
-- ✅ **DO** contribute API references and method signatures
-- ✅ **DO** include basic usage examples
-- ✅ **DO** keep docs factual and concise
-- ❌ **DON'T** include tutorials or opinions
-- ❌ **DON'T** commit JAR files
-- ❌ **DON'T** include sensitive information
+See [LICENSE](LICENSE).
 
 ---
 
-Built with ❤️ for the Minecraft development community by [Kodari.ai](https://kodari.ai)
+Built for the Minecraft development community by [Kodari.ai](https://kodari.ai)
