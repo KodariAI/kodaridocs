@@ -562,122 +562,143 @@ TownBlockStatus status  = PlayerCacheUtil.getTownBlockStatus(player, WorldCoord.
 
 ## Events
 
-All events are in `com.palmergames.bukkit.towny.event` or sub-packages. Import with:
+> All signatures below are verified against the actual GitHub source. Many Towny events have non-obvious method names (e.g. `getKickedResident()` not `getResident()`) and exist in non-obvious packages. Don't guess — use exactly what's listed here.
 
-```java
-import com.palmergames.bukkit.towny.event.*;
-import com.palmergames.bukkit.towny.event.town.*;
-import com.palmergames.bukkit.towny.event.actions.*;
-```
+> **Important:** Many Towny events run async (`super(!isPrimaryThread())`). If you need to call Bukkit APIs that require the main thread, schedule sync from the handler.
 
-### Town Lifecycle
+### Base Classes
 
-| Event | Package | Cancellable | Key Methods |
-|---|---|---|---|
-| `PreNewTownEvent` | `event` | Yes | `getTownName()`, `getPlayer()` |
-| `NewTownEvent` | `event` | No | `getTown()` |
-| `PreDeleteTownEvent` | `event` | Yes | `getTown()` |
-| `DeleteTownEvent` | `event` | No | `getTownName()` |
-| `RenameTownEvent` | `event` | No | `getTown()`, `getOldName()` |
-| `TownPreRenameEvent` | `event` | Yes | `getTown()`, `getNewName()` |
-| `TownMergeEvent` | `event.town` | No | `getMergingTown()`, `getSurvivingTown()` |
-| `TownPreMergeEvent` | `event.town` | Yes | `getMergingTown()`, `getSurvivingTown()` |
+**`com.palmergames.bukkit.towny.event.CancellableTownyEvent`** — abstract, extends `Event`, implements `Cancellable`.
 
-### Residents Joining / Leaving
-
-| Event | Cancellable | Key Methods |
-|---|---|---|
-| `TownPreAddResidentEvent` | Yes | `getTown()`, `getResident()` |
-| `TownAddResidentEvent` | No | `getTown()`, `getResident()` |
-| `TownPreRemoveResidentEvent` | Yes | `getTown()`, `getResident()` |
-| `TownRemoveResidentEvent` | No | `getTown()`, `getResident()` |
-| `TownLeaveEvent` (event.town) | No | `getTown()`, `getResident()` |
-| `TownKickEvent` (event.town) | No | `getTown()`, `getResident()`, `getKicker()` |
-
-### Claims & Unclaims
-
-| Event | Package | Cancellable | Key Methods |
-|---|---|---|---|
-| `TownPreClaimEvent` | `event` | Yes | `getTown()`, `getPlayer()`, `getTownBlock()`, `isOverClaim()`, `isOutpost()`, `isHomeBlock()` |
-| `TownClaimEvent` | `event` | No | `getTown()`, `getResident()`, `getTownBlock()`, `isOverClaim()` |
-| `TownPreUnclaimEvent` | `event.town` | Yes | `getTown()`, `getTownBlock()`, `getCause()` |
-| `TownUnclaimEvent` | `event.town` | No | `getTown()`, `getWorldCoord()`, `isOverClaim()` |
-| `TownPreUnclaimCmdEvent` | `event.town` | Yes | `getTown()`, `getPlayer()` |
-
-### Mayor & Nation
-
-| Event | Cancellable | Key Methods |
-|---|---|---|
-| `TownMayorChangedEvent` | No | `getTown()`, `getOldMayor()`, `getNewMayor()` |
-| `NationAddTownEvent` | No | `getNation()`, `getTown()` |
-| `NationPreAddTownEvent` | Yes | `getNation()`, `getTown()` |
-| `NationRemoveTownEvent` | No | `getNation()`, `getTown()` |
-| `NewNationEvent` | No | `getNation()` |
-| `PreDeleteNationEvent` | Yes | `getNation()` |
-| `DeleteNationEvent` | No | `getNationName()` |
-| `NationPreRenameEvent` | Yes | `getNation()`, `getNewName()` |
-| `RenameNationEvent` | No | `getNation()`, `getOldName()` |
-
-### Ruin & Conquest
-
-| Event | Cancellable | Key Methods |
-|---|---|---|
-| `TownPreRuinedEvent` (event.town) | Yes | `getTown()` |
-| `TownRuinedEvent` (event.town) | No | `getTown()` |
-| `TownConqueredEvent` (event.town) | No | `getTown()` |
-| `TownUnconquerEvent` (event.town) | No | `getTown()` |
-
-### Plot / Land Type
-
-| Event | Cancellable | Key Methods |
-|---|---|---|
-| `PlotPreChangeTypeEvent` | Yes | `getTownBlock()`, `getNewType()`, `getPlayer()` |
-| `PlotChangeTypeEvent` | No | `getTownBlock()`, `getNewType()`, `getPlayer()` |
-
-### Action Events (Build / Destroy / Switch / Use)
-
-These fire after Towny evaluates plot permissions and let you override the result. All extend `TownyActionEvent` and are cancellable.
-
-| Event | Trigger |
+| Return | Method |
 |---|---|
-| `TownyBuildEvent` | Player places a block |
-| `TownyDestroyEvent` | Player breaks a block |
-| `TownySwitchEvent` | Player interacts with a switch/button/door |
-| `TownyItemuseEvent` | Player uses an item (bucket, bonemeal, etc.) |
-| `TownyBurnEvent` | Block is burned by fire |
-| `TownyExplodingBlocksEvent` | Explosion damages blocks |
+| `boolean` | `isCancelled()` |
+| `void` | `setCancelled(boolean)` |
+| `String` | `getCancelMessage()` |
+| `void` | `setCancelMessage(String)` |
 
-Common shared methods (via `TownyActionEvent`):
+**`com.palmergames.bukkit.towny.event.actions.TownyActionEvent`** — abstract, extends `CancellableTownyEvent`. Inherited by all build/destroy/switch/itemuse events.
 
-```java
-Player   getPlayer()
-Location getLocation()
-Material getMaterial()
-TownBlock getTownBlock()
-boolean  isInWilderness()
-boolean  isCancelled()
-void     setCancelled(boolean)
-String   getMessage()            // message sent to player on cancel
-void     setMessage(String)
-```
+| Return | Method |
+|---|---|
+| `Player` | `getPlayer()` |
+| `Location` | `getLocation()` |
+| `Material` | `getMaterial()` |
+| `TownBlock` | `getTownBlock()` (nullable) |
+| `boolean` | `isInWilderness()` |
+| `boolean` | `hasTownBlock()` |
+| `boolean` | `isMessageSuppressed()` |
+| `void` | `suppressMessage()` |
 
-`TownyBuildEvent` also adds: `Block getBlock()`
+### Claim Events
+
+**`TownPreClaimEvent`** — package `com.palmergames.bukkit.towny.event` (NOT `event.town`). Cancellable.
+- Constructor: `(Town, TownBlock, Player, boolean isOutpost, boolean isHomeblock, boolean isOverClaim)`
+- `boolean isOverClaim()`, `boolean isOutpost()`, `boolean isHomeBlock()` (capital B)
+- `TownBlock getTownBlock()`, `Town getTown()`, `Player getPlayer()`
+
+**`TownClaimEvent`** — package `event`. NOT cancellable (post-event, async).
+- Constructor: `(TownBlock townBlock, Player player, boolean isOverClaim)`
+- `boolean isOverClaim()`, `TownBlock getTownBlock()`, `Resident getResident()`, `Town getTown()`
+- **Does NOT have `isOutpost()` or `isHomeBlock()`** — those are only on `TownPreClaimEvent`.
+
+**`TownPreUnclaimEvent`** — package `event.town`. Cancellable.
+- Constructor: `(Town, TownBlock, Cause)`
+- `Town getTown()` (nullable), `TownBlock getTownBlock()`, `Cause getCause()`
+- Nested enum `Cause`: `UNKNOWN`, `COMMAND`, `ADMIN_COMMAND`, `DELETE`
+
+**`TownUnclaimEvent`** — package `event.town` (NOT `event`). NOT cancellable (post-event).
+- Constructor: `(Town, WorldCoord, boolean isOverClaim)`
+- `Town getTown()` (nullable), `WorldCoord getWorldCoord()`, `boolean isOverClaim()`
+- **Uses `WorldCoord`, NOT `TownBlock`** (block is already gone) — and there is **NO `getTownBlock()`**.
+
+### Resident Membership Events
+
+**`TownAddResidentEvent`** — package `event`. NOT cancellable.
+- Constructor: `(Resident, Town)`
+- `Resident getResident()`, `Town getTown()`, `Resident getMayor()` (nullable)
+
+**`TownRemoveResidentEvent`** — package `event`. NOT cancellable.
+- Constructor: `(Resident, Town)`
+- `Resident getResident()`, `Town getTown()`
+
+**`TownKickEvent`** — package `event.town`. **Cancellable**.
+- Constructor: `(Resident kickedResident, Object kicker)`
+- `Resident getKickedResident()` — **NOT `getResident()`**
+- `Object getKicker()` — **returns `Object`, NOT `Resident`** (must instanceof-check for `Player` / `CommandSender`)
+- `Town getTown()`
+
+### Town/Nation Lifecycle
+
+**`NewTownEvent`** — package `event`. NOT cancellable.
+- Constructor: `(Town)`
+- `Town getTown()`
+
+**`DeleteTownEvent`** — package `event`. NOT cancellable.
+- Constructor: `(Town town, Resident mayor, int numTownBlocks, Cause cause, CommandSender sender)`
+- `String getTownName()`, `UUID getTownUUID()`, `long getTownCreated()`
+- `UUID getMayorUUID()` (nullable), `Resident getMayor()` (nullable)
+- `Cause getCause()`, `int getNumTownBlocks()`
+- `CommandSender getSender()` (nullable), `Resident getSenderResident()` (nullable)
+- Nested enum `Cause`
+
+**`NewNationEvent`** — package `event`. NOT cancellable.
+- Constructor: `(Nation)`
+- `Nation getNation()`
+
+**`DeleteNationEvent`** — package `event`. NOT cancellable.
+- Constructor: `(Nation, Resident king, Cause cause, CommandSender sender)`
+- `String getNationName()`, `UUID getNationUUID()`, `long getNationCreated()`
+- `UUID getLeaderUUID()` — **NOT `getKingUUID()`**
+- `Resident getLeader()` — **NOT `getKing()`** (despite the field being named `king`)
+- `Cause getCause()`, `CommandSender getSender()`, `Resident getSenderResident()`
+
+**`NationAddTownEvent`** — package `event`. NOT cancellable.
+- Constructor: `(Town, Nation)`
+- `Town getTown()`, `Nation getNation()`
+
+**`NationRemoveTownEvent`** — package `event`. NOT cancellable.
+- Constructor: `(Town, Nation)`
+- `Town getTown()`, `Nation getNation()`
+
+### Action Events (Build / Destroy / Switch / Itemuse)
+
+All in package `event.actions`, all extend `TownyActionEvent` (cancellable + inherited methods).
+
+**`TownyBuildEvent`** — Constructor: `(Player, Location, Material, Block, TownBlock, boolean cancelled)` — adds `Block getBlock()`
+
+**`TownyDestroyEvent`** — Constructor: `(Player, Location, Material, Block, TownBlock, boolean cancelled)` — adds `Block getBlock()`
+
+**`TownySwitchEvent`** — Constructor: `(Player, Location, Material, Block, TownBlock, boolean cancelled)` — adds `Block getBlock()`
+
+**`TownyItemuseEvent`** — Constructor: `(Player, Location, Material, TownBlock, boolean cancelled)` — **NO `getBlock()`** (constructor takes no Block)
 
 ### Day Cycle
 
-| Event | Cancellable | Notes |
-|---|---|---|
-| `PreNewDayEvent` | Yes | Fires before taxes / upkeep |
-| `NewDayEvent` | No | Fires after new-day processing |
-| `TownUpkeepCalculationEvent` | No | Override upkeep cost |
+**`NewDayEvent`** — package `event`. NOT cancellable, async.
+- Constructor: `(List<String> bankruptTowns, List<String> removedTowns, List<String> fallenNations, double townUpkeepCollected, double nationUpkeepCollected, long time)`
+- `List<String> getBankruptedTowns()` — **NOT `getBankruptTowns()`** (past tense with -ed)
+- `List<String> getFallenTowns()`, `List<String> getFallenNations()`
+- `double getTownUpkeepCollected()`, `double getNationUpkeepCollected()`
+- `long getTime()`
 
-### Database / Reload
+**`NewHourEvent`** — package `com.palmergames.bukkit.towny.event.time` (**NOT `event`**). NOT cancellable.
+- Constructor: `(long time)`
+- `long getTime()`
 
-| Event | Notes |
+### Common Mistakes Cheat Sheet
+
+| Mistake | Fix |
 |---|---|
-| `TownyLoadedDatabaseEvent` | Fires after full data load — safe to query API |
-| `TownBlockTypeRegisterEvent` | Re-register custom plot types here |
-| `TranslationLoadEvent` | Re-inject custom language strings here |
+| `event.getResident()` on `TownKickEvent` | `event.getKickedResident()` |
+| `event.getKicker()` returns `Resident` | Returns `Object` — instanceof-check |
+| `event.isOutpost()` on `TownClaimEvent` | Only on `TownPreClaimEvent` |
+| `event.getTownBlock()` on `TownUnclaimEvent` | Use `event.getWorldCoord()` instead |
+| `TownPreClaimEvent` in `event.town` package | It's in `event` (root) |
+| `TownUnclaimEvent` in `event` package | It's in `event.town` |
+| `NewHourEvent` in `event` | It's in `event.time` |
+| `event.getKing()` on `DeleteNationEvent` | `event.getLeader()` |
+| `event.getBankruptTowns()` on `NewDayEvent` | `event.getBankruptedTowns()` (past tense) |
 
 ---
 
