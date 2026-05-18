@@ -11,7 +11,7 @@ protobuf = "0.9.5"
 lombok = "1.18.46"
 
 # third party
-slf4j = "2.0.17"
+slf4j = "2.0.18"
 dotenv = "3.2.0"
 anthropic = "2.30.0"
 
